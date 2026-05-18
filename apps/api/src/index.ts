@@ -33,6 +33,7 @@ import pharmaciesRouter from "./routes/pharmacies";
 import verifyRouter from "./routes/verify";
 import analyticsRoutes from "./routes/analytics";
 import notificationsRouter from "./routes/notifications";
+import scanRouter from "./routes/scan";
 import { supabase } from "./db/client";
 
 import { errorHandler } from "./middleware/errorHandler";
@@ -110,6 +111,7 @@ app.use("/api/pharmacies", pharmaciesRouter);
 app.use("/api/verify", verifyRouter);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/notifications", notificationsRouter);
+app.use("/api/v1/scan", scanRouter);
 
 app.use(errorHandler);
 
