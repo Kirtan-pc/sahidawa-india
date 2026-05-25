@@ -57,9 +57,10 @@ export default async function LocaleLayout({
 
     const messages = await getMessages();
 
-    return (
+   return (
         <html lang={locale} suppressHydrationWarning>
-            <body>
+            {/* REPLACE YOUR OLD BODY TAG WITH THIS ONE: */}
+            <body className="bg-white dark:bg-red-500 transition-colors duration-300">
                 <ServiceWorkerProvider>
                     <ThemeProvider>
                         <NextIntlClientProvider messages={messages}>
