@@ -1,5 +1,5 @@
 "use client";
-// accessibilty enhancement update
+
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/routing";
 import { Globe, ChevronDown, Check } from "lucide-react";
@@ -54,7 +54,6 @@ export default function LanguageSwitcher() {
   const switchLanguage = (code: string) => {
     router.replace(pathname, { locale: code });
 
-    // small UX improvement
     setTimeout(() => {
       setOpen(false);
     }, 100);
@@ -65,6 +64,7 @@ export default function LanguageSwitcher() {
 
   return (
     <div className="relative" ref={ref}>
+      {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -112,6 +112,7 @@ export default function LanguageSwitcher() {
         />
       </button>
 
+      {/* Dropdown */}
       {open && (
         <div
           id="language-dropdown"
