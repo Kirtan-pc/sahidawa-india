@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
     AlertCircle,
     Heart,
@@ -12,6 +13,8 @@ import {
     ShieldCheck,
     Hospital,
     Pill,
+    Share2,
+    Check,
 } from "lucide-react";
 
 import type { HeatmapMode, Pharmacy } from "./PharmacyMap";
@@ -45,6 +48,48 @@ function PharmacyPanelRow({
     isSelected: boolean;
     onSelect: () => void;
 }) {
+    const [shareFeedback, setShareFeedback] = useState<"none" | "shared" | "copied">("none");
+
+    const handleShare = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        const shareData = {
+            title: pharmacy.name,
+            text: `${pharmacy.name}${pharmacy.address ? ` - ${pharmacy.address}` : ""}`,
+            url: `https://www.google.com/maps/search/?api=1&query=${pharmacy.coordinates.lat},${pharmacy.coordinates.lng}`,
+        };
+
+        const fallbackCopy = async () => {
+            const textToCopy = `${pharmacy.name}${
+                pharmacy.address ? `\nAddress: ${pharmacy.address}` : ""
+            }\nLocation: https://www.google.com/maps/search/?api=1&query=${
+                pharmacy.coordinates.lat
+            },${pharmacy.coordinates.lng}`;
+
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                setShareFeedback("copied");
+                setTimeout(() => setShareFeedback("none"), 2000);
+            } catch (err) {
+                console.error("Failed to copy text: ", err);
+            }
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+                setShareFeedback("shared");
+                setTimeout(() => setShareFeedback("none"), 2000);
+            } catch (err) {
+                if ((err as Error).name !== "AbortError") {
+                    await fallbackCopy();
+                }
+            }
+        } else {
+            await fallbackCopy();
+        }
+    };
+
     return (
         <article
             className={`rounded-xl border p-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-500/30 hover:shadow-md active:scale-[0.99] ${
@@ -141,8 +186,8 @@ function PharmacyPanelRow({
                 </div>
             </button>
 
-            {pharmacy.phone && (
-                <div className="mt-2 ml-11">
+            <div className="mt-2 ml-11 flex flex-wrap gap-2">
+                {pharmacy.phone && (
                     <a
                         href={`tel:${pharmacy.phone}`}
                         className="inline-flex items-center gap-1.5 rounded-lg bg-(--color-surface-muted) px-2.5 py-1 text-[11px] font-medium text-(--color-text-secondary) transition-colors hover:bg-(--color-border-muted) active:bg-(--color-border-muted)"
@@ -150,8 +195,31 @@ function PharmacyPanelRow({
                         <Phone size={9} className="text-emerald-600" />
                         Call
                     </a>
-                </div>
-            )}
+                )}
+
+                <button
+                    type="button"
+                    onClick={handleShare}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-(--color-surface-muted) px-2.5 py-1 text-[11px] font-medium text-(--color-text-secondary) transition-colors hover:bg-(--color-border-muted) active:bg-(--color-border-muted)"
+                >
+                    {shareFeedback === "copied" ? (
+                        <>
+                            <Check size={9} className="text-emerald-600" />
+                            Copied!
+                        </>
+                    ) : shareFeedback === "shared" ? (
+                        <>
+                            <Check size={9} className="text-emerald-600" />
+                            Shared!
+                        </>
+                    ) : (
+                        <>
+                            <Share2 size={9} className="text-emerald-600" />
+                            Share
+                        </>
+                    )}
+                </button>
+            </div>
         </article>
     );
 }
