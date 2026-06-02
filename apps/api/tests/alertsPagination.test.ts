@@ -12,6 +12,14 @@ jest.mock("../src/db/client", () => ({
     },
 }));
 
+// Mock doubleCsrf to automatically bypass CSRF validation during testing
+jest.mock("csrf-csrf", () => ({
+    doubleCsrf: () => ({
+        doubleCsrfProtection: (req: any, res: any, next: any) => next(),
+        generateToken: () => "mocked-csrf-token",
+    }),
+}));
+
 import { supabase } from "../src/db/client";
 
 // ── Helpers ────────────────────────────────────────────────────────
