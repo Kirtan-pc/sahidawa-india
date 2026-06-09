@@ -4,7 +4,7 @@ import { useRouter } from "@/i18n/routing";
 import { useState } from "react";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { PageHeader } from "../../../components/PageHeader";
+import { PageHeader } from "../../components/PageHeader";
 import Card from "@/components/Card";
 import { createSchedule } from "@/lib/scheduleApi";
 
