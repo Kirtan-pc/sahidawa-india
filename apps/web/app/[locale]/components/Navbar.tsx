@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
     History,
+    HelpCircle,
     Home,
     User,
     MapPin,
@@ -247,22 +248,25 @@ export default function Navbar() {
                                             <Link
                                                 href="/how-it-works"
                                                 onClick={() => setIsMenuOpen(false)}
-                                                className="rounded-md px-2 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                                             >
+                                                <HelpCircle size={14} />
                                                 {tNav("how_it_works")}
                                             </Link>
                                             <Link
                                                 href="/alerts"
                                                 onClick={() => setIsMenuOpen(false)}
-                                                className="rounded-md px-2 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                                             >
+                                                <Bell size={14} />
                                                 {tNav("alerts")}
                                             </Link>
                                             <Link
                                                 href="/map"
                                                 onClick={() => setIsMenuOpen(false)}
-                                                className="rounded-md px-2 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+                                                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                                             >
+                                                <MapPin size={14} />
                                                 {tNav("pharmacy_map")}
                                             </Link>
                                             <Link
