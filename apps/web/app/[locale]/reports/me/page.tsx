@@ -55,10 +55,7 @@ function formatDate(iso: string): string {
     });
 }
 
-const STATUS_STYLES: Record<
-    ReportStatus,
-    { icon: typeof Clock; chip: string; dot: string }
-> = {
+const STATUS_STYLES: Record<ReportStatus, { icon: typeof Clock; chip: string; dot: string }> = {
     pending: {
         icon: Clock,
         chip: "bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/30",
@@ -89,7 +86,21 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
     );
 }
 
-function ReportCard({ report, statusLabel, districtLabel, submittedLabel, batchLabel, noPhotoLabel }: { report: MyReport; statusLabel: string; districtLabel: string; submittedLabel: string; batchLabel: string; noPhotoLabel: string }) {
+function ReportCard({
+    report,
+    statusLabel,
+    districtLabel,
+    submittedLabel,
+    batchLabel,
+    noPhotoLabel,
+}: {
+    report: MyReport;
+    statusLabel: string;
+    districtLabel: string;
+    submittedLabel: string;
+    batchLabel: string;
+    noPhotoLabel: string;
+}) {
     const title =
         report.reported_brand_name?.trim() || report.scanned_barcode || "Unnamed medicine";
 
