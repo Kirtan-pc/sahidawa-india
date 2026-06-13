@@ -4,8 +4,14 @@ import { supabase } from "../db/client";
 import { verifyLimiter } from "../middleware/rateLimit";
 import { optionalAuth } from "../middleware/auth";
 import logger from "../utils/logger";
+import { lookupDrugByBatch } from "../services/drugLookup.service";
 import { escapeIlike } from "../utils/db";
 
+function getBatchStatus(recallStatus: string | null | undefined): "safe" | "recalled" | "unknown" {
+    if (!recallStatus || recallStatus === "none") return "safe";
+    if (recallStatus === "recalled") return "recalled";
+    return "unknown";
+}
 function maskClientIp(ip: string | undefined): string | null {
     if (!ip) return null;
 
@@ -188,26 +194,52 @@ router.post(
 
         const { batchNumber, latitude, longitude } = parsed.data;
 
-        const escaped = escapeIlike(batchNumber);
+        const upperBatch = batchNumber.toUpperCase();
+        const ALLOWED_MOCK_BATCHES = new Set([
+            "DOLO 650",
+            "DOLO-650",
+            "MOCK-DOLO-650",
+            "BN2024001",
+            "AUG625D",
+        ]);
 
+        if (process.env.VERIFY_ENABLE_MOCKS === "true" && ALLOWED_MOCK_BATCHES.has(upperBatch)) {
+            const brandName = upperBatch.includes("DOLO")
+                ? "Dolo 650"
+                : upperBatch === "AUG625D"
+                  ? "Augmentin 625"
+                  : "Mock Medicine";
+            const genericName = upperBatch.includes("DOLO")
+                ? "Paracetamol"
+                : upperBatch === "AUG625D"
+                  ? "Amoxicillin + Clavulanic Acid"
+                  : "Mock Generic";
+
+            const mockMedicine = {
+                id: "mock-id-dolo",
+                barcode_id: "8901148220042",
+                brand_name: brandName,
+                generic_name: genericName,
+                manufacturer: "Micro Labs Ltd",
+                batch_number: upperBatch,
+                expiry_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000 * 2).toISOString(), // 2 years expiry
+                cdsco_approval_status: "approved",
+                is_counterfeit_alert: false,
+            };
+            res.status(200).json({
+                verified: true,
+                medicine: mockMedicine,
+                scanMeta: {
+                    recentScanCount24h: 1,
+                    recentScanCount7d: 1,
+                    suspicious: false,
+                    suspicionReasons: [],
+                },
+            });
+            return;
+        }
         try {
-            const { data, error } = await supabase
-                .from("medicines")
-                .select(
-                    "id, barcode_id, brand_name, generic_name, manufacturer, batch_number, expiry_date, cdsco_approval_status, is_counterfeit_alert"
-                )
-                .ilike("batch_number", escaped)
-                .limit(1)
-                .maybeSingle();
-
-            if (error) {
-                logger.error({ message: "Medicine lookup failed", error, route: "/api/verify" });
-                res.status(500).json({
-                    verified: false,
-                    message: "Database lookup failed",
-                });
-                return;
-            }
+            const data = await lookupDrugByBatch(batchNumber);
 
             if (!data) {
                 res.status(404).json({
@@ -216,6 +248,13 @@ router.post(
                 });
                 return;
             }
+            // Look up batch recall status from batches table
+            const { data: batchData } = await supabase
+                .from("batches")
+                .select("recall_status")
+                .eq("batch_number", batchNumber)
+                .maybeSingle();
+            const batch_status = getBatchStatus(batchData?.recall_status);
 
             const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
             const since7d = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -279,6 +318,7 @@ router.post(
 
             res.status(200).json({
                 verified: true,
+                batch_status,
                 medicine: {
                     brand_name: data.brand_name,
                     generic_name: data.generic_name,

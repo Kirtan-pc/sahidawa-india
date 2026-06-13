@@ -476,6 +476,7 @@
             "description": "Supabase URL या anon key उपलब्ध नहीं है। साइन इन करने से पहले आवश्यक environment variables जोड़ें।"
         },
         "googleButton": "Google के साथ जारी रखें",
+        "githubButton": "GitHub के साथ जारी रखें",
         "emailSeparator": "या ईमेल के साथ जारी रखें",
         "emailLabel": "ईमेल पता",
         "emailPlaceholder": "you@example.com",
@@ -750,5 +751,13 @@
             "pregnancyHeading": "गर्भावस्था"
         },
         "disclaimer": "यह जानकारी शैक्षिक उद्देश्य के लिए है और पेशेवर चिकित्सा सलाह का विकल्प नहीं है।"
+    },
+    "Map": {
+        "errors": {
+            "denied": "लोकेशन एक्सेस की अनुमति नहीं दी गई। कृपया ब्राउज़र सेटिंग्स में इसे सक्षम करें।",
+            "unavailable": "लोकेशन की जानकारी उपलब्ध नहीं है।",
+            "timeout": "लोकेशन के अनुरोध की समय-सीमा समाप्त हो गई है।",
+            "generic": "आपकी लोकेशन प्राप्त करने में असमर्थ।"
+        }
     }
 }

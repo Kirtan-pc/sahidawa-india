@@ -32,6 +32,8 @@ export default function ExpiryTrackerPage() {
     const [name, setName] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [batchNumber, setBatchNumber] = useState("");
+    const [dateError, setDateError] = useState("");
+    const [isExpired, setIsExpired] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState<SortOption>("expirySoonest");
@@ -94,7 +96,26 @@ export default function ExpiryTrackerPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (!name || !expiryDate) return;
+
+        if (!expiryDate || !isValidDateString(expiryDate)) {
+            setDateError("Invalid expiry date");
+            return;
+        }
+
+        const selected = parseLocalDate(expiryDate);
+        const today = new Date();
+
+        today.setHours(0, 0, 0, 0);
+        selected.setHours(0, 0, 0, 0);
+
+        if (selected < today) {
+            setDateError("This medicine has already expired");
+            return;
+        }
+
+        setDateError("");
 
         const newMedicine: Medicine = {
             id: Date.now().toString(),
@@ -284,13 +305,41 @@ export default function ExpiryTrackerPage() {
                                 <label className="mb-1 block text-xs font-bold tracking-wider uppercase opacity-60">
                                     {t("expiryDate")}
                                 </label>
+
                                 <input
                                     type="date"
                                     required
                                     value={expiryDate}
-                                    onChange={(e) => setExpiryDate(e.target.value)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+
+                                        setExpiryDate(value);
+                                        setDateError("");
+
+                                        if (value) {
+                                            const selected = parseLocalDate(value);
+                                            const today = new Date();
+
+                                            today.setHours(0, 0, 0, 0);
+                                            selected.setHours(0, 0, 0, 0);
+
+                                            setIsExpired(selected < today);
+                                        } else {
+                                            setIsExpired(false);
+                                        }
+                                    }}
                                     className="w-full rounded-xl border border-(--color-border-muted) bg-(--color-surface-page) p-3 text-(--color-text-primary) [color-scheme:light] transition outline-none focus:ring-2 focus:ring-emerald-500 dark:[color-scheme:dark]"
                                 />
+
+                                {isExpired && (
+                                    <p className="mt-1 text-sm text-amber-600">
+                                        Warning: This medicine has already expired.
+                                    </p>
+                                )}
+
+                                {dateError && (
+                                    <p className="mt-1 text-sm text-red-600">{dateError}</p>
+                                )}
                             </div>
                             <div>
                                 <label className="mb-1 block text-xs font-bold tracking-wider uppercase opacity-60">
