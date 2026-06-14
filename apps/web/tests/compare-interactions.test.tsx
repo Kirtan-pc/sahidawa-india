@@ -24,7 +24,7 @@ const medicines: Record<string, Medicine> = {
         manufacturer: "Care Pharma",
         cdsco_approval_status: "approved",
     },
-    "Medicine 3": {
+    "Search Medicine 3": {
         id: "med-c",
         brand_name: "Brufen",
         generic_name: "Ibuprofen",
@@ -51,14 +51,13 @@ jest.mock("next-intl", () => ({
     useTranslations: () => {
         const messages: Record<string, string> = {
             addMedicine: "Add medicine",
+            checkButton: "Check Interactions",
             checkingInteractions: "Checking interaction warnings...",
             emptyComparison: "Select two medicines above to see the comparison.",
             fieldHeader: "Field",
             findPharmacies: "Find pharmacies",
             firstMedicine: "First medicine",
-            interactionDescription: "Warnings are based on selected medicines.",
-            interactionError: "Unable to check medicine interactions.",
-            interactionHeading: "Interaction warnings",
+            errorMessage: "Unable to check medicine interactions.",
             medicineA: "Medicine A",
             medicineB: "Medicine B",
             moderate: "Moderate",
@@ -69,10 +68,14 @@ jest.mock("next-intl", () => ({
             priceUnavailable: "Price unavailable",
             printExport: "Print / Export PDF",
             reportTitle: "SahiDawa Medicine Comparison Report",
-            safe: "Safe",
+            alerts_empty_title: "All clear!",
             secondMedicine: "Second medicine",
             searchPlaceholder: "Search brand or generic name",
-            severe: "High Risk",
+            searchLabel: "Search Medicine",
+            severityModerate: "Moderate Caution",
+            severitySerious: "Serious Warning",
+            subtitle: "Check potential harmful interactions between multiple medications",
+            title: "Medicine Interaction Checker",
             "medicineTypes.brand": "Brand",
             "medicineTypes.generic": "Generic",
             "rows.brandName": "Brand name",
@@ -174,25 +177,22 @@ describe("ComparePage interaction warnings", () => {
         fireEvent.click(screen.getByRole("button", { name: "Select First medicine" }));
         fireEvent.click(screen.getByRole("button", { name: "Select Second medicine" }));
         fireEvent.click(screen.getByRole("button", { name: "Add medicine" }));
-        fireEvent.click(screen.getByRole("button", { name: "Select Medicine 3" }));
+        fireEvent.click(screen.getByRole("button", { name: "Select Search Medicine 3" }));
 
+        let requestedUrl: URL | null = null;
         await waitFor(() => {
-            expect(global.fetch).toHaveBeenCalledWith(
-                expect.stringContaining("/api/v1/interactions"),
-                expect.any(Object)
-            );
+            const requestUrl = String((global.fetch as jest.Mock).mock.calls.at(-1)?.[0]);
+            expect(requestUrl).toContain("/api/v1/interactions");
+            requestedUrl = new URL(requestUrl, "http://localhost:3000");
+            expect(requestedUrl.searchParams.get("ids")).toBe("med-a,med-b,med-c");
         });
 
-        const requestedUrl = new URL(
-            String((global.fetch as jest.Mock).mock.calls.at(-1)?.[0]),
-            "http://localhost:3000"
-        );
-        expect(requestedUrl.searchParams.get("ids")).toBe("med-a,med-b,med-c");
+        expect(requestedUrl?.searchParams.get("ids")).toBe("med-a,med-b,med-c");
 
-        expect(await screen.findByText("Interaction warnings")).toBeInTheDocument();
-        expect(screen.getByText("High Risk")).toBeInTheDocument();
-        expect(screen.getByText("Moderate")).toBeInTheDocument();
-        expect(screen.getByText("Safe")).toBeInTheDocument();
+        expect(await screen.findByText("Medicine Interaction Checker")).toBeInTheDocument();
+        expect(screen.getByText("Serious Warning")).toBeInTheDocument();
+        expect(screen.getByText("Moderate Caution")).toBeInTheDocument();
+        expect(screen.getByText("All clear!")).toBeInTheDocument();
         expect(screen.getByText("Crocin + Warfarin")).toBeInTheDocument();
         expect(screen.getByText("Monitor INR and bleeding symptoms.")).toBeInTheDocument();
     });

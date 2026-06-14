@@ -1,8 +1,7 @@
-// @ts-nocheck
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { type ComponentType, useEffect, useState } from "react";
 import { ADMIN_API_BASE } from "@/lib/adminApi";
 
 function getToken(): string {
@@ -11,24 +10,42 @@ function getToken(): string {
 }
 
 // SSR-safe Recharts import — fixes hydration mismatch (issue #1303)
-const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart as any), {
-    ssr: false,
-});
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as any), {
-    ssr: false,
-});
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as any), {
-    ssr: false,
-});
-const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as any), {
-    ssr: false,
-});
-const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as any), {
-    ssr: false,
-});
-const ResponsiveContainer = dynamic(
-    () => import("recharts").then((mod) => mod.ResponsiveContainer as any),
-    { ssr: false }
+const BarChart = dynamic<any>(
+    () => import("recharts").then((mod) => mod.BarChart as unknown as ComponentType<any>),
+    {
+        ssr: false,
+    }
+);
+const Bar = dynamic<any>(
+    () => import("recharts").then((mod) => mod.Bar as unknown as ComponentType<any>),
+    {
+        ssr: false,
+    }
+);
+const XAxis = dynamic<any>(
+    () => import("recharts").then((mod) => mod.XAxis as unknown as ComponentType<any>),
+    {
+        ssr: false,
+    }
+);
+const YAxis = dynamic<any>(
+    () => import("recharts").then((mod) => mod.YAxis as unknown as ComponentType<any>),
+    {
+        ssr: false,
+    }
+);
+const Tooltip = dynamic<any>(
+    () => import("recharts").then((mod) => mod.Tooltip as unknown as ComponentType<any>),
+    {
+        ssr: false,
+    }
+);
+const ResponsiveContainer = dynamic<any>(
+    () =>
+        import("recharts").then((mod) => mod.ResponsiveContainer as unknown as ComponentType<any>),
+    {
+        ssr: false,
+    }
 );
 
 interface CacheStats {

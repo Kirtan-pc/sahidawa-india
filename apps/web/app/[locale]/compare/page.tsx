@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { AlertTriangle, Plus, ShieldCheck, X } from "lucide-react";
+import { AlertTriangle, Loader2, Plus, ShieldCheck, X } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { PageHeader } from "../components/PageHeader";
 import ComparisonGrid, {
@@ -48,7 +48,10 @@ async function searchMedicines(query: string): Promise<Medicine[]> {
 }
 
 export default function ComparePage() {
-    const t = useTranslations("Compare");
+    const tCompare = useTranslations("Compare");
+    const tInteractions = useTranslations("Interactions");
+    const tExpiryTracker = useTranslations("ExpiryTracker");
+    const tHome = useTranslations("Home");
     const [selectedMedicines, setSelectedMedicines] = useState<(Medicine | null)[]>([null, null]);
     const [interactions, setInteractions] = useState<InteractionWarning[]>([]);
     const [interactionsLoading, setInteractionsLoading] = useState(false);
@@ -112,7 +115,7 @@ export default function ComparePage() {
             .then(async (response) => {
                 if (!response.ok) {
                     const body = (await response.json().catch(() => ({}))) as { error?: string };
-                    throw new Error(body.error ?? "Unable to check medicine interactions.");
+                    throw new Error(body.error ?? tInteractions("errorMessage"));
                 }
 
                 return response.json() as Promise<{ interactions: InteractionWarning[] }>;
@@ -134,9 +137,7 @@ export default function ComparePage() {
                 if (error instanceof DOMException && error.name === "AbortError") return;
                 setInteractions([]);
                 setInteractionsError(
-                    error instanceof Error
-                        ? error.message
-                        : "Unable to check medicine interactions."
+                    error instanceof Error ? error.message : tInteractions("errorMessage")
                 );
             })
             .finally(() => {
@@ -169,33 +170,33 @@ export default function ComparePage() {
     };
 
     const comparisonLabels: ComparisonGridLabels = {
-        emptyComparison: t("emptyComparison"),
-        fieldHeader: t("fieldHeader"),
-        medicineA: t("medicineA"),
-        medicineB: t("medicineB"),
-        priceUnavailable: t("priceUnavailable"),
-        noSavings: t("noSavings"),
-        saveAmount: (amount, percent) => t("saveAmount", { amount, percent }),
+        emptyComparison: tCompare("emptyComparison"),
+        fieldHeader: tCompare("fieldHeader"),
+        medicineA: tCompare("medicineA"),
+        medicineB: tCompare("medicineB"),
+        priceUnavailable: tCompare("priceUnavailable"),
+        noSavings: tCompare("noSavings"),
+        saveAmount: (amount, percent) => tCompare("saveAmount", { amount, percent }),
         rows: {
-            brandName: t("rows.brandName"),
-            genericName: t("rows.genericName"),
-            composition: t("rows.composition"),
-            manufacturer: t("rows.manufacturer"),
-            type: t("rows.type"),
-            cdscoStatus: t("rows.cdscoStatus"),
-            expiryDate: t("rows.expiryDate"),
-            marketPrice: t("rows.marketPrice"),
-            janAushadhiPrice: t("rows.janAushadhiPrice"),
-            savings: t("rows.savings"),
+            brandName: tCompare("rows.brandName"),
+            genericName: tCompare("rows.genericName"),
+            composition: tCompare("rows.composition"),
+            manufacturer: tCompare("rows.manufacturer"),
+            type: tCompare("rows.type"),
+            cdscoStatus: tCompare("rows.cdscoStatus"),
+            expiryDate: tCompare("rows.expiryDate"),
+            marketPrice: tCompare("rows.marketPrice"),
+            janAushadhiPrice: tCompare("rows.janAushadhiPrice"),
+            savings: tCompare("rows.savings"),
         },
         medicineTypes: {
-            brand: t("medicineTypes.brand"),
-            generic: t("medicineTypes.generic"),
+            brand: tCompare("medicineTypes.brand"),
+            generic: tCompare("medicineTypes.generic"),
         },
         status: {
-            approved: t("status.approved"),
-            recalled: t("status.recalled"),
-            banned: t("status.banned"),
+            approved: tCompare("status.approved"),
+            recalled: tCompare("status.recalled"),
+            banned: tCompare("status.banned"),
         },
     };
 
@@ -210,21 +211,38 @@ export default function ComparePage() {
         }
     };
 
+    const interactionSeverityLabel = (severity: InteractionSeverity) => {
+        switch (severity) {
+            case "High Risk":
+                return tInteractions("severitySerious");
+            case "Moderate":
+                return tInteractions("severityModerate");
+            case "Safe":
+                return tHome("alerts_empty_title");
+        }
+    };
+
+    const medicineSlotLabel = (index: number) => {
+        if (index === 0) return tCompare("firstMedicine");
+        if (index === 1) return tCompare("secondMedicine");
+        return `${tInteractions("searchLabel")} ${index + 1}`;
+    };
+
     return (
         <div className="min-h-screen bg-(--color-surface-muted) text-(--color-text-primary)">
             <div className="print:hidden">
                 <PageHeader
-                    title={t("pageTitle")}
-                    subtitle={t("pageSubtitle")}
+                    title={tCompare("pageTitle")}
+                    subtitle={tCompare("pageSubtitle")}
                     backHref="/"
                     variant="light"
                 />
             </div>
             <div className="mb-6 hidden text-center print:block">
-                <h1 className="text-2xl font-bold">{t("reportTitle")}</h1>
+                <h1 className="text-2xl font-bold">{tCompare("reportTitle")}</h1>
 
                 <p className="text-sm">
-                    {t("generatedOn", { date: new Date().toLocaleDateString() })}
+                    {tCompare("generatedOn", { date: new Date().toLocaleDateString() })}
                 </p>
             </div>
             <main className="container mx-auto max-w-4xl space-y-6 px-4 py-8">
@@ -233,26 +251,20 @@ export default function ComparePage() {
                         {selectedMedicines.map((medicine, index) => (
                             <div key={index} className="relative">
                                 <MedicineSearchSelect
-                                    label={
-                                        index === 0
-                                            ? t("firstMedicine")
-                                            : index === 1
-                                              ? t("secondMedicine")
-                                              : `Medicine ${index + 1}`
-                                    }
+                                    label={medicineSlotLabel(index)}
                                     value={medicine}
                                     onChange={(nextMedicine) =>
                                         updateSelectedMedicine(index, nextMedicine)
                                     }
                                     onSearch={handleSearch}
-                                    placeholder={t("searchPlaceholder")}
+                                    placeholder={tCompare("searchPlaceholder")}
                                 />
                                 {index > 1 && (
                                     <button
                                         type="button"
                                         onClick={() => removeMedicineSlot(index)}
                                         className="absolute top-0 right-0 inline-flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                                        aria-label={`Remove medicine ${index + 1}`}
+                                        aria-label={`${tInteractions("clearAll")}: ${medicineSlotLabel(index)}`}
                                     >
                                         <X size={15} />
                                     </button>
@@ -267,7 +279,7 @@ export default function ComparePage() {
                         className="mt-4 inline-flex items-center gap-2 rounded-lg border border-emerald-200 px-3 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         <Plus size={16} />
-                        Add medicine
+                        {tExpiryTracker("addMedicine")}
                     </button>
                 </section>
                 {medicine1 && medicine2 && (
@@ -277,7 +289,7 @@ export default function ComparePage() {
                             onClick={() => window.print()}
                             className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 print:hidden"
                         >
-                            {t("printExport")}
+                            {tCompare("printExport")}
                         </button>
                     </div>
                 )}
@@ -291,15 +303,16 @@ export default function ComparePage() {
                         <div className="mb-4 flex items-start justify-between gap-3">
                             <div>
                                 <h2 className="text-lg font-semibold text-slate-900">
-                                    Interaction warnings
+                                    {tInteractions("title")}
                                 </h2>
                                 <p className="text-sm text-slate-500">
-                                    Warnings are based on all selected medicines.
+                                    {tInteractions("subtitle")}
                                 </p>
                             </div>
                             {interactionsLoading ? (
-                                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">
-                                    Checking
+                                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                                    <Loader2 className="animate-spin" size={16} />
+                                    <span className="sr-only">{tInteractions("checkButton")}</span>
                                 </span>
                             ) : (
                                 <ShieldCheck className="mt-1 text-emerald-600" size={22} />
@@ -313,7 +326,7 @@ export default function ComparePage() {
                             </div>
                         ) : interactions.length === 0 && !interactionsLoading ? (
                             <p className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-medium text-emerald-700">
-                                No interactions found.
+                                {tInteractions("noInteractions")}
                             </p>
                         ) : (
                             <div className="space-y-3">
@@ -331,7 +344,7 @@ export default function ComparePage() {
                                                     interaction.severity
                                                 )}`}
                                             >
-                                                {interaction.severity}
+                                                {interactionSeverityLabel(interaction.severity)}
                                             </span>
                                         </div>
                                         <p className="mt-2 text-sm text-slate-700">
@@ -353,7 +366,7 @@ export default function ComparePage() {
                         href="/map"
                         className="text-emerald-700 hover:underline dark:text-emerald-400"
                     >
-                        {t("findPharmacies")}
+                        {tCompare("findPharmacies")}
                     </Link>
                 </p>
             </main>
