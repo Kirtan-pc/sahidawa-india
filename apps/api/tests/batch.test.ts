@@ -236,4 +236,198 @@ describe("GET /api/verify/batch/:batchNumber", () => {
         expect(mockedSupabase.eq).toHaveBeenNthCalledWith(1, "batch_number", "bn2024001");
         expect(mockedSupabase.eq).toHaveBeenNthCalledWith(2, "batch_number", "bn2024001");
     });
+
+    it("returns unknown expiry_status when expiry_date is null", async () => {
+        mockedSupabase.maybeSingle.mockResolvedValueOnce({
+            data: {
+                batch_number: "BN-NULL-EXPIRY",
+                manufacturing_date: "2026-01-10",
+                expiry_date: null,
+                recall_status: "none",
+                quantity_produced: 5000,
+                medicine: {
+                    id: "medicine-1",
+                    brand_name: "SahiCure",
+                    generic_name: "Paracetamol",
+                    cdsco_approval_status: "Approved",
+                    is_counterfeit_alert: false,
+                },
+                manufacturer: {
+                    name: "Sahi Pharma Ltd",
+                    license_number: "LIC-12345",
+                    address: "Industrial Area",
+                    city: "Ahmedabad",
+                    state: "Gujarat",
+                    pincode: "380001",
+                    phone: "07912345678",
+                    email: "quality@sahipharma.example",
+                    website: "https://sahipharma.example",
+                    gmp_certified: true,
+                    location: { coordinates: [72.5714, 23.0225] },
+                },
+            },
+            error: null,
+        });
+
+        const response = await request(app).get("/api/verify/batch/BN-NULL-EXPIRY");
+
+        expect(response.status).toBe(200);
+        expect(response.body.expiry_status).toBe("unknown");
+    });
+
+    it("returns unknown expiry_status for malformed expiry_date", async () => {
+        mockedSupabase.maybeSingle.mockResolvedValueOnce({
+            data: {
+                batch_number: "BN-BAD-DATE",
+                manufacturing_date: "2026-01-10",
+                expiry_date: "not-a-date",
+                recall_status: "none",
+                quantity_produced: 5000,
+                medicine: {
+                    id: "medicine-1",
+                    brand_name: "SahiCure",
+                    generic_name: "Paracetamol",
+                    cdsco_approval_status: "Approved",
+                    is_counterfeit_alert: false,
+                },
+                manufacturer: {
+                    name: "Sahi Pharma Ltd",
+                    license_number: "LIC-12345",
+                    address: "Industrial Area",
+                    city: "Ahmedabad",
+                    state: "Gujarat",
+                    pincode: "380001",
+                    phone: "07912345678",
+                    email: "quality@sahipharma.example",
+                    website: "https://sahipharma.example",
+                    gmp_certified: true,
+                    location: { coordinates: [72.5714, 23.0225] },
+                },
+            },
+            error: null,
+        });
+
+        const response = await request(app).get("/api/verify/batch/BN-BAD-DATE");
+
+        expect(response.status).toBe(200);
+        expect(response.body.expiry_status).toBe("unknown");
+    });
+
+    it("returns red expiry_status for an expired batch", async () => {
+        mockedSupabase.maybeSingle.mockResolvedValueOnce({
+            data: {
+                batch_number: "BN-EXPIRED",
+                manufacturing_date: "2020-01-10",
+                expiry_date: "2024-01-01",
+                recall_status: "none",
+                quantity_produced: 5000,
+                medicine: {
+                    id: "medicine-1",
+                    brand_name: "SahiCure",
+                    generic_name: "Paracetamol",
+                    cdsco_approval_status: "Approved",
+                    is_counterfeit_alert: false,
+                },
+                manufacturer: {
+                    name: "Sahi Pharma Ltd",
+                    license_number: "LIC-12345",
+                    address: "Industrial Area",
+                    city: "Ahmedabad",
+                    state: "Gujarat",
+                    pincode: "380001",
+                    phone: "07912345678",
+                    email: "quality@sahipharma.example",
+                    website: "https://sahipharma.example",
+                    gmp_certified: true,
+                    location: { coordinates: [72.5714, 23.0225] },
+                },
+            },
+            error: null,
+        });
+
+        const response = await request(app).get("/api/verify/batch/BN-EXPIRED");
+
+        expect(response.status).toBe(200);
+        expect(response.body.expiry_status).toBe("red");
+    });
+
+    it("returns yellow expiry_status for near-expiry batch (within 6 months)", async () => {
+        const nearFuture = new Date();
+        nearFuture.setMonth(nearFuture.getMonth() + 3);
+        const nearExpiryDate = nearFuture.toISOString().slice(0, 10);
+
+        mockedSupabase.maybeSingle.mockResolvedValueOnce({
+            data: {
+                batch_number: "BN-NEAR-EXPIRY",
+                manufacturing_date: "2025-06-01",
+                expiry_date: nearExpiryDate,
+                recall_status: "none",
+                quantity_produced: 5000,
+                medicine: {
+                    id: "medicine-1",
+                    brand_name: "SahiCure",
+                    generic_name: "Paracetamol",
+                    cdsco_approval_status: "Approved",
+                    is_counterfeit_alert: false,
+                },
+                manufacturer: {
+                    name: "Sahi Pharma Ltd",
+                    license_number: "LIC-12345",
+                    address: "Industrial Area",
+                    city: "Ahmedabad",
+                    state: "Gujarat",
+                    pincode: "380001",
+                    phone: "07912345678",
+                    email: "quality@sahipharma.example",
+                    website: "https://sahipharma.example",
+                    gmp_certified: true,
+                    location: { coordinates: [72.5714, 23.0225] },
+                },
+            },
+            error: null,
+        });
+
+        const response = await request(app).get("/api/verify/batch/BN-NEAR-EXPIRY");
+
+        expect(response.status).toBe(200);
+        expect(response.body.expiry_status).toBe("yellow");
+    });
+
+    it("returns green expiry_status for a future expiry date", async () => {
+        mockedSupabase.maybeSingle.mockResolvedValueOnce({
+            data: {
+                batch_number: "BN-FUTURE",
+                manufacturing_date: "2026-01-10",
+                expiry_date: "2099-12-31",
+                recall_status: "none",
+                quantity_produced: 5000,
+                medicine: {
+                    id: "medicine-1",
+                    brand_name: "SahiCure",
+                    generic_name: "Paracetamol",
+                    cdsco_approval_status: "Approved",
+                    is_counterfeit_alert: false,
+                },
+                manufacturer: {
+                    name: "Sahi Pharma Ltd",
+                    license_number: "LIC-12345",
+                    address: "Industrial Area",
+                    city: "Ahmedabad",
+                    state: "Gujarat",
+                    pincode: "380001",
+                    phone: "07912345678",
+                    email: "quality@sahipharma.example",
+                    website: "https://sahipharma.example",
+                    gmp_certified: true,
+                    location: { coordinates: [72.5714, 23.0225] },
+                },
+            },
+            error: null,
+        });
+
+        const response = await request(app).get("/api/verify/batch/BN-FUTURE");
+
+        expect(response.status).toBe(200);
+        expect(response.body.expiry_status).toBe("green");
+    });
 });
