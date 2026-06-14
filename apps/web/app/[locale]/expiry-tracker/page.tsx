@@ -13,6 +13,8 @@ import {
     Download,
     Upload,
     Search,
+    Pencil,
+    X,
 } from "lucide-react";
 
 interface Medicine {
@@ -20,6 +22,7 @@ interface Medicine {
     name: string;
     expiryDate: string;
     batchNumber?: string;
+    notes?: string;
 }
 
 type FilterStatus = "all" | "expired" | "expiringSoon" | "safe";
@@ -32,10 +35,12 @@ export default function ExpiryTrackerPage() {
     const [name, setName] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [batchNumber, setBatchNumber] = useState("");
+    const [notes, setNotes] = useState("");
     const [dateError, setDateError] = useState("");
     const [isExpired, setIsExpired] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [sortBy, setSortBy] = useState<SortOption>("expirySoonest");
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
     const [importError, setImportError] = useState<string | null>(null);
@@ -63,6 +68,7 @@ export default function ExpiryTrackerPage() {
                             name: item.brand_name,
                             expiryDate: item.expiry_date,
                             batchNumber: item.batch_number ?? "",
+                            notes: item.notes ?? "",
                         }));
 
                         setMedicines(mapped);
@@ -118,11 +124,41 @@ export default function ExpiryTrackerPage() {
 
         setDateError("");
 
+        if (editingId) {
+            if (userId) {
+                const { error } = await supabase
+                    .from("expiry_tracker_items")
+                    .update({
+                        brand_name: name,
+                        batch_number: batchNumber || null,
+                        expiry_date: expiryDate,
+                        notes: notes || null,
+                    })
+                    .eq("id", editingId);
+
+                if (!error) {
+                    setMedicines(
+                        medicines.map((m) =>
+                            m.id === editingId ? { ...m, name, expiryDate, batchNumber, notes } : m
+                        )
+                    );
+                }
+            } else {
+                const updated = medicines.map((m) =>
+                    m.id === editingId ? { ...m, name, expiryDate, batchNumber, notes } : m
+                );
+                saveToLocalStorage(updated);
+            }
+            cancelEdit();
+            return;
+        }
+
         const newMedicine: Medicine = {
             id: Date.now().toString(),
             name,
             expiryDate,
             batchNumber,
+            notes,
         };
         if (userId) {
             const { data, error } = await supabase
@@ -132,6 +168,7 @@ export default function ExpiryTrackerPage() {
                     brand_name: name,
                     batch_number: batchNumber || null,
                     expiry_date: expiryDate,
+                    notes: notes || null,
                 })
                 .select()
                 .single();
@@ -144,6 +181,7 @@ export default function ExpiryTrackerPage() {
                         name: data.brand_name,
                         expiryDate: data.expiry_date,
                         batchNumber: data.batch_number ?? "",
+                        notes: data.notes ?? "",
                     },
                 ]);
             }
@@ -153,6 +191,7 @@ export default function ExpiryTrackerPage() {
         setName("");
         setExpiryDate("");
         setBatchNumber("");
+        setNotes("");
     };
 
     const handleDelete = async (id: string) => {
@@ -163,12 +202,35 @@ export default function ExpiryTrackerPage() {
         } else {
             saveToLocalStorage(medicines.filter((med) => med.id !== id));
         }
+        if (editingId === id) {
+            cancelEdit();
+        }
         setSelectedIds((prev) => {
             if (!prev.has(id)) return prev;
             const next = new Set(prev);
             next.delete(id);
             return next;
         });
+    };
+
+    const startEdit = (med: Medicine) => {
+        setEditingId(med.id);
+        setName(med.name);
+        setExpiryDate(med.expiryDate);
+        setBatchNumber(med.batchNumber ?? "");
+        setNotes(med.notes ?? "");
+        setDateError("");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setName("");
+        setExpiryDate("");
+        setBatchNumber("");
+        setNotes("");
+        setDateError("");
+        setIsExpired(false);
     };
 
     const toggleSelect = (id: string) => {
@@ -317,7 +379,7 @@ export default function ExpiryTrackerPage() {
                     {/* Sidebar */}
                     <div className="h-fit rounded-2xl border border-(--color-border-muted) bg-(--color-surface-muted) p-6 shadow-sm md:sticky md:top-32 md:col-span-1">
                         <h2 className="mb-4 text-lg font-bold tracking-tight uppercase">
-                            {t("addMedicine")}
+                            {editingId ? t("editMedicine") : t("addMedicine")}
                         </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -385,12 +447,33 @@ export default function ExpiryTrackerPage() {
                                     placeholder={t("batchPlaceholder")}
                                 />
                             </div>
+                            <div>
+                                <label className="mb-1 block text-xs font-bold tracking-wider uppercase opacity-60">
+                                    {t("notesLabel")}
+                                </label>
+                                <textarea
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                    rows={3}
+                                    className="w-full resize-none rounded-xl border border-(--color-border-muted) bg-(--color-surface-page) p-3 text-(--color-text-primary) transition outline-none focus:ring-2 focus:ring-emerald-500"
+                                    placeholder={t("notesPlaceholder")}
+                                />
+                            </div>
                             <button
                                 type="submit"
                                 className="w-full rounded-xl bg-emerald-600 py-3 font-bold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-700 active:scale-95"
                             >
-                                {t("addToTracker")}
+                                {editingId ? t("saveChanges") : t("addToTracker")}
                             </button>
+                            {editingId && (
+                                <button
+                                    type="button"
+                                    onClick={cancelEdit}
+                                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-(--color-border-muted) py-3 font-bold transition hover:bg-(--color-surface-page)"
+                                >
+                                    <X size={18} /> {t("cancel")}
+                                </button>
+                            )}
                         </form>
 
                         {/* Import / Export */}
@@ -528,6 +611,11 @@ export default function ExpiryTrackerPage() {
                                                             </span>
                                                         )}
                                                     </div>
+                                                    {med.notes && (
+                                                        <p className="mt-2 border-l-2 border-emerald-500/30 pl-2 text-sm italic opacity-60">
+                                                            {med.notes}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4">
@@ -536,6 +624,15 @@ export default function ExpiryTrackerPage() {
                                                 >
                                                     {status.icon} {status.text}
                                                 </span>
+                                                <button
+                                                    onClick={() => startEdit(med)}
+                                                    className="rounded-full p-2 transition-colors hover:bg-emerald-500/10"
+                                                >
+                                                    <Pencil
+                                                        size={18}
+                                                        className="text-emerald-500"
+                                                    />
+                                                </button>
                                                 <button
                                                     onClick={() => handleDelete(med.id)}
                                                     className="rounded-full p-2 transition-colors hover:bg-red-500/10"
