@@ -37,6 +37,20 @@ const statsSchema = z.object({
     to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be YYYY-MM-DD"),
 });
 
+const IST_OFFSET_MINUTES = 330;
+const IST_OFFSET_MS = IST_OFFSET_MINUTES * 60 * 1000;
+
+const getIstDateTime = (timestamp: number = Date.now()) => {
+    // Medicine schedules are stored and queried by Indian calendar dates.
+    // toISOString() uses UTC, so shift by IST's fixed UTC+05:30 offset first.
+    const istDate = new Date(timestamp + IST_OFFSET_MS);
+
+    return {
+        today: istDate.toISOString().split("T")[0],
+        nowTime: istDate.toISOString().slice(11, 16),
+    };
+};
+
 // List user's active schedules
 router.get("/", requireAuth, async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -315,8 +329,7 @@ router.get("/:id/stats", requireAuth, async (req: AuthenticatedRequest, res: Res
 // Get today's pending doses for all user's active schedules
 router.get("/today/summary", requireAuth, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const today = new Date().toISOString().split("T")[0];
-        const nowTime = new Date().toTimeString().slice(0, 5);
+        const { today, nowTime } = getIstDateTime();
 
         const { data: schedules, error: schedError } = await supabase
             .from("medicine_schedules")

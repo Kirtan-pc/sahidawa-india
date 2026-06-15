@@ -469,7 +469,32 @@
         "importDateError": "Invalid date format found in backup. All dates must be in YYYY-MM-DD format.",
         "statusExpired": "Expired",
         "statusExpiringSoon": "Expiring soon ({days}d)",
-        "statusSafe": "Safe"
+        "statusSafe": "Safe",
+        "deleteSelected": "Delete Selected",
+        "selectMedicine": "Select {name}"
+    },
+    "ChildVaccinationTracker": {
+        "childTrackerTitle": "Child Vaccination Tracker",
+        "childTrackerSubtitle": "Enter a child profile to generate a personalized National Immunization Schedule timeline with completion tracking.",
+        "childReminderButton": "Download reminders",
+        "childNameLabel": "Child name",
+        "childNamePlaceholder": "Enter child name",
+        "childDobLabel": "Date of birth",
+        "childDefaultName": "Child",
+        "childDobPrompt": "Enter a date of birth to generate the personalized vaccination timeline.",
+        "childDobFutureError": "Date of birth cannot be in the future.",
+        "childDobInvalidError": "Enter a valid date of birth.",
+        "childProfileSummary": "Child profile",
+        "scheduleSourceLabel": "Schedule basis",
+        "childTimelineHeading": "Personalized timeline",
+        "whereApplicableBadge": "Where applicable",
+        "dueDateLabel": "Due date",
+        "officialTimingLabel": "Official timing",
+        "completedStatus": "Completed",
+        "dueStatus": "Due",
+        "overdueStatus": "Overdue",
+        "upcomingStatus": "Upcoming",
+        "markCompleteButton": "Mark completed"
     },
     "Login": {
         "brandSubtitle": "Medicine safety platform",

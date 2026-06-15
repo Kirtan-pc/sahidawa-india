@@ -191,8 +191,8 @@ export default function ProfilePage() {
                             </button>
                         )}
 
-                        <button
-                            type="button"
+                        <Link
+                            href="/settings"
                             className="flex w-full items-center justify-between p-5 transition-colors hover:bg-(--color-surface-muted)"
                         >
                             <div className="flex items-center gap-3">
@@ -204,10 +204,10 @@ export default function ProfilePage() {
                             </div>
 
                             <ChevronRight size={18} className="text-(--color-text-muted)" />
-                        </button>
+                        </Link>
 
-                        <button
-                            type="button"
+                        <Link
+                            href="/privacy"
                             className="flex w-full items-center justify-between p-5 transition-colors hover:bg-(--color-surface-muted)"
                         >
                             <div className="flex items-center gap-3">
@@ -222,7 +222,7 @@ export default function ProfilePage() {
                             </div>
 
                             <ChevronRight size={18} className="text-(--color-text-muted)" />
-                        </button>
+                        </Link>
                     </div>
                 </div>
             </div>

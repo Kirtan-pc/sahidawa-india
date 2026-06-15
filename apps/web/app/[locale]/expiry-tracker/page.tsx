@@ -39,6 +39,7 @@ export default function ExpiryTrackerPage() {
     const [sortBy, setSortBy] = useState<SortOption>("expirySoonest");
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
     const [importError, setImportError] = useState<string | null>(null);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -162,6 +163,37 @@ export default function ExpiryTrackerPage() {
         } else {
             saveToLocalStorage(medicines.filter((med) => med.id !== id));
         }
+        setSelectedIds((prev) => {
+            if (!prev.has(id)) return prev;
+            const next = new Set(prev);
+            next.delete(id);
+            return next;
+        });
+    };
+
+    const toggleSelect = (id: string) => {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedIds.size === 0) return;
+        const ids = Array.from(selectedIds);
+        if (userId) {
+            await supabase.from("expiry_tracker_items").delete().in("id", ids);
+
+            setMedicines(medicines.filter((med) => !selectedIds.has(med.id)));
+        } else {
+            saveToLocalStorage(medicines.filter((med) => !selectedIds.has(med.id)));
+        }
+        setSelectedIds(new Set());
     };
 
     const parseLocalDate = (dateStr: string) => {
@@ -391,9 +423,20 @@ export default function ExpiryTrackerPage() {
                     <div className="space-y-4 md:col-span-2">
                         <div className="flex items-center justify-between px-2">
                             <h2 className="text-xl font-bold">{t("trackedMedicines")}</h2>
-                            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-500">
-                                {t("total")}: {medicines.length}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                {selectedIds.size > 0 && (
+                                    <button
+                                        onClick={handleBulkDelete}
+                                        className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 text-xs font-bold text-red-500 transition hover:bg-red-500/20"
+                                    >
+                                        <Trash2 size={14} /> {t("deleteSelected")} (
+                                        {selectedIds.size})
+                                    </button>
+                                )}
+                                <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-500">
+                                    {t("total")}: {medicines.length}
+                                </span>
+                            </div>
                         </div>
 
                         {/* Search + Sort */}
@@ -457,22 +500,34 @@ export default function ExpiryTrackerPage() {
                                             key={med.id}
                                             className="flex items-center justify-between rounded-2xl border border-(--color-border-muted) bg-(--color-surface-muted) p-5 shadow-sm transition-all hover:border-emerald-500/50"
                                         >
-                                            <div className="space-y-1">
-                                                <h3 className="text-lg leading-tight font-bold">
-                                                    {med.name}
-                                                </h3>
-                                                <div className="flex items-center gap-3 text-sm opacity-70">
-                                                    <span className="flex items-center gap-1">
-                                                        <Calendar size={14} />{" "}
-                                                        {parseLocalDate(
-                                                            med.expiryDate
-                                                        ).toLocaleDateString()}
-                                                    </span>
-                                                    {med.batchNumber && (
+                                            <div className="flex items-center gap-3">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedIds.has(med.id)}
+                                                    onChange={() => toggleSelect(med.id)}
+                                                    aria-label={t("selectMedicine", {
+                                                        name: med.name,
+                                                    })}
+                                                    className="h-4 w-4 cursor-pointer accent-emerald-600"
+                                                />
+                                                <div className="space-y-1">
+                                                    <h3 className="text-lg leading-tight font-bold">
+                                                        {med.name}
+                                                    </h3>
+                                                    <div className="flex items-center gap-3 text-sm opacity-70">
                                                         <span className="flex items-center gap-1">
-                                                            <Package size={14} /> {med.batchNumber}
+                                                            <Calendar size={14} />{" "}
+                                                            {parseLocalDate(
+                                                                med.expiryDate
+                                                            ).toLocaleDateString()}
                                                         </span>
-                                                    )}
+                                                        {med.batchNumber && (
+                                                            <span className="flex items-center gap-1">
+                                                                <Package size={14} />{" "}
+                                                                {med.batchNumber}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4">
