@@ -10,22 +10,22 @@ function getToken(): string {
 }
 
 // SSR-safe Recharts import — fixes hydration mismatch (issue #1303)
-const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart as any), {
+const BarChart = dynamic<any>(() => import("recharts").then((mod) => mod.BarChart as any), {
     ssr: false,
 });
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as any), {
+const Bar = dynamic<any>(() => import("recharts").then((mod) => mod.Bar as any), {
     ssr: false,
 });
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as any), {
+const XAxis = dynamic<any>(() => import("recharts").then((mod) => mod.XAxis as any), {
     ssr: false,
 });
-const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as any), {
+const YAxis = dynamic<any>(() => import("recharts").then((mod) => mod.YAxis as any), {
     ssr: false,
 });
-const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as any), {
+const Tooltip = dynamic<any>(() => import("recharts").then((mod) => mod.Tooltip as any), {
     ssr: false,
 });
-const ResponsiveContainer = dynamic(
+const ResponsiveContainer = dynamic<any>(
     () => import("recharts").then((mod) => mod.ResponsiveContainer as any),
     { ssr: false }
 );

@@ -20,8 +20,8 @@ import {
     Download,
     ScanLine,
 } from "lucide-react";
-import { useFormatter } from "next-intl";
-import { useId, useMemo, useRef, useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 interface ChildTrackerState {
     childName: string;
@@ -39,7 +39,6 @@ const CHILD_NAME_MAX_LENGTH = 80;
 const VALID_DOSE_IDS = new Set(NATIONAL_IMMUNIZATION_SCHEDULE.map((item) => item.id));
 const TRACKER_STORAGE_KEY = "vaccine-hub-child-tracker-v1";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SyncContext =
     | { status: "loading" }
     | { status: "local" }
@@ -95,6 +94,10 @@ export function ChildVaccinationTracker() {
     const [isOcrScanning, setIsOcrScanning] = useState(false);
     const [ocrError, setOcrError] = useState<string | null>(null);
     const scanInputRef = useRef<HTMLInputElement>(null);
+    const [syncContext, setSyncContext] = useState<SyncContext>({ status: "loading" });
+    const hasUserEditedRef = useRef(false);
+    const profileSyncSignatureRef = useRef<string | null>(null);
+    const cloudCompletedDoseIdsRef = useRef<Set<string>>(new Set());
 
     const dobValidation = validateChildDateOfBirth(tracker.dateOfBirth, todayDateInput);
     const schedule = useMemo(
