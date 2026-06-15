@@ -8,6 +8,9 @@ export interface ScanHistoryEntry {
     timestamp: number;
     medicineName: string;
     status: string;
+    scannedAt?: string;
+    query?: string;
+    source?: string;
 }
 
 let dbPromise: ReturnType<typeof openDB> | null = null;

@@ -12,6 +12,9 @@ type CloudScanHistoryRow = {
     medicine_name: string;
     status: string;
     timestamp: number;
+    scanned_at: string;
+    query: string;
+    source: string;
     updated_at?: string;
 };
 
@@ -35,6 +38,9 @@ export async function syncScanHistoryWithCloud(): Promise<{
             medicine_name: entry.medicineName,
             status: entry.status,
             timestamp: entry.timestamp,
+            scanned_at: entry.scannedAt || new Date(entry.timestamp).toISOString(),
+            query: entry.query || entry.medicineName,
+            source: entry.source || "offline",
         }));
 
         const { error: upsertError } = await supabase
@@ -68,5 +74,8 @@ function fromCloudRow(row: CloudScanHistoryRow): ScanHistoryEntry {
         medicineName: row.medicine_name,
         status: row.status,
         timestamp: row.timestamp,
+        scannedAt: row.scanned_at,
+        query: row.query,
+        source: row.source,
     };
 }
