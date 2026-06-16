@@ -44,13 +44,13 @@ export default function SearchBar({ dark = false, onSearchChange }: SearchBarPro
     const [history, setHistory] = useState<HistoryItem[]>([]);
 
     useEffect(() => {
-        const stored = localStorage.getItem("sahidawa_search_history");
-        if (stored) {
-            try {
+        try {
+            const stored = localStorage.getItem("sahidawa_search_history");
+            if (stored) {
                 setHistory(JSON.parse(stored));
-            } catch (e) {
-                console.error("Failed to parse search history:", e);
             }
+        } catch (e) {
+            console.error("Failed to access or parse search history:", e);
         }
     }, []);
 
@@ -78,9 +78,14 @@ export default function SearchBar({ dark = false, onSearchChange }: SearchBarPro
                     if (!a.pinned && b.pinned) return 1;
                     return b.timestamp - a.timestamp;
                 })
-                .slice(0, 10); // Limit to 10 items
+                .slice(0, 20); // Limit to 20 items
 
-            localStorage.setItem("sahidawa_search_history", JSON.stringify(sortedFinal));
+            try {
+                localStorage.setItem("sahidawa_search_history", JSON.stringify(sortedFinal));
+            } catch (e) {
+                // Storage quota exceeded — silently skip persisting
+                console.warn("Failed to persist search history:", e);
+            }
             return sortedFinal;
         });
     }, []);
