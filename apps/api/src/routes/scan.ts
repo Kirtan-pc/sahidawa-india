@@ -9,6 +9,7 @@ import { getMlServiceUrl, MISSING_ML_SERVICE_URL_MESSAGE } from "../config/mlSer
 import { validateUploadSize } from "../middleware/uploadSizeValidator";
 import { uploadRateLimiter } from "../middleware/uploadRateLimit";
 import { scanQueryLimiter } from "../middleware/rateLimit";
+import { redisClient } from "../utils/redis";
 
 import { escapeIlike, escapePostgrest } from "../utils/db";
 
@@ -510,7 +511,7 @@ router.post("/extract", uploadRateLimiter, validateUploadSize, (req: Request, re
                                 "composition, mrp, jan_aushadhi_price"
                         )
                         .or(
-                            `brand_name.ilike."%${escapePostgrest(matchedName!)}%",generic_name.ilike."%${escapePostgrest(matchedName!)}%"`
+                            `brand_name.ilike.%${escapePostgrest(matchedName!)}%,generic_name.ilike.%${escapePostgrest(matchedName!)}%`
                         )
                         .limit(1)
                         .maybeSingle();
@@ -638,6 +639,22 @@ router.post("/match", scanQueryLimiter, async (req: Request, res: Response) => {
         return;
     }
 
+    const normalizedQuery = query.trim().toLowerCase();
+    const cacheKey = `match_cache:${normalizedQuery}`;
+
+    try {
+        if (redisClient.isOpen) {
+            const cached = await redisClient.get(cacheKey);
+            if (cached) {
+                logger.info(`Cache HIT for match query: "${query}"`);
+                res.status(200).json(JSON.parse(cached));
+                return;
+            }
+        }
+    } catch (cacheErr) {
+        logger.error(`Redis error reading cache for match query: ${cacheErr}`);
+    }
+
     try {
         const { data, error } = await supabase.rpc("search_medicines_text", {
             query_text: query,
@@ -660,21 +677,40 @@ router.post("/match", scanQueryLimiter, async (req: Request, res: Response) => {
 
                 for (const word of words) {
                     fallbackQuery = fallbackQuery.or(
-                        `brand_name.ilike."%${escapePostgrest(word)}%",generic_name.ilike."%${escapePostgrest(word)}%"`
+                        `brand_name.ilike.%${escapePostgrest(word)}%,generic_name.ilike.%${escapePostgrest(word)}%`
                     );
                 }
 
                 const { data: fallback } = await (fallbackQuery as any).limit(3);
                 if (fallback && fallback.length > 0) {
-                    res.status(200).json(
-                        fallback.map((m: { brand_name: string | null; generic_name: string }) => ({
+                    const fallbackResult = fallback.map(
+                        (m: { brand_name: string | null; generic_name: string }) => ({
                             name: m.brand_name || m.generic_name,
                             score: 60,
-                        }))
+                        })
                     );
+
+                    try {
+                        if (redisClient.isOpen)
+                            await redisClient.set(cacheKey, JSON.stringify(fallbackResult), {
+                                EX: 3600,
+                            });
+                    } catch (err) {
+                        /* ignore */
+                    }
+
+                    res.status(200).json(fallbackResult);
                     return;
                 }
             }
+
+            try {
+                if (redisClient.isOpen)
+                    await redisClient.set(cacheKey, JSON.stringify([]), { EX: 3600 });
+            } catch (err) {
+                /* ignore */
+            }
+
             res.status(200).json([]);
             return;
         }
@@ -689,6 +725,13 @@ router.post("/match", scanQueryLimiter, async (req: Request, res: Response) => {
                 score: Math.round((medicine.similarity ?? 0) * 100),
             })
         );
+
+        try {
+            if (redisClient.isOpen)
+                await redisClient.set(cacheKey, JSON.stringify(matches), { EX: 3600 });
+        } catch (err) {
+            /* ignore */
+        }
 
         res.status(200).json(matches);
     } catch (err) {
@@ -728,6 +771,22 @@ router.post("/verify-brand", scanQueryLimiter, async (req: Request, res: Respons
         return;
     }
 
+    const normalizedBrand = brandName.trim().toLowerCase();
+    const cacheKey = `brand_cache:${normalizedBrand}`;
+
+    try {
+        if (redisClient.isOpen) {
+            const cached = await redisClient.get(cacheKey);
+            if (cached) {
+                logger.info(`Cache HIT for verify-brand: "${brandName}"`);
+                res.status(200).json(JSON.parse(cached));
+                return;
+            }
+        }
+    } catch (cacheErr) {
+        logger.error(`Redis error reading cache for verify-brand: ${cacheErr}`);
+    }
+
     try {
         const { data, error } = await supabase
             .from("medicines")
@@ -757,7 +816,7 @@ router.post("/verify-brand", scanQueryLimiter, async (req: Request, res: Respons
             return;
         }
 
-        res.status(200).json({
+        const responseData = {
             verified: true,
             medicine: {
                 id: data.id,
@@ -775,7 +834,16 @@ router.post("/verify-brand", scanQueryLimiter, async (req: Request, res: Respons
                 product_match_score: data.product_match_score,
                 manufacturer_match_score: data.manufacturer_match_score,
             },
-        });
+        };
+
+        try {
+            if (redisClient.isOpen)
+                await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 86400 }); // 24 hours
+        } catch (err) {
+            /* ignore */
+        }
+
+        res.status(200).json(responseData);
     } catch (err) {
         const msg = err instanceof Error ? err.message : "Unknown error";
         logger.error(`Error during verify-brand: ${msg}`);
