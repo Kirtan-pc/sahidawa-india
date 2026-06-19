@@ -456,9 +456,13 @@ export default function ExpiryTrackerPage() {
                     const saved = localStorage.getItem("sahidawa_expiry_tracker");
 
                     if (saved) {
-                        const parsed = JSON.parse(saved);
-                        setMedicines(parsed);
-                        checkAndTriggerLocalNotifications(parsed);
+                        try {
+                            const parsed = JSON.parse(saved);
+                            setMedicines(parsed);
+                            checkAndTriggerLocalNotifications(parsed);
+                        } catch (parseError) {
+                            console.error("Failed to parse local expiry tracker data:", parseError);
+                        }
                     }
                 }
             } catch (e) {
@@ -578,7 +582,29 @@ export default function ExpiryTrackerPage() {
 
     const handleDelete = async (id: string) => {
         if (userId) {
+            const itemToDelete = medicines.find((med) => med.id === id);
+
             await supabase.from("expiry_tracker_items").delete().eq("id", id);
+
+            // Clean up corresponding entry in localStorage if it exists
+            const saved = localStorage.getItem("sahidawa_expiry_tracker");
+            if (saved) {
+                try {
+                    const localMeds: Medicine[] = JSON.parse(saved);
+                    const updatedLocal = localMeds.filter((med) => {
+                        const isMatch =
+                            med.id === id ||
+                            (itemToDelete &&
+                                med.name === itemToDelete.name &&
+                                med.expiryDate === itemToDelete.expiryDate &&
+                                med.batchNumber === itemToDelete.batchNumber);
+                        return !isMatch;
+                    });
+                    localStorage.setItem("sahidawa_expiry_tracker", JSON.stringify(updatedLocal));
+                } catch (e) {
+                    console.error("Failed to clean up localStorage on delete:", e);
+                }
+            }
 
             setMedicines(medicines.filter((med) => med.id !== id));
         } else {
@@ -692,7 +718,7 @@ export default function ExpiryTrackerPage() {
         const file = e.target.files?.[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
             try {
                 const parsed = JSON.parse(event.target?.result as string);
                 if (!Array.isArray(parsed)) throw new Error("Not an array");
@@ -707,17 +733,54 @@ export default function ExpiryTrackerPage() {
                     setImportError(t("importDateError"));
                     return;
                 }
-                const existingIds = new Set(medicines.map((m) => m.id));
-                const merged = [...medicines, ...valid.filter((m) => !existingIds.has(m.id))];
-                saveToLocalStorage(merged);
 
-                // Schedule notifications for newly imported medicines
-                valid.forEach((m) => {
-                    if (!existingIds.has(m.id)) {
-                        scheduleNotificationsForMedicine(m);
+                const existingIds = new Set(medicines.map((m) => m.id));
+                const newItems = valid.filter((m) => !existingIds.has(m.id));
+                if (newItems.length === 0) return;
+
+                if (userId) {
+                    const rowsToInsert = newItems.map((item) => ({
+                        user_id: userId,
+                        brand_name: item.name,
+                        batch_number: item.batchNumber || null,
+                        expiry_date: item.expiryDate,
+                    }));
+
+                    const { data, error } = await supabase
+                        .from("expiry_tracker_items")
+                        .insert(rowsToInsert)
+                        .select();
+
+                    if (!error && data) {
+                        const mapped = data.map((item) => ({
+                            id: item.id,
+                            name: item.brand_name,
+                            expiryDate: item.expiry_date,
+                            batchNumber: item.batch_number ?? "",
+                            notes: item.notes ?? "",
+                        }));
+                        const updatedList = [...medicines, ...mapped];
+                        setMedicines(updatedList);
+
+                        // Schedule notifications for newly imported medicines
+                        mapped.forEach((m) => {
+                            scheduleNotificationsForMedicine(m);
+                        });
+                        checkAndTriggerLocalNotifications(updatedList);
+                    } else if (error) {
+                        console.error("Failed to import medicines to Supabase:", error.message);
+                        setImportError(t("importError"));
                     }
-                });
-                checkAndTriggerLocalNotifications(merged);
+                } else {
+                    const merged = [...medicines, ...newItems];
+                    saveToLocalStorage(merged);
+
+                    // Schedule notifications for newly imported medicines
+                    newItems.forEach((m) => {
+                        scheduleNotificationsForMedicine(m);
+                    });
+                    checkAndTriggerLocalNotifications(merged);
+                }
             } catch {
                 setImportError(t("importError"));
             }
