@@ -423,14 +423,61 @@ export interface LasaCheckResult {
     matches: LasaMatch[];
 }
 
+const lasaCache = new Map<string, LasaCheckResult>();
+const inFlightRequests = new Map<string, Promise<LasaCheckResult>>();
+const MAX_CACHE_SIZE = 100;
+
+function setCachedLasa(key: string, value: LasaCheckResult): void {
+    if (lasaCache.size >= MAX_CACHE_SIZE) {
+        const oldestKey = lasaCache.keys().next().value;
+        if (oldestKey !== undefined) {
+            lasaCache.delete(oldestKey);
+        }
+    }
+    lasaCache.set(key, value);
+}
+
 export async function checkLasaConflicts(
     medicineName: string,
     signal?: AbortSignal
 ): Promise<LasaCheckResult> {
-    return fetchWithCsrf<LasaCheckResult>(`${API_BASE}/api/v1/lasa/check`, {
-        method: "POST",
-        body: JSON.stringify({ medicineName }),
-        timeout: 8000,
-        signal,
-    });
+    const query = medicineName.trim();
+    if (query.length < 2) {
+        return { hasConflicts: false, matches: [] };
+    }
+
+    const cacheKey = query.toLowerCase();
+
+    // Check if we have a cached entry
+    const cached = lasaCache.get(cacheKey);
+
+    // If there is an in-flight request, we can reuse its promise
+    let promise = inFlightRequests.get(cacheKey);
+    if (!promise) {
+        promise = fetchWithCsrf<LasaCheckResult>(`${API_BASE}/api/v1/lasa/check`, {
+            method: "POST",
+            body: JSON.stringify({ medicineName: query }),
+            timeout: 8000,
+            signal,
+        })
+            .then((data) => {
+                setCachedLasa(cacheKey, data);
+                return data;
+            })
+            .finally(() => {
+                inFlightRequests.delete(cacheKey);
+            });
+        inFlightRequests.set(cacheKey, promise);
+    }
+
+    if (cached) {
+        // Stale-While-Revalidate: return cached data instantly
+        // and let the in-flight revalidation promise run in the background.
+        // Catch errors silently to prevent unhandled promise rejections.
+        promise.catch(() => {});
+        return cached;
+    }
+
+    // Otherwise, wait for the network request to complete
+    return promise;
 }
