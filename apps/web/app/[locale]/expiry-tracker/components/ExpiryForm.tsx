@@ -16,6 +16,7 @@ interface ExpiryFormProps {
     medicinesCount: number;
     fileInputRef: React.RefObject<HTMLInputElement | null>;
     notificationPermission: string;
+    isSubmitting?: boolean;
     onNameChange: (value: string) => void;
     onExpiryDateChange: (value: string) => void;
     onBatchNumberChange: (value: string) => void;
@@ -45,6 +46,7 @@ export function ExpiryForm({
     medicinesCount,
     fileInputRef,
     notificationPermission,
+    isSubmitting = false,
     onNameChange,
     onExpiryDateChange,
     onBatchNumberChange,
@@ -171,9 +173,38 @@ export function ExpiryForm({
                 </button>
                 <button
                     type="submit"
-                    className="w-full rounded-xl bg-emerald-600 py-3 font-bold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-700 active:scale-95"
+                    disabled={isSubmitting}
+                    className="w-full rounded-xl bg-emerald-600 py-3 font-bold text-white shadow-lg shadow-emerald-900/20 transition-all hover:bg-emerald-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-emerald-600"
                 >
-                    {editingId ? t("saveChanges") : t("addToTracker")}
+                    {isSubmitting ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <svg
+                                className="h-4 w-4 animate-spin"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                />
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                                />
+                            </svg>
+                            {t("saving") || "Saving..."}
+                        </span>
+                    ) : editingId ? (
+                        t("saveChanges")
+                    ) : (
+                        t("addToTracker")
+                    )}
                 </button>
                 {editingId && (
                     <button
