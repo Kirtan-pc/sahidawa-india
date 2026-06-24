@@ -374,7 +374,7 @@ router.post("/extract", uploadRateLimiter, validateUploadSize, (req: Request, re
                     const orFilter = searchWords
                         .map((w) => {
                             const safe = escapeIlike(w);
-                            return `brand_name.ilike.%${safe}%,generic_name.ilike.%${safe}%`;
+                            return `brand_name.ilike."%${safe}%",generic_name.ilike."%${safe}%"`;
                         })
                         .join(",");
 
@@ -511,7 +511,7 @@ router.post("/extract", uploadRateLimiter, validateUploadSize, (req: Request, re
                                 "composition, mrp, jan_aushadhi_price"
                         )
                         .or(
-                            `brand_name.ilike.%${escapePostgrest(matchedName!)}%,generic_name.ilike.%${escapePostgrest(matchedName!)}%`
+                            `brand_name.ilike."%${escapePostgrest(matchedName!)}%",generic_name.ilike."%${escapePostgrest(matchedName!)}%"`
                         )
                         .limit(1)
                         .maybeSingle();
@@ -676,7 +676,7 @@ router.post("/match", scanQueryLimiter, async (req: Request, res: Response) => {
                 const orConditions = words
                     .map(
                         (w: string) =>
-                            `brand_name.ilike.%${escapePostgrest(w)}%,generic_name.ilike.%${escapePostgrest(w)}%`
+                            `brand_name.ilike."%${escapePostgrest(w)}%",generic_name.ilike."%${escapePostgrest(w)}%"`
                     )
                     .join(",");
 

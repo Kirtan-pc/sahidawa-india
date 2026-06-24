@@ -2,7 +2,6 @@ import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { supabase, dbConfig } from "../db/client";
 import logger from "../utils/logger";
-import { escapeIlike } from "../utils/db";
 import { escapePostgrest } from "../utils/db";
 import { interactionCheckLimiter } from "../middleware/rateLimit";
 
@@ -24,6 +23,17 @@ const checkSchema = z.object({
         .min(2, "At least two medicines are required to check interactions")
         .max(20, "A maximum of 20 medicines can be checked at once"),
 });
+
+export function buildMedicineResolutionFilter(input: string): string {
+    const escaped = escapePostgrest(input);
+    return `id.eq."${escaped}",brand_name.ilike."%${escaped}%",generic_name.ilike."%${escaped}%"`;
+}
+
+export function buildInteractionPairFilter(a: string, b: string): string {
+    const drugA = escapePostgrest(a);
+    const drugB = escapePostgrest(b);
+    return `and(drug_a_id.eq."${drugA}",drug_b_id.eq."${drugB}"),and(drug_a_id.eq."${drugB}",drug_b_id.eq."${drugA}")`;
+}
 
 // Brand name to generic name static mapping for local offline fallback
 const localBrandMap: Record<string, string> = {
@@ -339,13 +349,10 @@ async function resolveToGeneric(input: string): Promise<{ input: string; generic
 
     if (!dbFailed) {
         try {
-            const escaped = escapeIlike(cleanInput);
             const { data, error } = await supabase
                 .from("medicines")
                 .select("brand_name, generic_name")
-                .or(
-                    `id.eq.${escaped},brand_name.ilike."%${escapePostgrest(escaped)}%",generic_name.ilike."%${escapePostgrest(escaped)}%"`
-                )
+                .or(buildMedicineResolutionFilter(cleanInput))
                 .limit(1)
                 .maybeSingle();
 
@@ -491,9 +498,7 @@ router.post("/check", interactionCheckLimiter, async (req: Request, res: Respons
                         const { data, error } = await supabase
                             .from("drug_interactions")
                             .select("*")
-                            .or(
-                                `and(drug_a_id.eq.${a},drug_b_id.eq.${b}),and(drug_a_id.eq.${b},drug_b_id.eq.${a})`
-                            )
+                            .or(buildInteractionPairFilter(a, b))
                             .maybeSingle();
 
                         if (error) {

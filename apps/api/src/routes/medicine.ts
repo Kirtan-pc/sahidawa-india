@@ -3,7 +3,7 @@ import multer from "multer";
 import { supabase } from "../db/client";
 import { redisClient } from "../utils/redis";
 import { scanQueryLimiter } from "../middleware/rateLimit";
-import { escapeIlike, escapePostgrest } from "../utils/db";
+import { escapePostgrest } from "../utils/db";
 
 const router = Router();
 
@@ -18,6 +18,12 @@ const upload = multer({
 });
 
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || "http://localhost:8000";
+
+export function buildMedicineVoiceSearchFilter(transcribedText: string): string {
+    const safeTranscribedText = escapePostgrest(transcribedText);
+    return `brand_name.ilike."%${safeTranscribedText}%",generic_name.ilike."%${safeTranscribedText}%"`;
+}
+
 /**
  * POST /api/medicine/verify-voice
  * Accepts audio blob from frontend, forwards to Python ML service,
@@ -80,9 +86,7 @@ router.post(
                 const { data: medicines } = await supabase
                     .from("medicines")
                     .select("brand_name, generic_name, manufacturer, is_cdsco_verified")
-                    .or(
-                        `brand_name.ilike."%${escapePostgrest(escapeIlike(transcribedText))}%",generic_name.ilike."%${escapePostgrest(escapeIlike(transcribedText))}%"`
-                    )
+                    .or(buildMedicineVoiceSearchFilter(transcribedText))
                     .limit(1);
 
                 if (medicines && medicines.length > 0) {
