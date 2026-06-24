@@ -137,18 +137,18 @@ const deletePhoneSchema = z.object({
     phone: z.string().min(10).max(20).optional(),
 });
 
-function formatPhoneNumber(phone: string): string {
+function formatPhoneNumber(phone: string): string | null {
     let cleaned = phone.trim().replace(/[\s\-\(\)]/g, "");
     if (/^\d{10}$/.test(cleaned)) {
         return `+91${cleaned}`;
     }
-    if (/^\+/.test(cleaned)) {
+    if (/^\+91\d{10}$/.test(cleaned)) {
         return cleaned;
     }
     if (/^91\d{10}$/.test(cleaned)) {
         return `+${cleaned}`;
     }
-    return cleaned;
+    return null;
 }
 
 // Local in-memory fallback store for development when Supabase is offline
@@ -170,7 +170,15 @@ const memorySubscribers = new Map<string, InMemorySubscriber>();
 
 router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {
-        const phone = req.query.phone ? formatPhoneNumber(req.query.phone as string) : undefined;
+        let phone: string | undefined = undefined;
+        if (req.query.phone) {
+            const formatted = formatPhoneNumber(req.query.phone as string);
+            if (!formatted) {
+                res.status(400).json({ error: "Invalid phone number format" });
+                return;
+            }
+            phone = formatted;
+        }
         let query = supabase.from("notification_subscribers").select("*");
 
         if (req.user) {
@@ -250,6 +258,10 @@ router.post("/register", optionalAuth, async (req: AuthenticatedRequest, res) =>
 
     const { phone, channels, language, district } = parsed.data;
     const formattedPhone = formatPhoneNumber(phone);
+    if (!formattedPhone) {
+        res.status(400).json({ error: "Invalid phone number format" });
+        return;
+    }
 
     try {
         let existing = null;
@@ -375,7 +387,19 @@ router.patch("/phone", optionalAuth, async (req: AuthenticatedRequest, res) => {
 
     const { phone, newPhone, channels, language, district, is_active } = parsed.data;
     const formattedPhone = formatPhoneNumber(phone);
-    const formattedNewPhone = newPhone ? formatPhoneNumber(newPhone) : undefined;
+    if (!formattedPhone) {
+        res.status(400).json({ error: "Invalid phone number format" });
+        return;
+    }
+    let formattedNewPhone: string | undefined = undefined;
+    if (newPhone) {
+        const fNew = formatPhoneNumber(newPhone);
+        if (!fNew) {
+            res.status(400).json({ error: "Invalid new phone number format" });
+            return;
+        }
+        formattedNewPhone = fNew;
+    }
 
     try {
         let data = null;
@@ -461,8 +485,15 @@ router.patch("/phone", optionalAuth, async (req: AuthenticatedRequest, res) => {
 
 router.delete("/phone", optionalAuth, async (req: AuthenticatedRequest, res) => {
     const parsed = deletePhoneSchema.safeParse(req.body);
-    const phone =
-        parsed.success && parsed.data.phone ? formatPhoneNumber(parsed.data.phone) : undefined;
+    let phone: string | undefined = undefined;
+    if (parsed.success && parsed.data.phone) {
+        const formatted = formatPhoneNumber(parsed.data.phone);
+        if (!formatted) {
+            res.status(400).json({ error: "Invalid phone number format" });
+            return;
+        }
+        phone = formatted;
+    }
 
     try {
         let data = null;
@@ -644,6 +675,10 @@ router.post(
         const from = parsed.data.From;
         const body = parsed.data.Body ? parsed.data.Body.trim().toUpperCase() : "";
         const formattedFrom = formatPhoneNumber(from);
+        if (!formattedFrom) {
+            res.status(400).send("Invalid phone number format");
+            return;
+        }
 
         try {
             let replyMessage = "";
