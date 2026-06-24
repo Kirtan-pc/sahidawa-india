@@ -124,6 +124,15 @@ const updatePhoneSchema = z.object({
     is_active: z.boolean().optional(),
 });
 
+const twilioWebhookSchema = z.object({
+    From: z
+        .string()
+        .min(10, "From number too short")
+        .max(20, "From number too long")
+        .regex(/^\+?\d+$/, "From must contain only digits and an optional leading +"),
+    Body: z.string().optional(),
+});
+
 const deletePhoneSchema = z.object({
     phone: z.string().min(10).max(20).optional(),
 });
@@ -626,14 +635,13 @@ router.post(
     express.urlencoded({ extended: true }),
     verifyTwilioSignature,
     async (req, res) => {
-        const from = req.body.From;
-        const body = req.body.Body ? req.body.Body.trim().toUpperCase() : "";
-
-        if (!from) {
-            res.status(400).send("Missing From parameter");
+        const parsed = twilioWebhookSchema.safeParse(req.body);
+        if (!parsed.success) {
+            res.status(400).send("Invalid webhook payload");
             return;
         }
-
+        const from = parsed.data.From;
+        const body = parsed.data.Body ? parsed.data.Body.trim().toUpperCase() : "";
         const formattedFrom = formatPhoneNumber(from);
 
         try {
