@@ -5,6 +5,34 @@ import { rateLimit } from "@/lib/rateLimit";
 import { BASE_PROMPT } from "@/lib/chatPrompts";
 import { structuredLog } from "@/lib/structuredLogger";
 import { ChatRoles, ChatRole } from "@/lib/constants";
+import { get_encoding } from "tiktoken";
+
+export function trimHistoryByTokens(messages: ChatMessage[], maxTokens: number): ChatMessage[] {
+    try {
+        const enc = get_encoding("cl100k_base");
+        const trimmed: ChatMessage[] = [];
+        let currentTokens = 0;
+
+        for (let i = messages.length - 1; i >= 0; i--) {
+            const msg = messages[i];
+            const text = msg.text || msg.content || "";
+            const tokens = enc.encode(text).length;
+            const msgTokens = tokens + 4; // overhead buffer
+
+            if (currentTokens + msgTokens > maxTokens && trimmed.length > 0) {
+                break;
+            }
+
+            currentTokens += msgTokens;
+            trimmed.unshift(msg);
+        }
+
+        enc.free();
+        return trimmed;
+    } catch (e) {
+        return messages.slice(-50);
+    }
+}
 
 const DEFAULT_DISCLAIMER =
     "This guidance is for informational use only and is not a diagnosis. Consult a doctor or pharmacist, especially for severe or persistent symptoms.";
@@ -184,7 +212,9 @@ export async function POST(req: Request) {
 
         const MAX_MESSAGES = 50;
         const MAX_MESSAGE_CHARS = 2000;
-        const trimmedMessages = messages.slice(-MAX_MESSAGES);
+        const MAX_TOKENS = 3000; // Safe limit for standard context + response
+        const recentMessages = messages.slice(-MAX_MESSAGES);
+        const trimmedMessages = trimHistoryByTokens(recentMessages, MAX_TOKENS);
 
         for (const msg of trimmedMessages) {
             const text = msg.text || msg.content || "";

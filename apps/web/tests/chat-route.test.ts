@@ -1,3 +1,4 @@
+process.env.GEMINI_API_KEY = "test-api-key";
 const generateContentMock = jest.fn();
 const generateContentStreamMock = jest.fn();
 
@@ -18,7 +19,7 @@ jest.mock("@google/genai", () => ({
     },
 }));
 
-import { POST } from "../app/api/chat/route";
+import { POST, trimHistoryByTokens } from "../app/api/chat/route";
 
 function createTextStream(chunks: string[]) {
     return (async function* () {
@@ -108,7 +109,7 @@ describe("POST /api/chat", () => {
                 body: JSON.stringify({
                     mode: "voice-triage",
                     responseLanguage: "English",
-                    messages: [],
+                    messages: [{ role: "user" }],
                 }),
             })
         );
@@ -194,6 +195,49 @@ describe("POST /api/chat", () => {
                     systemInstruction: expect.stringContaining("Punjabi"),
                 }),
             })
+        );
+    });
+});
+
+describe("trimHistoryByTokens", () => {
+    it("retains all messages if total tokens are within the limit", () => {
+        const messages = [
+            { role: "user", content: "Hello" },
+            { role: "assistant", content: "Hi there" },
+        ];
+        const trimmed = trimHistoryByTokens(messages, 100);
+        expect(trimmed).toHaveLength(2);
+    });
+
+    it("truncates older messages when total tokens exceed the limit", () => {
+        const messages = [
+            {
+                role: "user",
+                content:
+                    "This is a very old message that should be truncated because it pushes the limit.",
+            },
+            { role: "user", content: "Recent message 1" },
+            { role: "assistant", content: "Recent message 2" },
+        ];
+        // "Recent message X" is roughly 3 tokens each + 4 overhead = 7 tokens per msg -> 14 total.
+        // If maxTokens is 20, it should only keep the last two.
+        const trimmed = trimHistoryByTokens(messages, 20);
+        expect(trimmed).toHaveLength(2);
+        expect(trimmed[0].content).toBe("Recent message 1");
+    });
+
+    it("always keeps at least the last message even if it exceeds the limit", () => {
+        const messages = [
+            { role: "user", content: "Short old message" },
+            {
+                role: "assistant",
+                content: "Very long recent message that exceeds the limit on its own",
+            },
+        ];
+        const trimmed = trimHistoryByTokens(messages, 5); // extremely small limit
+        expect(trimmed).toHaveLength(1);
+        expect(trimmed[0].content).toBe(
+            "Very long recent message that exceeds the limit on its own"
         );
     });
 });
