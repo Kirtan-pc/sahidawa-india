@@ -387,41 +387,56 @@ router.get("/today/summary", requireAuth, async (req: AuthenticatedRequest, res:
             return;
         }
 
-        const todaySchedules = await Promise.all(
-            (schedules ?? []).map(async (schedule) => {
-                const times = (schedule.times as string[]) ?? [];
-                const { data: loggedDoses } = await supabase
-                    .from("dose_logs")
-                    .select("*")
-                    .eq("schedule_id", schedule.id)
-                    .eq("user_id", req.user!.id)
-                    .eq("log_date", today);
+        const scheduleIds = (schedules ?? []).map((s) => s.id);
+        let allDoseLogs: any[] = [];
 
-                const loggedMap = new Map(
-                    (loggedDoses ?? []).map((d) => [d.log_time.slice(0, 5), d.status])
-                );
+        if (scheduleIds.length > 0) {
+            const { data: doseLogsData, error: doseLogsError } = await supabase
+                .from("dose_logs")
+                .select("*")
+                .in("schedule_id", scheduleIds)
+                .eq("user_id", req.user!.id)
+                .eq("log_date", today);
 
-                const doses = times.map((time: string) => {
-                    const status = loggedMap.get(time);
-                    const isPast = time < nowTime;
-                    return {
-                        time,
-                        status: status ?? (isPast ? "pending" : "upcoming"),
-                    };
-                });
+            if (!doseLogsError && doseLogsData) {
+                allDoseLogs = doseLogsData;
+            }
+        }
 
-                const allTaken = doses.every((d: { status: string }) => d.status === "taken");
+        const doseLogsBySchedule = new Map<string, any[]>();
+        for (const log of allDoseLogs) {
+            if (!doseLogsBySchedule.has(log.schedule_id)) {
+                doseLogsBySchedule.set(log.schedule_id, []);
+            }
+            doseLogsBySchedule.get(log.schedule_id)!.push(log);
+        }
 
+        const todaySchedules = (schedules ?? []).map((schedule) => {
+            const times = (schedule.times as string[]) ?? [];
+            const loggedDoses = doseLogsBySchedule.get(schedule.id) ?? [];
+
+            const loggedMap = new Map(loggedDoses.map((d) => [d.log_time.slice(0, 5), d.status]));
+
+            const doses = times.map((time: string) => {
+                const status = loggedMap.get(time);
+                const isPast = time < nowTime;
                 return {
-                    id: schedule.id,
-                    medicine_name: schedule.medicine_name,
-                    dosage: schedule.dosage,
-                    times: schedule.times,
-                    doses,
-                    completed: allTaken,
+                    time,
+                    status: status ?? (isPast ? "pending" : "upcoming"),
                 };
-            })
-        );
+            });
+
+            const allTaken = doses.every((d: { status: string }) => d.status === "taken");
+
+            return {
+                id: schedule.id,
+                medicine_name: schedule.medicine_name,
+                dosage: schedule.dosage,
+                times: schedule.times,
+                doses,
+                completed: allTaken,
+            };
+        });
 
         res.json({
             date: today,
