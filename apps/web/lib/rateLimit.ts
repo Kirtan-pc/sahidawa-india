@@ -6,15 +6,14 @@ const hasCredentials =
     Boolean(process.env.UPSTASH_REDIS_REST_URL) &&
     Boolean(process.env.UPSTASH_REDIS_REST_TOKEN);
 
-if (!hasCredentials && process.env.NODE_ENV === "production") {
-    throw new Error(
-        "Missing Upstash Redis rate limit configuration in production. " +
-            "Please set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN."
-    );
-}
-
 class MockRateLimit {
     async limit() {
+        if (!hasCredentials && process.env.NODE_ENV === "production") {
+            throw new Error(
+                "Missing Upstash Redis rate limit configuration in production. " +
+                    "Please set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN."
+            );
+        }
         return { success: true, limit: 10, remaining: 9, reset: 0 };
     }
 }

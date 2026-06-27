@@ -18,12 +18,13 @@ describe("rateLimit", () => {
         process.env = ORIGINAL_ENV;
     });
 
-    it("throws in production when Upstash credentials are missing", () => {
+    it("throws in production when limit() is called and credentials are missing", async () => {
         process.env.NODE_ENV = "production";
+        const { rateLimit } = require("@/lib/rateLimit");
 
-        expect(() => {
-            require("@/lib/rateLimit");
-        }).toThrow("Missing Upstash Redis rate limit configuration in production");
+        await expect(rateLimit.limit("test-key")).rejects.toThrow(
+            "Missing Upstash Redis rate limit configuration in production"
+        );
     });
 
     it("does not throw in development when Upstash credentials are missing", () => {
