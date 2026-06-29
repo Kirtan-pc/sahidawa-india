@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 import { PageHeader } from "../components/PageHeader";
-import { supabase } from "@/lib/supabase";
 import {
     Calendar,
     Trash2,
@@ -14,226 +13,48 @@ import {
     Upload,
     Search,
 } from "lucide-react";
-
-interface Medicine {
-    id: string;
-    name: string;
-    expiryDate: string;
-    batchNumber?: string;
-}
+import { useMedicineTracker } from "@/hooks/useMedicineTracker";
+import { useExpiryIO } from "@/hooks/useExpiryIO";
+import { parseLocalDate, getDiffDays, getExpiryStatus } from "./components/expiryUtils";
 
 type FilterStatus = "all" | "expired" | "expiringSoon" | "safe";
 type SortOption = "expirySoonest" | "expiryLatest" | "alpha";
 
 export default function ExpiryTrackerPage() {
     const t = useTranslations("ExpiryTracker");
-    const [medicines, setMedicines] = useState<Medicine[]>([]);
-    const [userId, setUserId] = useState<string | null>(null);
+
+    // ── Data / CRUD ───────────────────────────────────────────────────────────
+    const { medicines, isLoaded, addMedicine, deleteMedicine, replaceMedicines } =
+        useMedicineTracker();
+
+    // ── I/O ───────────────────────────────────────────────────────────────────
+    const { importError, fileInputRef, handleExport, handleImport } = useExpiryIO(
+        medicines,
+        replaceMedicines,
+        { importError: t("importError"), importDateError: t("importDateError") }
+    );
+
+    // ── Form state ────────────────────────────────────────────────────────────
     const [name, setName] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [batchNumber, setBatchNumber] = useState("");
-    const [isLoaded, setIsLoaded] = useState(false);
+
+    // ── List UI state ─────────────────────────────────────────────────────────
     const [searchQuery, setSearchQuery] = useState("");
     const [sortBy, setSortBy] = useState<SortOption>("expirySoonest");
     const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
-    const [importError, setImportError] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const {
-                    data: { session },
-                } = await supabase.auth.getSession();
-
-                if (session?.user) {
-                    setUserId(session.user.id);
-
-                    const { data, error } = await supabase
-                        .from("expiry_tracker_items")
-                        .select("*")
-                        .order("created_at", { ascending: false });
-
-                    if (!error && data) {
-                        const mapped = data.map((item) => ({
-                            id: item.id,
-                            name: item.brand_name,
-                            expiryDate: item.expiry_date,
-                            batchNumber: item.batch_number ?? "",
-                        }));
-
-                        setMedicines(mapped);
-                    }
-                } else {
-                    const saved = localStorage.getItem("sahidawa_expiry_tracker");
-
-                    if (saved) {
-                        setMedicines(JSON.parse(saved));
-                    }
-                }
-            } catch (e) {
-                console.error(e);
-            } finally {
-                setIsLoaded(true);
-            }
-        };
-
-        loadData();
-    }, []);
-
-    const saveToLocalStorage = (updatedList: Medicine[]) => {
-        setMedicines(updatedList);
-        try {
-            if (typeof window !== "undefined" && window.localStorage) {
-                window.localStorage.setItem("sahidawa_expiry_tracker", JSON.stringify(updatedList));
-            }
-        } catch (e) {
-            console.error("Failed to save medicines to localStorage:", e);
-        }
-    };
-
+    // ── Form submit ───────────────────────────────────────────────────────────
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!name || !expiryDate) return;
-
-        const newMedicine: Medicine = {
-            id: Date.now().toString(),
-            name,
-            expiryDate,
-            batchNumber,
-        };
-        if (userId) {
-            const { data, error } = await supabase
-                .from("expiry_tracker_items")
-                .insert({
-                    user_id: userId,
-                    brand_name: name,
-                    batch_number: batchNumber || null,
-                    expiry_date: expiryDate,
-                })
-                .select()
-                .single();
-
-            if (!error && data) {
-                setMedicines([
-                    ...medicines,
-                    {
-                        id: data.id,
-                        name: data.brand_name,
-                        expiryDate: data.expiry_date,
-                        batchNumber: data.batch_number ?? "",
-                    },
-                ]);
-            }
-        } else {
-            saveToLocalStorage([...medicines, newMedicine]);
-        }
+        await addMedicine({ name, expiryDate, batchNumber });
         setName("");
         setExpiryDate("");
         setBatchNumber("");
     };
 
-    const handleDelete = async (id: string) => {
-        if (userId) {
-            await supabase.from("expiry_tracker_items").delete().eq("id", id);
-
-            setMedicines(medicines.filter((med) => med.id !== id));
-        } else {
-            saveToLocalStorage(medicines.filter((med) => med.id !== id));
-        }
-    };
-
-    const parseLocalDate = (dateStr: string) => {
-        const [year, month, day] = dateStr.split("-").map(Number);
-        return new Date(year, month - 1, day);
-    };
-
-    const isValidDateString = (dateStr: string): boolean => {
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
-        const [year, month, day] = dateStr.split("-").map(Number);
-        if (month < 1 || month > 12) return false;
-        if (day < 1 || day > 31) return false;
-        const date = new Date(year, month - 1, day);
-        return (
-            date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
-        );
-    };
-
-    const getDiffDays = (dateStr: string) => {
-        const expiry = parseLocalDate(dateStr);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    };
-
-    const getExpiryStatus = (dateStr: string) => {
-        const diffDays = getDiffDays(dateStr);
-        if (diffDays < 0)
-            return {
-                icon: <XCircle size={14} />,
-                text: t("statusExpired"),
-                color: "text-red-600 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/30",
-                key: "expired" as FilterStatus,
-            };
-        if (diffDays <= 30)
-            return {
-                icon: <AlertTriangle size={14} />,
-                text: t("statusExpiringSoon", { days: diffDays }),
-                color: "text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-900/30",
-                key: "expiringSoon" as FilterStatus,
-            };
-        return {
-            icon: <CheckCircle2 size={14} />,
-            text: t("statusSafe"),
-            color: "text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900/30",
-            key: "safe" as FilterStatus,
-        };
-    };
-
-    // Export
-    const handleExport = () => {
-        const blob = new Blob([JSON.stringify(medicines, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "sahidawa_expiry_backup.json";
-        a.click();
-        URL.revokeObjectURL(url);
-    };
-
-    // Import
-    const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setImportError(null);
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const parsed = JSON.parse(event.target?.result as string);
-                if (!Array.isArray(parsed)) throw new Error("Not an array");
-                const valid = parsed.filter(
-                    (item) =>
-                        typeof item.id === "string" &&
-                        typeof item.name === "string" &&
-                        typeof item.expiryDate === "string" &&
-                        isValidDateString(item.expiryDate)
-                );
-                if (valid.length !== parsed.length) {
-                    setImportError(t("importDateError"));
-                    return;
-                }
-                const existingIds = new Set(medicines.map((m) => m.id));
-                const merged = [...medicines, ...valid.filter((m) => !existingIds.has(m.id))];
-                saveToLocalStorage(merged);
-            } catch {
-                setImportError(t("importError"));
-            }
-        };
-        reader.readAsText(file);
-        e.target.value = "";
-    };
-
-    // Filter + Search + Sort
+    // ── Derived list ──────────────────────────────────────────────────────────
     const processedMedicines = medicines
         .filter((med) => {
             if (filterStatus === "all") return true;
@@ -255,13 +76,37 @@ export default function ExpiryTrackerPage() {
         { key: "safe", label: t("filterSafe") },
     ];
 
+    // ── Status → icon/color (render layer, not the pure util) ─────────────────
+    const statusMeta: Record<
+        "expired" | "expiringSoon" | "safe",
+        { icon: React.ReactNode; color: string; text: string }
+    > = {
+        expired: {
+            icon: <XCircle size={14} />,
+            color: "text-red-600 bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-900/30",
+            text: t("statusExpired"),
+        },
+        expiringSoon: {
+            icon: <AlertTriangle size={14} />,
+            color: "text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-900/30",
+            // Overridden in render with interpolated days value
+            text: "",
+        },
+        safe: {
+            icon: <CheckCircle2 size={14} />,
+            color: "text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-900/20 dark:border-emerald-900/30",
+            text: t("statusSafe"),
+        },
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
     return (
         <div className="min-h-screen bg-(--color-surface-page) text-(--color-text-primary) transition-colors duration-300">
             <PageHeader title={t("title")} subtitle={t("subtitle")} backHref="/" variant="light" />
 
             <main className="mx-auto max-w-6xl p-6 pt-32 md:pt-40">
                 <div className="mt-4 grid grid-cols-1 gap-8 md:grid-cols-3">
-                    {/* Sidebar */}
+                    {/* ── Sidebar ── */}
                     <div className="h-fit rounded-2xl border border-(--color-border-muted) bg-(--color-surface-muted) p-6 shadow-sm md:sticky md:top-32 md:col-span-1">
                         <h2 className="mb-4 text-lg font-bold tracking-tight uppercase">
                             {t("addMedicine")}
@@ -338,7 +183,7 @@ export default function ExpiryTrackerPage() {
                         </div>
                     </div>
 
-                    {/* Main list */}
+                    {/* ── Main list ── */}
                     <div className="space-y-4 md:col-span-2">
                         <div className="flex items-center justify-between px-2">
                             <h2 className="text-xl font-bold">{t("trackedMedicines")}</h2>
@@ -390,6 +235,7 @@ export default function ExpiryTrackerPage() {
                             ))}
                         </div>
 
+                        {/* Medicine list */}
                         {!isLoaded ? (
                             <div className="py-20 text-center opacity-50">
                                 <p className="animate-pulse">{t("loading")}</p>
@@ -402,7 +248,12 @@ export default function ExpiryTrackerPage() {
                         ) : (
                             <div className="grid grid-cols-1 gap-4">
                                 {processedMedicines.map((med) => {
-                                    const status = getExpiryStatus(med.expiryDate);
+                                    const { key, diffDays } = getExpiryStatus(med.expiryDate);
+                                    const meta = statusMeta[key];
+                                    const statusText =
+                                        key === "expiringSoon"
+                                            ? t("statusExpiringSoon", { days: diffDays })
+                                            : meta.text;
                                     return (
                                         <div
                                             key={med.id}
@@ -428,12 +279,12 @@ export default function ExpiryTrackerPage() {
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <span
-                                                    className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[11px] font-bold ${status.color}`}
+                                                    className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[11px] font-bold ${meta.color}`}
                                                 >
-                                                    {status.icon} {status.text}
+                                                    {meta.icon} {statusText}
                                                 </span>
                                                 <button
-                                                    onClick={() => handleDelete(med.id)}
+                                                    onClick={() => deleteMedicine(med.id)}
                                                     className="rounded-full p-2 transition-colors hover:bg-red-500/10"
                                                 >
                                                     <Trash2 size={18} className="text-red-500" />
