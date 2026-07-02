@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { supabase } from "../db/client";
+import { uuidSchema } from "../utils/validation";
 import logger from "../utils/logger";
 import { redisClient } from "../utils/redis";
 import { limiter } from "../middleware/rateLimit";
@@ -1105,6 +1106,11 @@ router.put(
     requireAuth,
     limiter,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+        const parsedId = uuidSchema.safeParse(req.params.id);
+        if (!parsedId.success) {
+            res.status(400).json({ error: "Invalid UUID format" });
+            return;
+        }
         try {
             const pharmacyId = req.params.id;
 
@@ -1164,6 +1170,11 @@ router.delete(
     requireAuth,
     limiter,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+        const parsedId = uuidSchema.safeParse(req.params.id);
+        if (!parsedId.success) {
+            res.status(400).json({ error: "Invalid UUID format" });
+            return;
+        }
         try {
             const pharmacyId = req.params.id;
 
@@ -1214,6 +1225,11 @@ router.post(
     limiter,
     upload.single("file"),
     async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+        const parsedId = uuidSchema.safeParse(req.params.id);
+        if (!parsedId.success) {
+            res.status(400).json({ error: "Invalid UUID format" });
+            return;
+        }
         try {
             const pharmacyId = req.params.id;
 
