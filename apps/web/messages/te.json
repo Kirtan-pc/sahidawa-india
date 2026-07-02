@@ -883,6 +883,12 @@
             "passwordMismatch": "Passwords do not match."
         }
     },
+    "NotFound": {
+        "badge": "404 లోపం",
+        "title": "పేజీ కనుగొనబడలేదు",
+        "description": "మీరు వెతుకుతున్న పేజీ లేదు లేదా తీసివేయబడి ఉండవచ్చు.",
+        "backHome": "మరలా హోమ్‌కి వెళ్లండి",
+        "scanMedicine": "మందును స్కాన్ చేయండి"
     "Settings": {
         "channelRequired": "Kaneesam oka communication channel (SMS leda WhatsApp) prarambhinchali.",
         "optOutConfirm": "Meeru nijanga opt out chesi anni SMS mariyu WhatsApp heccharikalanu aapalanukuntunnara?",

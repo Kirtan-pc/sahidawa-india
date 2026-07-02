@@ -820,6 +820,12 @@
             "passwordMismatch": "Passwords do not match."
         }
     },
+    "NotFound": {
+        "badge": "Error 404",
+        "title": "Page Not Found",
+        "description": "We couldn't find the medicine or page you were looking for. It might have been moved, or the URL might be incorrect.",
+        "backHome": "Back to Home",
+        "scanMedicine": "Scan Medicine"
     "Settings": {
         "channelRequired": "Nyunatinyunam ekam sancharamadhyamam (SMS va WhatsApp) sakshamam bhavitavyam.",
         "optOutConfirm": "Kim bhavan/bhavati nischayena opt out kritva sarvani SMS tatha WhatsApp sachetanani sthagayitum icchati?",

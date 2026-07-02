@@ -883,6 +883,12 @@
             "passwordMismatch": "Passwords do not match."
         }
     },
+    "NotFound": {
+        "badge": "404 त्रुटी",
+        "title": "पृष्ठ आढळले नाही",
+        "description": "तुम्ही शोधत असलेले पृष्ठ अस्तित्वात नाही किंवा हलविले गेले असावे.",
+        "backHome": "मुख्यपृष्ठावर परत जा",
+        "scanMedicine": "औषध स्कॅन करा"
     "Settings": {
         "channelRequired": "Kimaan ek sampark madhyam (SMS kiwa WhatsApp) saksham asane avashyak aahe.",
         "optOutConfirm": "Tumhala kharokhar opt out karun sarv SMS ani WhatsApp alert band karayche aahet ka?",
