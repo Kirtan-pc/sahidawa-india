@@ -58,7 +58,6 @@ type FetchStatus = "loading" | "success" | "error";
 export default function MyMedicinesPage() {
     const [medicines, setMedicines] = useState<TrackedMedicine[]>([]);
     const [savedMedicines, setSavedMedicines] = useState<BookmarkedMedicine[]>([]);
-    const [, setError] = useState<string | null>(null);
     const [confirmDialog, setConfirmDialog] = useState<{
         isOpen: boolean;
         bookmarkName?: string;

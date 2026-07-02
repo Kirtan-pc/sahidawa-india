@@ -16,6 +16,7 @@ import medicineSchedulesRouter from "./routes/medicineSchedules";
 import abhaRoutes from "./routes/abha";
 import trackingRouter from "./routes/tracking";
 import { initExpiryCron } from "./cron/expiry-check";
+import { initDistrictAlertSyncCron } from "./cron/districtAlertSync";
 // ── Environment Configuration ──────────────────────────────────────────────
 const rootEnvPath = path.resolve(__dirname, "../../../.env");
 dotenv.config({ path: rootEnvPath });
@@ -85,6 +86,7 @@ app.use(httpsRedirect);
 
 app.use(compression());
 initExpiryCron();
+initDistrictAlertSyncCron();
 // ── Global Middleware Configuration ───────────────────────────────────────
 app.use(cookieParser());
 
