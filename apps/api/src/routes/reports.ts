@@ -375,6 +375,7 @@ reportsRouter.patch(
                     .from("counterfeit_reports")
                     .select("*", { count: "exact", head: true })
                     .eq("district", data.district)
+                    .eq("reported_brand_name", data.reported_brand_name)
                     .eq("status", "verified_fake")
                     .eq("is_escalated", false);
 
