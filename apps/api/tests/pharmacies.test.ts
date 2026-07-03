@@ -518,12 +518,14 @@ describe("POST /api/pharmacies/bulk-upload — BOM stripping", () => {
             "\uFEFFmedicine_name,batch_number,expiry_date,quantity,mrp\n" +
             "Paracetamol 500mg,BATCH001,2027-01-01,100,50\n";
 
-        const fromMock = jest.fn();
         const selectMock = jest.fn().mockReturnThis();
         const eqMock = jest.fn().mockReturnThis();
-        const maybeSingleMock = jest.fn().mockResolvedValue({
-            data: { id: "pharmacy-uuid-123" },
-            error: null,
+        const orderMock = jest.fn().mockReturnThis();
+        const thenMock = jest.fn().mockImplementation((resolve) => {
+            return resolve({
+                data: [{ id: "pharmacy-uuid-123" }],
+                error: null,
+            });
         });
         const insertMock = jest.fn().mockResolvedValue({ error: null });
 
@@ -532,7 +534,8 @@ describe("POST /api/pharmacies/bulk-upload — BOM stripping", () => {
                 return {
                     select: selectMock,
                     eq: eqMock,
-                    maybeSingle: maybeSingleMock,
+                    order: orderMock,
+                    then: thenMock,
                 };
             }
             if (table === "pharmacy_inventory") {
@@ -557,9 +560,12 @@ describe("POST /api/pharmacies/bulk-upload — BOM stripping", () => {
 
         const selectMock = jest.fn().mockReturnThis();
         const eqMock = jest.fn().mockReturnThis();
-        const maybeSingleMock = jest.fn().mockResolvedValue({
-            data: { id: "pharmacy-uuid-123" },
-            error: null,
+        const orderMock = jest.fn().mockReturnThis();
+        const thenMock = jest.fn().mockImplementation((resolve) => {
+            return resolve({
+                data: [{ id: "pharmacy-uuid-123" }],
+                error: null,
+            });
         });
         const insertMock = jest.fn().mockResolvedValue({ error: null });
 
@@ -568,7 +574,8 @@ describe("POST /api/pharmacies/bulk-upload — BOM stripping", () => {
                 return {
                     select: selectMock,
                     eq: eqMock,
-                    maybeSingle: maybeSingleMock,
+                    order: orderMock,
+                    then: thenMock,
                 };
             }
             if (table === "pharmacy_inventory") {
@@ -584,5 +591,53 @@ describe("POST /api/pharmacies/bulk-upload — BOM stripping", () => {
         expect(response.status).toBe(200);
         expect(response.body.successCount).toBe(1);
         expect(response.body.failedCount).toBe(0);
+    });
+
+    it("uses specified pharmacyId from body/query and falls back to most recently created", async () => {
+        const csvContent =
+            "medicine_name,batch_number,expiry_date,quantity,mrp\n" +
+            "Ibuprofen 400mg,BATCH002,2027-06-01,50,30\n";
+
+        const selectMock = jest.fn().mockReturnThis();
+        const eqMock = jest.fn().mockReturnThis();
+        const orderMock = jest.fn().mockReturnThis();
+        const thenMock = jest.fn().mockImplementation((resolve) => {
+            return resolve({
+                data: [{ id: "pharmacy-uuid-456" }, { id: "pharmacy-uuid-123" }],
+                error: null,
+            });
+        });
+        const insertMock = jest.fn().mockResolvedValue({ error: null });
+
+        (mockedSupabase.from as jest.Mock).mockImplementation((table: string) => {
+            if (table === "pharmacies") {
+                return {
+                    select: selectMock,
+                    eq: eqMock,
+                    order: orderMock,
+                    then: thenMock,
+                };
+            }
+            if (table === "pharmacy_inventory") {
+                return { insert: insertMock };
+            }
+            return {};
+        });
+
+        // Test with pharmacyId in body
+        const response1 = await request(app)
+            .post("/api/pharmacies/bulk-upload")
+            .send({ fileContent: csvContent, pharmacyId: "pharmacy-uuid-123" });
+
+        expect(response1.status).toBe(200);
+        expect(eqMock).toHaveBeenCalledWith("id", "pharmacy-uuid-123");
+
+        // Test fallback (no pharmacyId) - orders by created_at desc
+        const response2 = await request(app)
+            .post("/api/pharmacies/bulk-upload")
+            .send({ fileContent: csvContent });
+
+        expect(response2.status).toBe(200);
+        expect(orderMock).toHaveBeenCalledWith("created_at", { ascending: false });
     });
 });

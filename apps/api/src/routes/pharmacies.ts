@@ -1012,18 +1012,26 @@ router.post(
             // Strip UTF-8 BOM if present
             const fileContent = rawFileContent.replace(/^\uFEFF/, "");
 
-            const { data: pharmacy, error: pharmError } = await supabase
-                .from("pharmacies")
-                .select("id")
-                .eq("created_by", req.user.id)
-                .maybeSingle();
+            const pharmacyId = req.body.pharmacyId || req.query.pharmacyId;
 
-            if (pharmError || !pharmacy) {
+            let query = supabase.from("pharmacies").select("id").eq("created_by", req.user.id);
+
+            if (pharmacyId) {
+                query = query.eq("id", pharmacyId);
+            } else {
+                query = query.order("created_at", { ascending: false });
+            }
+
+            const { data: pharmacies, error: pharmError } = await query;
+
+            if (pharmError || !pharmacies || pharmacies.length === 0) {
                 res.status(404).json({
                     error: "No registered pharmacy found for this authorized user.",
                 });
                 return;
             }
+
+            const pharmacy = pharmacies[0];
 
             // Parse CSV with papaparse — handles quoted fields, embedded commas,
             // escaped/nested quotes, and inconsistent line endings correctly
