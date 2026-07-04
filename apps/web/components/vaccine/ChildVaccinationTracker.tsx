@@ -10,6 +10,7 @@ import {
     validateChildDateOfBirth,
 } from "@/lib/childVaccinationSchedule";
 import { supabase } from "@/lib/supabase";
+import type Tesseract from "tesseract.js";
 import {
     AlertCircle,
     Baby,
@@ -344,6 +345,7 @@ export function ChildVaccinationTracker() {
         e.target.value = "";
         setIsOcrScanning(true);
         setOcrError(null);
+        let worker: Tesseract.Worker | null = null;
         try {
             const Tesseract = (await import("tesseract.js")).default;
             const reader = new FileReader();
@@ -352,9 +354,8 @@ export function ChildVaccinationTracker() {
                 reader.onerror = () => reject(new Error("Failed to read file"));
                 reader.readAsDataURL(file);
             });
-            const worker = await Tesseract.createWorker("eng");
+            worker = await Tesseract.createWorker("eng");
             const { data } = await worker.recognize(dataUrl);
-            await worker.terminate();
             const text = data.text;
 
             // Parse DOB: look for DD/MM/YYYY or DD-MM-YYYY patterns
@@ -394,6 +395,13 @@ export function ChildVaccinationTracker() {
         } catch {
             setOcrError("Failed to scan image. Please try again.");
         } finally {
+            if (worker) {
+                try {
+                    await worker.terminate();
+                } catch (error) {
+                    console.error("Failed to terminate vaccine OCR worker:", error);
+                }
+            }
             setIsOcrScanning(false);
         }
     };

@@ -4,6 +4,7 @@ import { supabase, dbConfig } from "../db/client";
 import logger from "../utils/logger";
 import { escapePostgrest } from "../utils/db";
 import { interactionCheckLimiter } from "../middleware/rateLimit";
+import zlib from "zlib";
 
 const router = Router();
 
@@ -40,26 +41,20 @@ export function buildInteractionPairFilter(a: string, b: string): string {
 }
 
 // Brand name to generic name static mapping for local offline fallback
-const localBrandMap: Record<string, string> = {
-    crocin: "paracetamol",
-    calpol: "paracetamol",
-    dolo: "paracetamol",
-    dolo650: "paracetamol",
-    paracetamol: "paracetamol",
-    coumadin: "warfarin",
-    warfarin: "warfarin",
-    aspirin: "aspirin",
-    disprin: "aspirin",
-    ibuprofen: "ibuprofen",
-    brufen: "ibuprofen",
-    viagra: "sildenafil",
-    sildenafil: "sildenafil",
-    nitroglycerin: "nitroglycerin",
-    angised: "nitroglycerin",
-    lipitor: "atorvastatin",
-    atorvastatin: "atorvastatin",
-    clarithromycin: "clarithromycin",
-};
+// Compressed as a base64 gzipped JSON to reduce bundle size and memory footprint.
+const GZIPPED_BRAND_MAP_B64 =
+    "H4sIAAAAAAAACm2RSwrDMAxE76K1F920i9xGsZ1UIFtGdlJC6d1Lako+zm7mDZIG9AarYilCBwkVrS8YhMGARU7CDXbCcgkf91vD967ZL1NA9zv8Qh1QKYLZ5IFiTlThXxlwlNOZUT8llcGvdNMGep1aOBOOitBBJnY+4kBrrZ05JZGKysiL9fXs0RvAOFL27iJhSlRE16pFdMZcsNSRvW1Sy6hUniphqQ86gc8X5Fdb2rwBAAA=";
+
+let lazyBrandMap: Record<string, string> | null = null;
+
+function getLocalBrandMap(): Record<string, string> {
+    if (!lazyBrandMap) {
+        const buffer = Buffer.from(GZIPPED_BRAND_MAP_B64, "base64");
+        const decompressed = zlib.gunzipSync(buffer).toString("utf-8");
+        lazyBrandMap = JSON.parse(decompressed);
+    }
+    return lazyBrandMap!;
+}
 
 // Common clinical drug-drug interactions for offline fallback
 interface LocalInteraction {
@@ -238,7 +233,7 @@ function getLocalInteractionsForGenerics(genericNames: string[]): InteractionRec
     const selectedGenerics = new Set(
         genericNames.map((name) => {
             const normalized = normalizeGenericName(name);
-            return localBrandMap[normalized] ?? normalized;
+            return getLocalBrandMap()[normalized] ?? normalized;
         })
     );
 
@@ -461,7 +456,7 @@ async function resolveMedicinesToGenerics(
         // Fallback to local static map for all inputs
         for (const input of cleanInputs) {
             const normalizedForOffline = normalizeOfflineBrandName(input);
-            const mapped = localBrandMap[normalizedForOffline];
+            const mapped = getLocalBrandMap()[normalizedForOffline];
             if (mapped) {
                 resultsMap.set(input.toLowerCase(), mapped);
             }
