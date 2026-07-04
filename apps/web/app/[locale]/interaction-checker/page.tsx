@@ -115,19 +115,30 @@ export default function InteractionCheckerPage() {
             return;
         }
 
+        // Guards against out-of-order responses: if the search text changes
+        // (or this effect re-runs/unmounts) before the request resolves,
+        // `isStale` is flipped to true and the stale response is discarded
+        // instead of overwriting the suggestions for the current query.
+        let isStale = false;
+
         const delayId = setTimeout(() => {
             fuzzyMatchBrand(query)
                 .then((res) => {
+                    if (isStale) return;
                     // Filter duplicates and map names
                     const names = Array.from(new Set(res.map((s) => s.name)));
                     setSuggestions(names);
                 })
                 .catch((err) => {
+                    if (isStale) return;
                     console.error("Suggestions lookup failed:", err);
                 });
         }, 250);
 
-        return () => clearTimeout(delayId);
+        return () => {
+            isStale = true;
+            clearTimeout(delayId);
+        };
     }, [searchQuery]);
 
     // Handle clicks outside suggestions dropdown to close it
