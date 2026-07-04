@@ -5,7 +5,7 @@ import pytesseract
 import io
 import logging
 #Added for the fuzz string matching 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 from services.matcher import find_matches
 # Configure logging
@@ -22,7 +22,7 @@ async def extract_text(file: UploadFile = File(...)):
     Extracts text from an uploaded medicine strip image using Tesseract OCR.
     """
     # Validate file type
-    if not file.content_type.startswith("image/"):
+    if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File uploaded is not an image.")
 
     # Validate file size to prevent Denial of Service (DoS) via memory exhaustion
@@ -82,7 +82,7 @@ async def extract_text(file: UploadFile = File(...)):
 # For issue 17: Request payload validation schema
 class MatchRequest(BaseModel):
     query: str
-    medicines: List[str]
+    medicines: List[str] = Field(..., max_length=1000)
 
 # Response validation schema
 class MatchResponse(BaseModel):

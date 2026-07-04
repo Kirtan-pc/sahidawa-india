@@ -1304,11 +1304,34 @@
             "cancel": "Cancel"
         }
     },
+    "AbhaSetup": {
+        "back": "Back to Profile",
+        "title": "ABHA Setup",
+        "success": "ABHA successfully linked.",
+        "placeholders": {
+            "address": "Enter ABHA Address",
+            "otp": "Enter OTP"
+        },
+        "buttons": {
+            "generateOtp": "Generate OTP",
+            "verifyOtp": "Verify OTP",
+            "resendIn": "Resend in {seconds}s"
+        },
+        "errors": {
+            "addressRequired": "ABHA address is required",
+            "otpRequired": "OTP is required",
+            "generic": "Something went wrong"
+        }
+    },
     "NotFound": {
         "badge": "404 Error",
         "title": "Page not found",
         "description": "The page you are looking for doesn't exist or may have been moved.",
         "backHome": "Go back home",
         "scanMedicine": "Scan Medicine"
-    }
+    },
+    "errorBatchRequired": "Batch number is required.",
+    "errorExpiryRequired": "Expiry date is required.",
+    "errorExpiryInvalid": "Invalid date format.",
+    "errorExpiryPast": "Expiry date cannot be in the past."
 }
