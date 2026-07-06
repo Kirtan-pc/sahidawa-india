@@ -18,18 +18,7 @@ import Footer from "./components/Footer";
 import { AuthProvider } from "@/src/components/AuthProvider";
 import { TracingInitializer } from "@/components/TracingInitializer";
 
-const BackToTopButton = dynamic(() => import("./components/BackToTopButton"), {
-    ssr: false,
-    loading: () => null,
-});
-const Chatbot = dynamic(() => import("./components/Chatbot"), {
-    ssr: false,
-    loading: () => null,
-});
-const CommandPalette = dynamic(() => import("./components/CommandPalette"), {
-    ssr: false,
-    loading: () => null,
-});
+import { InteractiveOverlays } from "./components/InteractiveOverlays";
 
 export async function generateMetadata({
     params,
@@ -115,11 +104,7 @@ export default async function LocaleLayout({
                                     <OfflineErrorBoundary>{children}</OfflineErrorBoundary>
                                 </main>
                                 <Footer />
-                                <div className="no-print">
-                                    <BackToTopButton />
-                                    <Chatbot />
-                                    <CommandPalette />
-                                </div>
+                                <InteractiveOverlays />
                             </AuthProvider>
                         </NextIntlClientProvider>
                         <div className="no-print">
