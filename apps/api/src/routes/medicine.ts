@@ -112,6 +112,7 @@ router.post(
                 warnings: ["Medicine not found in CDSCO database. Consult a pharmacist."],
             };
 
+            // If empty transcription, exit early
             if (transcribedText === "") {
                 verificationResult = {
                     status: "transcription_failed",
@@ -127,51 +128,43 @@ router.post(
             }
 
             // ── Layer 2: Check cache by transcribed text BEFORE hitting Supabase ───────
-            if (transcribedText) {
-                const cachedByText = await getCachedVoiceResult(transcribedText);
-                if (cachedByText) {
-                    logger.info(
-                        `Voice verification served from text cache for: "${transcribedText}"`
-                    );
-                    // Also back-fill the audio hash cache so future identical audio skips ML too
-                    await setCachedVoiceByAudioHash(audioHash, cachedByText);
-                    return res.json(cachedByText);
-                }
+            const cachedByText = await getCachedVoiceResult(transcribedText);
+            if (cachedByText) {
+                logger.info(`Voice verification served from text cache for: "${transcribedText}"`);
+                // Back-fill Layer 1 audio hash cache
+                await setCachedVoiceByAudioHash(audioHash, cachedByText);
+                return res.json(cachedByText);
+            }
 
-                // ── Cache miss — query Supabase ──────────────────────────────────────────
-                logger.info(`Voice cache MISS for: "${transcribedText}". Querying Supabase...`);
-                const { data: medicines } = await supabase
-                    .from("medicines")
-                    .select("brand_name, generic_name, manufacturer, is_cdsco_verified")
-                    .or(buildMedicineVoiceSearchFilter(transcribedText))
-                    .limit(1);
+            // ── Cache miss — query Supabase ──────────────────────────────────────────
+            logger.info(`Voice cache MISS for: "${transcribedText}". Querying Supabase...`);
+            const { data: medicines } = await supabase
+                .from("medicines")
+                .select("brand_name, generic_name, manufacturer, is_cdsco_verified")
+                .or(buildMedicineVoiceSearchFilter(transcribedText))
+                .limit(1);
 
-                if (medicines && medicines.length > 0) {
-                    const med = medicines[0];
-                    verificationResult = {
-                        status: med.is_cdsco_verified ? "verified" : "not_found",
-                        cdsco_registered: med.is_cdsco_verified || false,
-                        medicine_name_english:
-                            med.brand_name || med.generic_name || transcribedText,
-                        medicine_name_regional: transcribedText,
-                        manufacturer: med.manufacturer || "Unknown",
-                        category: "Medicine",
-                        warnings: [],
-                    };
-                }
-
-                result.verification = verificationResult;
-
-                // Populate both cache layers for future requests
-                await Promise.all([
-                    setCachedVoiceResult(transcribedText, result),
-                    setCachedVoiceByAudioHash(audioHash, result),
-                ]);
-
-                return res.json(result);
+            if (medicines && medicines.length > 0) {
+                const med = medicines[0];
+                verificationResult = {
+                    status: med.is_cdsco_verified ? "verified" : "not_found",
+                    cdsco_registered: med.is_cdsco_verified || false,
+                    medicine_name_english: med.brand_name || med.generic_name || transcribedText,
+                    medicine_name_regional: transcribedText,
+                    manufacturer: med.manufacturer || "Unknown",
+                    category: "Medicine",
+                    warnings: [],
+                };
             }
 
             result.verification = verificationResult;
+
+            // Populate both cache layers for future requests
+            await Promise.all([
+                setCachedVoiceResult(transcribedText, result),
+                setCachedVoiceByAudioHash(audioHash, result),
+            ]);
+
             return res.json(result);
         } catch (err) {
             if (err instanceof ServiceUnavailableError) {

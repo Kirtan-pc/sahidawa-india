@@ -30,13 +30,15 @@ const BLOCKED_IMAGE_URL_PATTERNS = [
     /^::1$/,
     /^fc00:/i,
     /^fe80:/i,
+    /^::ffff:/i,
 ];
 
 function isPublicImageUrl(rawUrl: string): boolean {
     try {
         const { protocol, hostname } = new URL(rawUrl);
         if (protocol !== "https:" && protocol !== "http:") return false;
-        return !BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(hostname));
+        const normalized = hostname.replace(/^\[|\]$/g, "");
+        return !BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(normalized));
     } catch {
         return false;
     }

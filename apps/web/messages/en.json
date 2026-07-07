@@ -762,7 +762,13 @@
         "statusExpiringSoon": "Expiring soon ({days}d)",
         "statusSafe": "Safe",
         "deleteSelected": "Delete Selected",
-        "selectMedicine": "Select {name}"
+        "selectMedicine": "Select {name}",
+        "deleteMedicine": "Delete medicine",
+        "cancelButton": "Cancel",
+        "deleteConfirmTitle": "Delete Medicine?",
+        "deleteConfirmMessage": "This will permanently remove \"{medicine}\" from your tracked medicines. This action cannot be undone.",
+        "bulkDeleteConfirmTitle": "Delete Multiple Medicines?",
+        "bulkDeleteConfirmMessage": "This will permanently remove {count} medicine(s) from your tracked list. This action cannot be undone."
     },
     "ChildVaccinationTracker": {
         "childTrackerTitle": "Child Vaccination Tracker",
@@ -792,13 +798,7 @@
         "csvExportSuccess": "CSV exported successfully",
         "pdfExportSuccess": "PDF exported successfully",
         "noMedicinesToDisplay": "No medicines to display",
-        "generatedOn": "Generated On",
-        "deleteMedicine": "Delete medicine",
-        "cancelButton": "Cancel",
-        "deleteConfirmTitle": "Delete Medicine?",
-        "deleteConfirmMessage": "This will permanently remove \"{medicine}\" from your tracked medicines. This action cannot be undone.",
-        "bulkDeleteConfirmTitle": "Delete Multiple Medicines?",
-        "bulkDeleteConfirmMessage": "This will permanently remove {count} medicine(s) from your tracked list. This action cannot be undone."
+        "generatedOn": "Generated On"
     },
     "Login": {
         "brandSubtitle": "Medicine safety platform",
