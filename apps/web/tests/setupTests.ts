@@ -18,7 +18,7 @@ if (!(globalThis as any).OffscreenCanvas) {
             this.width = w;
             this.height = h;
         }
-        getContext(_type?: string) {
+        getContext() {
             return {
                 filter: "",
                 drawImage: () => {},
@@ -52,8 +52,8 @@ if (!(globalThis as any).Worker) {
     class WorkerMock {
         onmessage: ((ev: any) => void) | null = null;
         onerror: ((ev: any) => void) | null = null;
-        constructor(_script?: string) {}
-        postMessage(_msg?: any) {}
+        constructor() {}
+        postMessage() {}
         terminate() {}
         addEventListener() {}
         removeEventListener() {}
