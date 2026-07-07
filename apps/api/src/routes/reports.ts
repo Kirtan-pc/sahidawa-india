@@ -11,6 +11,7 @@ import {
 } from "../services/reportValidation.service";
 import { triggerRecallAlert } from "../services/notifications";
 import logger from "../utils/logger";
+import dns from "dns/promises";
 
 const reportsRouter = Router();
 const DEFAULT_ADMIN_REPORTS_LIMIT = 20;
@@ -30,6 +31,7 @@ const BLOCKED_IMAGE_URL_PATTERNS = [
     /^::1$/,
     /^fc00:/i,
     /^fe80:/i,
+    /^::ffff:/i,
 ];
 
 import dns from "dns";

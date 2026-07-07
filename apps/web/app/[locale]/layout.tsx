@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import dynamic from "next/dynamic";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -74,7 +73,6 @@ export default async function LocaleLayout({
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
-    // Unused variables removed
 
     if (!routing.locales.includes(locale as any)) {
         notFound();

@@ -20,6 +20,7 @@ router = APIRouter(prefix="/ocr", tags=["OCR"])
 ocr_limiter = RateLimiter(requests=10, window_seconds=60)
 
 MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024  # 5MB limit
+CHUNK_SIZE = 64 * 1024  # 64 KB
 
 
 # Attach the rate limiter dependency to the decorator
@@ -30,17 +31,30 @@ async def extract_text(file: UploadFile = File(...)):
     if not file.content_type or not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File uploaded is not an image.")
 
-    # Validate file size to prevent Denial of Service (DoS) via memory exhaustion
-    if file.size and file.size > MAX_IMAGE_SIZE_BYTES:
-        raise HTTPException(
-            status_code=413,
-            detail=f"File too large. Maximum allowed size is {MAX_IMAGE_SIZE_BYTES // (1024 * 1024)}MB.",
-        )
-
     try:
-        # Read image content
-        contents = await file.read()
+        # Read the uploaded file incrementally so oversized streamed uploads
+        # can be rejected without loading the entire file into memory.
+        chunks = []
+        total_size = 0
 
+        while True:
+            chunk = await file.read(CHUNK_SIZE)
+
+            if not chunk:
+                break
+
+            total_size += len(chunk)
+
+            if total_size > MAX_IMAGE_SIZE_BYTES:
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"File too large. Maximum allowed size is {MAX_IMAGE_SIZE_BYTES // (1024 * 1024)}MB."
+                )
+
+            chunks.append(chunk)
+
+        contents = b"".join(chunks)
+        
         try:
             image_to_verify = Image.open(io.BytesIO(contents))
             image_to_verify.verify()
@@ -81,12 +95,16 @@ async def extract_text(file: UploadFile = File(...)):
             "confidence": confidence,
             "filename": file.filename,
         }
+    
+    except HTTPException:
+        raise
+
     except Exception as e:
         logger.error(f"OCR error: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to process image: {str(e)}"
-        )
-
+        raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
+    
+    finally:
+        await file.close()
 
 # For issue 17: Request payload validation schema
 class MatchRequest(BaseModel):
