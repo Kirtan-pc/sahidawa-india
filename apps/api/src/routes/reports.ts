@@ -32,20 +32,47 @@ const BLOCKED_IMAGE_URL_PATTERNS = [
     /^fe80:/i,
 ];
 
-function isPublicImageUrl(rawUrl: string): boolean {
+import dns from "dns";
+
+const DNS_TIMEOUT_MS = parseInt(process.env.DNS_LOOKUP_TIMEOUT_MS ?? "3000", 10);
+
+async function isPublicImageUrl(rawUrl: string): Promise<boolean> {
     try {
         const { protocol, hostname } = new URL(rawUrl);
         if (protocol !== "https:" && protocol !== "http:") return false;
-        return !BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(hostname));
+        const normalized = hostname.replace(/^\[|\]$/g, "");
+
+        if (BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(normalized))) {
+            return false;
+        }
+
+        // Race DNS lookup against a hard timeout to prevent DoS via slow DNS
+        const dnsResult = (await Promise.race([
+            // Use the promises API to get a proper Promise-returning lookup
+            (dns.promises.lookup as any)(normalized),
+            new Promise<never>((_, reject) =>
+                setTimeout(() => reject(new Error("DNS lookup timeout")), DNS_TIMEOUT_MS)
+            ),
+        ])) as { address: string };
+
+        if (BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(dnsResult.address))) {
+            return false;
+        }
+
+        return true;
     } catch {
+        // Treat DNS failures and timeouts as unsafe — block the URL
         return false;
     }
 }
 
-const safeImageUrl = z.string().url().refine(isPublicImageUrl, {
-    message:
-        "Image URL must use http(s) and must not point to a private, loopback, or link-local address",
-});
+const safeImageUrl = z
+    .string()
+    .url()
+    .refine(async (v) => await isPublicImageUrl(v), {
+        message:
+            "Image URL must use http(s) and must not point to a private, loopback, or link-local address",
+    });
 
 import { INDIAN_STATES_AND_DISTRICTS } from "../constants/administrativeMap";
 
@@ -108,7 +135,7 @@ reportsRouter.post(
     reportLimiter,
     optionalAuth,
     async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-        const parsed = createReportSchema.safeParse(req.body);
+        const parsed = await createReportSchema.safeParseAsync(req.body as unknown);
 
         if (!parsed.success) {
             res.status(400).json({
