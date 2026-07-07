@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
-import { usePredictivePrefetch } from "../../hooks/usePredictivePrefetch";
+import { usePredictivePrefetch } from "@/src/hooks/usePredictivePrefetch";
 
 interface Pharmacy {
     id: number;
