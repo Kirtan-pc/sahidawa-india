@@ -19,6 +19,10 @@ jest.mock("../src/db/client", () => ({
     },
 }));
 
+jest.mock("dns/promises", () => ({
+    lookup: jest.fn().mockResolvedValue({ address: "8.8.8.8", family: 4 }),
+}));
+
 jest.mock("../src/services/reportValidation.service", () => ({
     validateReport: jest.fn().mockResolvedValue({
         passed: true,
@@ -585,6 +589,37 @@ describe("Reports API Routes", () => {
             expect(response.body.issues[0].message).toBe(
                 "Invalid district 'pune dist' for state 'Maharashtra'"
             );
+        });
+
+        it("blocks SSRF attempts with DNS rebinding/resolution to private IPs", async () => {
+            const dns = require("dns/promises");
+
+            // Mock dns.lookup to resolve to a private IP (e.g. AWS Metadata IP or local)
+            (dns.lookup as jest.Mock).mockResolvedValueOnce({
+                address: "169.254.169.254",
+                family: 4,
+            });
+
+            const payload = {
+                medicineName: "Aspirin 500mg",
+                manufacturer: "TestCo",
+                description: "This is a detailed description of the issue",
+                images: ["https://example-dns-rebind.com/image.jpg"],
+                pharmacyName: "Test Pharmacy",
+                address: "123 Main St",
+                city: "Delhi",
+                state: "Delhi",
+                pincode: "110001",
+            };
+
+            const response = await request(app).post("/api/reports").send(payload);
+
+            expect(response.status).toBe(400);
+            expect(response.body.error).toBe("Invalid report payload");
+            expect(response.body.issues[0].message).toBe(
+                "Image URL must use http(s) and must not point to a private, loopback, or link-local address"
+            );
+            expect(dns.lookup).toHaveBeenCalledWith("example-dns-rebind.com");
         });
     });
 

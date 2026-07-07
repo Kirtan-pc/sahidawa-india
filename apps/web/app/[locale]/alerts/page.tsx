@@ -1,26 +1,21 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PageHeader } from "../components/PageHeader";
 import {
     Activity,
     Filter,
-    AlertTriangle,
     Search,
     Globe,
     AlertCircle,
     MapPin,
-    ChevronDown,
     ShieldAlert,
     BellOff,
     Download,
-    Building2,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import RecallPushSubscriber from "@/components/alerts/RecallPushSubscriber";
-import { CopyButton } from "@/components/ui/CopyButton";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LiveMessage } from "@/components/ui/LiveMessage";
-import { API_BASE } from "@/lib/api";
 import BackToTopButton from "@/app/[locale]/components/BackToTopButton";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -43,21 +38,6 @@ function useDebounce(value: string, delay: number = 300) {
     }, [value, delay]);
 
     return debouncedValue;
-}
-
-function formatRelativeTime(dateString: string | null): string {
-    if (!dateString) return "Recent";
-    const now = new Date();
-    const past = new Date(dateString);
-    const msPerMinute = 60 * 1000;
-    const msPerHour = msPerMinute * 60;
-    const msPerDay = msPerHour * 24;
-    const elapsed = now.getTime() - past.getTime();
-
-    if (elapsed < msPerMinute) return "Just now";
-    if (elapsed < msPerHour) return `${Math.round(elapsed / msPerMinute)}m ago`;
-    if (elapsed < msPerDay) return `${Math.round(elapsed / msPerHour)}h ago`;
-    return past.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 export interface Alert {
@@ -89,17 +69,8 @@ export default function FullAlertsLogPage() {
     const debouncedBrandSearch = useDebounce(brandSearch, 300);
     const debouncedRegionSearch = useDebounce(regionSearch, 300);
 
-    const {
-        allAlerts,
-        loading,
-        loadingMore,
-        error,
-        page,
-        setPage,
-        totalCount,
-        hasMore,
-        snoozeAlert,
-    } = useAlerts({ debouncedBrandSearch, debouncedRegionSearch, refreshTrigger });
+    const { allAlerts, loading, loadingMore, error, setPage, totalCount, hasMore, snoozeAlert } =
+        useAlerts({ debouncedBrandSearch, debouncedRegionSearch, refreshTrigger });
 
     // Accordion active expanded state
     const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null);
