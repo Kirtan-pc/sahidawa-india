@@ -29,6 +29,9 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 
 PENDING_ALERTS_KEY = "cdsco_pending_alerts"
+RETRY_COUNTER_PREFIX = "cdsco_alert_retry:"
+DLQ_KEY = "cdsco_dlq_alerts"
+MAX_RETRIES = int(os.getenv("CDSCO_ALERT_MAX_RETRIES", 3))
 
 def generate_idempotency_key(pdf_url: str, alert: dict) -> str:
     batch_number = alert.get('batch_number', 'unknown')
@@ -58,7 +61,8 @@ def process_pending_queue():
     
     if skipped_keys:
         redis_client.hdel(PENDING_ALERTS_KEY, *skipped_keys)
-            
+        for skey in skipped_keys:
+            redis_client.delete(f"{RETRY_COUNTER_PREFIX}{skey}")  
     if not new_alerts_map:
         logging.info("All pending alerts were duplicates. Queue cleared.")
         return
@@ -71,10 +75,23 @@ def process_pending_queue():
         keys_to_mark = list(new_alerts_map.keys())
         if keys_to_mark:
             redis_client.hdel(PENDING_ALERTS_KEY, *keys_to_mark)
+            for key in keys_to_mark:
+                redis_client.delete(f"{RETRY_COUNTER_PREFIX}{key}")
         logging.info("Successfully removed ingested alerts from Redis queue.")
     else:
         logging.warning("Failed to ingest alerts. They will remain pending in the Redis queue for the next run.")
-
+        for key in new_alerts_map.keys():
+            retry_count = redis_client.incr(f"{RETRY_COUNTER_PREFIX}{key}")
+            
+            if retry_count >= MAX_RETRIES:
+                payload = redis_client.hget(PENDING_ALERTS_KEY, key)
+                if payload:
+                    redis_client.hset(DLQ_KEY, key, payload)
+                
+                redis_client.hdel(PENDING_ALERTS_KEY, key)
+                redis_client.delete(f"{RETRY_COUNTER_PREFIX}{key}")
+                logging.warning(f"Alert {key} moved to DLQ after {MAX_RETRIES} failed attempts.")
+                
 def scrape_cdsco_alerts():
     logging.info(f"Checking {CDSCO_ALERTS_URL} for new alerts...")
     try:
@@ -199,7 +216,13 @@ if __name__ == "__main__":
     if not API_SECRET_KEY:
         logging.error("API_SECRET_KEY is not set in environment. Exiting.")
         sys.exit(1)
-        
+    
+    try:
+        dlq_count = redis_client.hlen(DLQ_KEY)
+        if dlq_count > 0:
+            logging.warning(f"[DLQ] {dlq_count} alerts are currently in the dead-letter queue.")
+    except Exception as redis_err:
+        logging.error(f"Could not scan Redis DLQ on startup: {redis_err}")
     logging.info("Starting up. Attempting to clear pending queue before scraping new PDFs...")
     process_pending_queue()
     scrape_cdsco_alerts()
