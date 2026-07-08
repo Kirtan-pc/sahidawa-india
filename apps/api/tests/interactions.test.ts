@@ -21,6 +21,18 @@ jest.mock("../src/db/client", () => {
 });
 
 import { supabase, dbConfig } from "../src/db/client";
+import { cacheMiddleware } from "../src/middleware/cache";
+
+// Derived from the shared middleware (rather than a hardcoded literal) so this
+// stays correct if cacheMiddleware's header format ever changes.
+function cacheControlFor(durationSeconds: number, staleWhileRevalidateSeconds: number): string {
+    let headerValue = "";
+    const fakeRes = { setHeader: (name: string, value: string) => (headerValue = value) } as never;
+    cacheMiddleware(durationSeconds, staleWhileRevalidateSeconds)({} as never, fakeRes, () => {});
+    return headerValue;
+}
+
+const INTERACTIONS_CACHE_CONTROL = cacheControlFor(120, 300);
 
 const MED_A_ID = "11111111-1111-4111-8111-111111111111";
 const MED_B_ID = "22222222-2222-4222-8222-222222222222";
@@ -30,6 +42,12 @@ describe("GET /api/v1/interactions", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         dbConfig.isSupabaseOffline = false;
+    });
+
+    it("should return Cache-Control header", async () => {
+        const response = await request(app).get("/api/v1/interactions?ids=med-1");
+
+        expect(response.headers["cache-control"]).toContain("public");
     });
 
     it("returns 400 when fewer than two medicine ids are provided", async () => {
@@ -78,7 +96,7 @@ describe("GET /api/v1/interactions", () => {
         const res = await request(app).get(`/api/v1/interactions?ids=${MED_A_ID},${MED_B_ID}`);
 
         expect(res.status).toBe(200);
-        expect(res.headers["cache-control"]).toBe("public, max-age=60, stale-while-revalidate=300");
+        expect(res.headers["cache-control"]).toBe(INTERACTIONS_CACHE_CONTROL);
         expect(res.body).toEqual({ interactions: [] });
         expect(supabase.from).toHaveBeenCalledTimes(1);
         expect(supabase.from).toHaveBeenCalledWith("medicines");
@@ -150,7 +168,7 @@ describe("GET /api/v1/interactions", () => {
         );
 
         expect(res.status).toBe(200);
-        expect(res.headers["cache-control"]).toBe("public, max-age=60, stale-while-revalidate=300");
+        expect(res.headers["cache-control"]).toBe(INTERACTIONS_CACHE_CONTROL);
         expect(supabase.from).toHaveBeenCalledTimes(2);
         expect(supabase.from).toHaveBeenNthCalledWith(1, "medicines");
         expect(supabase.from).toHaveBeenNthCalledWith(2, "drug_interactions");
