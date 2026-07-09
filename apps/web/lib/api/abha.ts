@@ -1,20 +1,12 @@
 import { API_BASE, getCsrfToken } from "../api";
 import { fetchWithRetry } from "../apiWithRetry";
+import type { ABHALinkResponse, ABHAPrescription, ABHAVerificationData } from "@sahidawa/types";
+export type { ABHALinkResponse, ABHAPrescription, ABHAVerificationData };
 
 // ─── Interfaces ───────────────────────────────────────────────────────────────
 
-export interface ABHALinkResponse {
-    txnId: string;
-}
-
 export interface ABHAVerifyResponse {
     token: string;
-}
-
-export interface ABHAPrescription {
-    id: string;
-    title: string;
-    issuedAt: string;
 }
 
 export interface ABHAUploadResponse {
@@ -147,11 +139,7 @@ export async function getABHAPrescriptions(
 // ─── Upload Verification ──────────────────────────────────────────────────────
 
 export async function uploadABHAVerification(
-    payload: {
-        medicineId: string;
-        verificationResult: string;
-        scannedAt: string;
-    },
+    payload: ABHAVerificationData,
     accessToken?: string,
     signal?: AbortSignal
 ): Promise<ABHAUploadResponse> {

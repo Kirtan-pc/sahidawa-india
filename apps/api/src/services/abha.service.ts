@@ -1,6 +1,7 @@
 import crypto, { constants, publicEncrypt, randomUUID } from "node:crypto";
 import { supabase } from "../db/client";
 import logger from "../utils/logger";
+import type { ABHALinkResponse, ABHAPrescription, ABHAVerificationData } from "@sahidawa/types";
 
 const DEFAULT_ABDM_BASE_URL = "https://abhasbx.abdm.gov.in/abha/api";
 const DEFAULT_ABDM_SESSION_URL = "https://dev.abdm.gov.in/api/hiecm/gateway/v3/sessions";
@@ -8,22 +9,6 @@ const ABDM_REQUEST_TIMEOUT_MS = 10000;
 const ABHA_LOGIN_SCOPE = ["abha-address-login", "mobile-verify"];
 const ABHA_ADDRESS_LOGIN_PATH = "/v3/phr/web/login/abha";
 const ABDM_PUBLIC_CERTIFICATE_PATH = "/v3/profile/public/certificate";
-
-export interface ABHALinkResponse {
-    txnId: string;
-}
-
-export interface ABHAPrescription {
-    id: string;
-    title: string;
-    issuedAt: string;
-}
-
-export interface ABHAVerificationData {
-    medicineId: string;
-    verificationResult: string;
-    scannedAt: string;
-}
 
 interface AbdmSessionResponse {
     accessToken?: string;

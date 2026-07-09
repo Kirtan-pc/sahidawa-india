@@ -11,67 +11,16 @@ import {
 } from "../services/reportValidation.service";
 import { triggerRecallAlert } from "../services/notifications";
 import logger from "../utils/logger";
-import dns from "dns/promises";
+import { validateOutboundUrl } from "../utils/security/urlValidator";
 
 const reportsRouter = Router();
 const DEFAULT_ADMIN_REPORTS_LIMIT = 20;
 const MAX_ADMIN_REPORTS_LIMIT = 100;
 
-// Blocked hostname patterns for image URL SSRF protection.
-// z.string().url() only validates URL format, not destination.
-// An attacker could supply cloud metadata or internal service URLs that may be
-// fetched server-side when the image is processed.
-const BLOCKED_IMAGE_URL_PATTERNS = [
-    /^localhost$/i,
-    /^127\./,
-    /^10\./,
-    /^172\.(1[6-9]|2\d|3[01])\./,
-    /^192\.168\./,
-    /^169\.254\./,
-    /^::1$/,
-    /^fc00:/i,
-    /^fe80:/i,
-    /^::ffff:/i,
-];
-
-import dns from "dns";
-
-const DNS_TIMEOUT_MS = parseInt(process.env.DNS_LOOKUP_TIMEOUT_MS ?? "3000", 10);
-
-async function isPublicImageUrl(rawUrl: string): Promise<boolean> {
-    try {
-        const { protocol, hostname } = new URL(rawUrl);
-        if (protocol !== "https:" && protocol !== "http:") return false;
-        const normalized = hostname.replace(/^\[|\]$/g, "");
-
-        if (BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(normalized))) {
-            return false;
-        }
-
-        // Race DNS lookup against a hard timeout to prevent DoS via slow DNS
-        const dnsResult = (await Promise.race([
-            // Use the promises API to get a proper Promise-returning lookup
-            (dns.promises.lookup as any)(normalized),
-            new Promise<never>((_, reject) =>
-                setTimeout(() => reject(new Error("DNS lookup timeout")), DNS_TIMEOUT_MS)
-            ),
-        ])) as { address: string };
-
-        if (BLOCKED_IMAGE_URL_PATTERNS.some((p) => p.test(dnsResult.address))) {
-            return false;
-        }
-
-        return true;
-    } catch {
-        // Treat DNS failures and timeouts as unsafe — block the URL
-        return false;
-    }
-}
-
 const safeImageUrl = z
     .string()
     .url()
-    .refine(async (v) => await isPublicImageUrl(v), {
+    .refine(async (v) => await validateOutboundUrl(v), {
         message:
             "Image URL must use http(s) and must not point to a private, loopback, or link-local address",
     });
