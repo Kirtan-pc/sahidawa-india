@@ -1285,9 +1285,24 @@
     "AbhaRecords": {
         "backToProfile": "Back to Profile",
         "title": "ABHA Records",
+        "subtitle": "Manage your Ayushman Bharat Health Account",
         "loading": "Loading records...",
-        "noPrescriptions": "No prescriptions found.",
-        "failedToLoad": "Failed to load records"
+        "failedToLoadStatus": "Failed to check ABHA status",
+        "failedToLoad": "Failed to load records",
+        "failedToLink": "Failed to initiate linking",
+        "failedToVerify": "Failed to verify OTP",
+        "linkAccount": "Link Your ABHA Account",
+        "linkDescription": "Connect your ABHA account to securely fetch and manage your health records.",
+        "abhaAddressLabel": "ABHA Address",
+        "abhaAddressPlaceholder": "e.g. name@abdm",
+        "requestOtp": "Request OTP",
+        "otpLabel": "Enter OTP",
+        "otpPlaceholder": "XXXXXX",
+        "cancel": "Cancel",
+        "verifyOtp": "Verify OTP",
+        "accountLinked": "Your ABHA account is linked securely.",
+        "noPrescriptions": "No health records found",
+        "noPrescriptionsDesc": "You don't have any prescriptions associated with this ABHA account yet."
     },
     "Tracking": {
         "success": "Medicine tracked successfully!",
