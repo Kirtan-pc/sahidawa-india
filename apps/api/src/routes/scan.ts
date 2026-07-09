@@ -987,9 +987,18 @@ router.post(
                 });
             }
 
-            await supabase
+            const { error: idemUpdateError } = await supabase
                 .from("submission_idempotency")
-                .insert({ idempotency_key: idempotencyKey, scan_id: resolvedScanId });
+                .update({ scan_id: resolvedScanId })
+                .eq("idempotency_key", idempotencyKey);
+
+            if (idemUpdateError) {
+                logger.error("Failed to persist idempotency record", {
+                    error: idemUpdateError,
+                    idempotencyKey,
+                    scanId: resolvedScanId,
+                });
+            }
 
             res.status(200).json(result);
         } catch (err) {
@@ -1000,6 +1009,18 @@ router.post(
             logger.error(
                 `Error during offline scan submit: ${err instanceof Error ? err.message : err}`
             );
+
+            if (idempotencyKey) {
+                try {
+                    await supabase
+                        .from("submission_idempotency")
+                        .delete()
+                        .eq("idempotency_key", idempotencyKey);
+                } catch {
+                    /* best-effort cleanup; ignore secondary failures */
+                }
+            }
+
             res.status(500).json({ error: "Server error during scan submission" });
         }
     }
