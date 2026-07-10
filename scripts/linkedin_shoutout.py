@@ -287,29 +287,28 @@ def _static_fallback(pr: dict, tier_display: str) -> str:
     pr_url = pr.get('url', 'N/A')
     
     templates = [
-        # Template 1: Mission-centric
-        "Another massive step forward for medicine safety! 🛡️\n\n"
-        "We are incredibly grateful to {name} for stepping up and delivering an exceptional {tier_display} contribution to SahiDawa.\n\n"
-        "Their recent work in PR #{number} (\"{title}\") resolves a key engineering challenge, bringing us one step closer to making healthcare tech accessible for millions.\n\n"
-        "Thank you, {name}, for your dedication and open-source craftsmanship! 🌟\n\n"
+        # Template 1: Direct Technical
+        "PR #{number} (\"{title}\") has been successfully merged into SahiDawa. ⚙️\n\n"
+        "This update resolves a key engineering requirement by improving our core infrastructure for medicine tracking. {name} successfully executed this {tier_display} task, delivering clean and functional code.\n\n"
+        "Good work, {name}. We appreciate the contribution.\n\n"
         "Connect with {name}: {linkedin_url}\n\n"
         "Want to contribute to India's open-source stack? Join the GSSoC 2026 wave on our repo:\n\n"
         "Codebase: {github_url}\n"
         "Merged PR: {pr_url}",
         
-        # Template 2: Engineering-centric
-        "Building robust healthcare platforms takes serious engineering, and {name} just proved it! ⚙️\n\n"
-        "They successfully merged PR #{number} (\"{title}\"), tackling a {tier_display} issue with precision. Every line of code merged strengthens SahiDawa's core infrastructure and helps us scale to meet the needs of 1.4 billion people.\n\n"
-        "We are lucky to have developers like {name} in our community pushing the boundaries of what open-source can achieve. 🚀\n\n"
+        # Template 2: Direct Impact
+        "We have rolled out a new update via PR #{number}: \"{title}\". 🛡️\n\n"
+        "{name} handled this {tier_display} issue, optimizing our platform's reliability. The changes directly impact how we scale our open-source health-tech stack for users across India.\n\n"
+        "Solid execution by {name}.\n\n"
         "Connect with {name}: {linkedin_url}\n\n"
         "Want to contribute to India's open-source stack? Join the GSSoC 2026 wave on our repo:\n\n"
         "Codebase: {github_url}\n"
         "Merged PR: {pr_url}",
         
-        # Template 3: Community-centric
-        "Our open-source community continues to amaze us! 🎉\n\n"
-        "Today, we want to spotlight {name} for their phenomenal work on SahiDawa. They took on a {tier_display} challenge (PR #{number}: \"{title}\") and delivered an outstanding solution that significantly improves our platform.\n\n"
-        "It's contributors like {name} who are driving the future of open health-tech in India. Keep shipping amazing code! 🔥\n\n"
+        # Template 3: Direct Community
+        "New code shipped to SahiDawa production. 🚀\n\n"
+        "Credit to {name} for resolving PR #{number} (\"{title}\"). Tackling a {tier_display} problem requires solid technical context, and this PR delivers exactly that. It's an important addition to our codebase.\n\n"
+        "Thanks for the effort, {name}.\n\n"
         "Connect with {name}: {linkedin_url}\n\n"
         "Want to contribute to India's open-source stack? Join the GSSoC 2026 wave on our repo:\n\n"
         "Codebase: {github_url}\n"
@@ -348,7 +347,7 @@ def generate_post_with_groq(pr: dict, tier_display: str, tier_desc: str, system_
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        "temperature": 0.7,
+        "temperature": 0.5,
         "max_tokens": 800
     }
     
@@ -369,16 +368,16 @@ def generate_post_with_gemini(pr: dict, tier_display: str, tier_desc: str) -> st
     contributor_name = get_contributor_name(pr['author'])
     system_prompt = (
         "You are the Open-Source Maintainer for SahiDawa, India's medicine safety platform. "
-        "Write a heartfelt, highly engaging LinkedIn post thanking a contributor for their merged PR. Keep it within 3 short paragraphs.\n\n"
-        "CRITICAL RULES FOR VARIABILITY (DO NOT IGNORE):\n"
-        "- DO NOT always start with 'A huge shoutout' or 'Let's celebrate'. Use diverse, creative opening hooks focused on the real-world impact of the code.\n"
-        "- Adapt your tone to the PR content: be analytical for complex backend fixes, and celebratory for UX/UI features.\n"
-        "- Do not use a rigid robotic template. Weave the story naturally.\n"
-        "- Use appropriate emojis (e.g., 🎉, 🚀, 🔥, 🛡️, ⚙️) but vary them per post.\n\n"
-        "FRAMEWORK TO FOLLOW (The Hero's Journey):\n"
-        "1. The Hook: Start with the real-world or technical impact of this update.\n"
-        "2. The Hero: Introduce the contributor by name (no @github handles) as the problem solver.\n"
-        "3. The Weapon: Briefly explain the specific technical challenge they solved (based on the git diff) and why it matters.\n"
+        "Write a clean, professional, and direct LinkedIn post acknowledging a contributor's merged PR. Keep it within 3 short paragraphs.\n\n"
+        "CRITICAL RULES FOR TONE AND VARIABILITY (NO BS POLICY):\n"
+        "- NO SUGAR-COATING. Do not use overly enthusiastic, exaggerated, or fluffy language (e.g., avoid 'massive shoutout', 'incredible', 'mind-blowing').\n"
+        "- Keep it raw, technical, and high-signal. Focus purely on the engineering facts and the direct impact of the code.\n"
+        "- Do not use robotic templates. Weave the facts naturally.\n"
+        "- Use minimal, professional emojis (e.g., 🚀, 🛡️, ⚙️) if needed, but do not overuse them.\n\n"
+        "FRAMEWORK TO FOLLOW:\n"
+        "1. The Core Update: State exactly what was merged and its direct technical or product impact.\n"
+        "2. The Contributor: Acknowledge the contributor by name (no @github handles) for tackling the specified Task Tier.\n"
+        "3. The Mechanism: Briefly explain how the code works (based on the git diff).\n"
         "4. The Connection: Include 'Connect with [Name]: [LinkedIn URL]'.\n"
         "5. The Call to Action: End EXACTLY with this text (do not modify this footer):\n\n"
         "Want to contribute to India's open-source stack? Join the GSSoC 2026 wave on our repo:\n\n"
