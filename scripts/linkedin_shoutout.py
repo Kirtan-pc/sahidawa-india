@@ -416,9 +416,9 @@ def generate_comic_prompt_with_gemini(pr: dict, api_key: str) -> str:
         "You are an expert technical illustrator creating prompts for an AI image generator (Imagen 3). "
         "Your task is to take a GitHub Pull Request and design a whiteboard-style stickman comic prompt that explains the technical change with developer humor.\n\n"
         "RULES FOR THE PROMPT YOU GENERATE:\n"
-        "1. Visual Style: Minimalist hand-drawn stickmen on a clean off-white whiteboard with subtle gray dot grid. No 3D, no neon, no gradients.\n"
-        "2. Characters: Create two stickmen representing concepts in the PR (e.g., 'Main Thread' vs 'Web Worker', 'Frontend' vs 'Database', 'Dev' vs 'Bug', 'Old API' vs 'New Cache'). Label them clearly.\n"
-        "3. Action: Show a funny interaction metaphor for the PR. For example, one struggling with heavy boxes while the other helps, or one throwing something away.\n"
+        "1. Visual Style: LITERAL minimalist stick figures. Simple black lines on a pure white background. NO clothes, NO 3D, NO shading, NO colors.\n"
+        "2. Characters: Create two basic stickmen (circles for heads, single lines for bodies and limbs) representing concepts in the PR. Label them clearly.\n"
+        "3. Action: Show a funny interaction metaphor for the PR. For example, one stickman struggling with heavy boxes while the other helps, or one throwing something away.\n"
         "4. Speech Bubbles: Include short, witty developer humor in speech bubbles.\n"
         "5. Composition: DO NOT INCLUDE ANY TEXT, LABELS, OR PR CARDS. Leave the center of the image relatively empty or uncluttered, because a real GitHub PR card will be pasted directly in the middle later.\n"
         "6. Format: Do NOT use markdown code blocks. Output ONLY the raw image generation prompt string."
@@ -451,9 +451,7 @@ def generate_comic_prompt_with_gemini(pr: dict, api_key: str) -> str:
             time.sleep(10)
     
     # Generic fallback prompt
-    return """A clean, minimal, professional LinkedIn engineering micro-comic on a whiteboard background.
-Two simple stickmen developers interacting. One is struggling with heavy technical debt, the other provides a solution.
-Include speech bubbles with developer humor.
+    return """LITERAL stick figure drawing. Simple black lines on a pure white background. Two very basic stickmen (circles for heads, single lines for bodies and limbs) interacting. One is struggling with heavy technical debt, the other provides a solution. Include speech bubbles with developer humor. NO CLOTHES. NO SHADING. NO 3D. Just simple black lines.
 DO NOT INCLUDE ANY REAL TEXT OR STATS AT THE BOTTOM. Leave the center/bottom of the image relatively empty and uncluttered, because a real GitHub PR card will be pasted directly in the middle later."""
 
 def _upload_asset_to_linkedin(file_path: str, access_token: str, org_urn: str) -> str | None:
