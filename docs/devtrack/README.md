@@ -871,3 +871,4 @@
 | [#3318](https://github.com/RatLoopz/sahidawa-india/pull/3318) | 2026-07-07 | ML/AI | 8 | @hrx01-dev | [View Doc](devtrack/2026-07/PR-3318-ref-migrated-cdsco-alert-agent-idempotency-queue-t.md) |
 | [#3328](https://github.com/RatLoopz/sahidawa-india/pull/3328) | 2026-07-08 | Backend | 9 | @Kirtan-pc | [View Doc](devtrack/2026-07/PR-3328-fix-security-bug-add-dns-resolution-timeout-to-ssr.md) |
 | [#3359](https://github.com/RatLoopz/sahidawa-india/pull/3359) | 2026-07-08 | Frontend | 23 | @hrx01-dev | [View Doc](devtrack/2026-07/PR-3359-ref-migrated-alerts-pagination-fetching-to-tanstac.md) / [ADR](devtrack/adr/ADR-047-ref-migrated-alerts-pagination-fetching-to-tanstac.md) |
+| [#3467](https://github.com/RatLoopz/sahidawa-india/pull/3467) | 2026-07-11 | Frontend | 19 | @hrx01-dev | [View Doc](devtrack/2026-07/PR-3467-feat-wired-homepage-search-into-the-existing-offli.md) / [ADR](devtrack/adr/ADR-048-feat-wired-homepage-search-into-the-existing-offli.md) |
