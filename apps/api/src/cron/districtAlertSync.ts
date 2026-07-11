@@ -131,9 +131,9 @@ export async function syncDistrictAlertTallies(): Promise<void> {
     }
 }
 
-export const initDistrictAlertSyncCron = (): void => {
+export const initDistrictAlertSyncCron = (): { stop: () => void } => {
     // Runs every 6 hours
-    cron.schedule("0 */6 * * *", async () => {
+    const task = cron.schedule("0 */6 * * *", async () => {
         try {
             await syncDistrictAlertTallies();
         } catch (err) {
@@ -144,4 +144,5 @@ export const initDistrictAlertSyncCron = (): void => {
         }
     });
     logger.info("District alert tally sync cron initialized (every 6 hours)");
+    return task;
 };
