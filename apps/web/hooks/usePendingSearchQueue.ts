@@ -1,38 +1,99 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { getSearchQueue, type QueuedSearch, clearSearchQueue } from "@/lib/db/searchQueue";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getSearchQueue, type QueuedSearch, removeFromSearchQueue } from "@/lib/db/searchQueue";
 import { toast } from "sonner";
 
-export function usePendingSearchQueue(onSync?: (query: string) => void) {
+export function usePendingSearchQueue(onSync?: (query: string) => void | Promise<void>) {
     const [pendingSearches, setPendingSearches] = useState<QueuedSearch[]>([]);
     const [isSyncing, setIsSyncing] = useState(false);
-
-    const refresh = useCallback(async () => {
-        setPendingSearches(await getSearchQueue());
-    }, []);
+    const [isLoading, setIsLoading] = useState(true);
+    const [executingId, setExecutingId] = useState<string | null>(null);
+    const inFlightRef = useRef<string | null>(null);
+    const processingOnlineRef = useRef(false);
+    const onSyncRef = useRef(onSync);
 
     useEffect(() => {
-        void refresh();
+        onSyncRef.current = onSync;
+    }, [onSync]);
+
+    const refresh = useCallback(async () => {
+        try {
+            setPendingSearches(await getSearchQueue());
+        } catch (error) {
+            toast.error("Could not load saved searches");
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const execute = useCallback(
+        async (item: QueuedSearch) => {
+            const sync = onSyncRef.current;
+            if (!sync || inFlightRef.current !== null) return false;
+
+            inFlightRef.current = item.id;
+            setExecutingId(item.id);
+            try {
+                await sync(item.query);
+            } catch {
+                toast.error(`Could not run saved search: "${item.query}"`);
+                return false;
+            }
+
+            try {
+                await removeFromSearchQueue(item.id);
+            } catch {
+                toast.error(`Could not remove saved search: "${item.query}"`);
+                return false;
+            }
+
+            setPendingSearches((current) => current.filter(({ id }) => id !== item.id));
+            void refresh().catch(() => undefined);
+            return true;
+        },
+        [refresh]
+    );
+
+    const executeWithLockRelease = useCallback(
+        async (item: QueuedSearch) => {
+            try {
+                return await execute(item);
+            } finally {
+                if (inFlightRef.current === item.id) {
+                    inFlightRef.current = null;
+                    setExecutingId(null);
+                }
+            }
+        },
+        [execute]
+    );
+
+    useEffect(() => {
+        void refresh().catch(() => undefined);
 
         const handleOnline = async () => {
+            if (processingOnlineRef.current || inFlightRef.current) return;
+            processingOnlineRef.current = true;
             setIsSyncing(true);
-            const currentQueue = await getSearchQueue();
-            if (currentQueue.length > 0) {
-                // Sort by most recent first
-                const sorted = currentQueue.sort((a, b) => b.timestamp - a.timestamp);
-                const mostRecent = sorted[0];
-
-                if (onSync) {
-                    onSync(mostRecent.query);
+            try {
+                const currentQueue = await getSearchQueue();
+                if (currentQueue.length > 0) {
+                    const mostRecent = [...currentQueue].sort(
+                        (a, b) => b.timestamp - a.timestamp
+                    )[0];
+                    const succeeded = await executeWithLockRelease(mostRecent);
+                    if (succeeded) {
+                        toast.success(`Restored queued search: "${mostRecent.query}"`);
+                    }
                 }
-
-                toast.success(`Restored queued search: "${mostRecent.query}"`);
-
-                await clearSearchQueue();
-                void refresh();
+            } catch {
+                toast.error("Could not process saved searches");
+            } finally {
+                processingOnlineRef.current = false;
+                setIsSyncing(false);
             }
-            setIsSyncing(false);
         };
 
         window.addEventListener("online", handleOnline);
@@ -40,7 +101,14 @@ export function usePendingSearchQueue(onSync?: (query: string) => void) {
         return () => {
             window.removeEventListener("online", handleOnline);
         };
-    }, [refresh, onSync]);
+    }, [executeWithLockRelease, refresh]);
 
-    return { pendingSearches, isSyncing, refresh };
+    return {
+        pendingSearches,
+        isSyncing,
+        isLoading,
+        executingId,
+        execute: executeWithLockRelease,
+        refresh,
+    };
 }

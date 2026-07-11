@@ -97,6 +97,9 @@ export default function SahiDawaHome() {
     const {
         pendingSearches,
         isSyncing,
+        isLoading: isSearchQueueLoading,
+        executingId,
+        execute: executeQueuedSearch,
         refresh: refreshSearchQueue,
     } = usePendingSearchQueue((query) => {
         setActiveSearchQuery(query);
@@ -194,7 +197,13 @@ export default function SahiDawaHome() {
 
                     {/* Search Bar */}
                     <div className="mx-auto w-full max-w-2xl pt-2">
-                        <PendingSearchQueue pending={pendingSearches} isSyncing={isSyncing} />
+                        <PendingSearchQueue
+                            pending={pendingSearches}
+                            isSyncing={isSyncing}
+                            isLoading={isSearchQueueLoading}
+                            executingId={executingId}
+                            onExecute={executeQueuedSearch}
+                        />
                         <SearchBar onSearchChange={handleSearchSubmit} />
                     </div>
 
