@@ -410,47 +410,6 @@ def assemble_final_post(ai_content: str, pr: dict) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 # IMAGE GENERATION + LINKEDIN NATIVE IMAGE UPLOAD
 # ─────────────────────────────────────────────────────────────────────────────
-def generate_comic_prompt_with_gemini(pr: dict, api_key: str) -> str:
-    print("🧠 Generating dynamic visual prompt for the PR comic...")
-    system_prompt = (
-        "You are an expert technical illustrator creating prompts for an AI image generator (Imagen 3). "
-        "Your task is to take a GitHub Pull Request and design a whiteboard-style stickman comic prompt that explains the technical change with developer humor.\n\n"
-        "RULES FOR THE PROMPT YOU GENERATE:\n"
-        "1. Visual Style: LITERAL minimalist stick figures. Simple black lines on a pure white background. NO clothes, NO 3D, NO shading, NO colors.\n"
-        "2. Characters: Create exactly two basic stickmen (circles for heads, single lines for bodies) representing concepts in the PR. Draw them large and prominent in the center of the frame.\n"
-        "3. Action: Show a funny interaction metaphor for the PR. For example, one stickman struggling with heavy boxes while the other helps, or one throwing something away.\n"
-        "4. Speech Bubbles: Include short, witty developer humor in speech bubbles.\n"
-        "5. Format: Do NOT use markdown code blocks. Output ONLY the raw image generation prompt string."
-    )
-    user_prompt = f"PR Title: {pr.get('title', '')}\nPR Body: {pr.get('body', '')[:500]}\nGenerate the detailed image prompt."
-    
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={api_key}"
-    payload = {
-        "systemInstruction": {"parts": [{"text": system_prompt}]},
-        "contents": [{"parts": [{"text": user_prompt}]}],
-        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 800},
-    }
-    
-    import time
-    for attempt in range(1, 4):
-        try:
-            resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload, timeout=30)
-            if resp.status_code == 429:
-                print(f"⚠️ Gemini Prompt Rate Limit Exceeded (Attempt {attempt}). Waiting 20s...")
-                time.sleep(20)
-                continue
-            resp.raise_for_status()
-            text = resp.json().get("candidates", [])[0].get("content", {}).get("parts", [])[0].get("text", "").strip()
-            if len(text) > 50:
-                # Clean up potential markdown formatting
-                text = text.replace("```text", "").replace("```prompt", "").replace("```", "").strip()
-                return text
-        except Exception as e:
-            print(f"⚠️ Dynamic prompt generation attempt {attempt} failed: {e}")
-            time.sleep(10)
-    
-    # Generic fallback prompt
-    return """LITERAL stick figure drawing. Simple black lines on a pure white background. Two very basic stickmen (circles for heads, single lines for bodies and limbs) interacting prominently in the center of the frame. One is struggling with heavy technical debt, the other provides a solution. Include speech bubbles with developer humor. NO CLOTHES. NO SHADING. NO 3D. Just simple black lines."""
 
 def _upload_asset_to_linkedin(file_path: str, access_token: str, org_urn: str) -> str | None:
     print(f"📤 Registering image upload for {file_path}...")
@@ -503,21 +462,14 @@ def _upload_asset_to_linkedin(file_path: str, access_token: str, org_urn: str) -
 def generate_and_upload_image(pr: dict, access_token: str, org_urn: str) -> str | None:
     """
     1. Fetches the clean GitHub PR OpenGraph image.
-    2. Generates a completely separate AI stickman comic from Pollinations.
-    3. Stitches them vertically into a single beautiful square image.
+    2. Crops the bottom language bar.
     Returns the single URN for the LinkedIn post.
     """
-    import urllib.parse
-    import random
     from PIL import Image
     import io
     
     final_path = "/tmp/pr_final.png"
-    api_key = get_env_or_exit("GEMINI_API_KEY")
     
-    pr_card_img = None
-    comic_img = None
-
     # Step 1 — Fetch GitHub PR Image
     print("📥 Fetching real GitHub PR Image...")
     repo = os.environ.get('GITHUB_REPOSITORY', 'RatLoopz/sahidawa-india')
@@ -536,57 +488,14 @@ def generate_and_upload_image(pr: dict, access_token: str, org_urn: str) -> str 
             pr_img = Image.open(io.BytesIO(og_resp.content)).convert("RGB")
             # Crop the bottom 25px language bar
             pr_card_img = pr_img.crop((0, 0, pr_img.width, pr_img.height - 25))
-            break
+            pr_card_img.save(final_path, format="PNG")
+            print("✅ GitHub PR Image downloaded and cropped successfully.")
+            return _upload_asset_to_linkedin(final_path, access_token, org_urn)
         except Exception as e:
             print(f"⚠️ GitHub fetch attempt {attempt} failed: {e}")
             time.sleep(2)
-
-    # Step 2 — Generate AI Background via Pollinations
-    print("🎨 Requesting engineering stickman comic from Pollinations API...")
-    prompt = generate_comic_prompt_with_gemini(pr, api_key)
-    try:
-        clean_prompt = prompt.replace('\n', ' ').strip()
-        encoded_prompt = urllib.parse.quote(clean_prompt)
-        seed = random.randint(1, 999999)
-        image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1200&height=630&nologo=true&seed={seed}"
-        
-        img_resp = requests.get(image_url, timeout=60)
-        img_resp.raise_for_status()
-        comic_img = Image.open(io.BytesIO(img_resp.content)).convert("RGB")
-        print("✅ Pollinations API generated comic successfully.")
-    except Exception as e:
-        print(f"⚠️ Pollinations API comic generation failed: {e}")
-
-    # Step 3 — Stitch them together
-    try:
-        if comic_img and pr_card_img:
-            # Both exist: Stitch them vertically
-            total_height = comic_img.height + pr_card_img.height
-            final_img = Image.new('RGB', (1200, total_height), (255, 255, 255))
             
-            # Paste PR Card on top
-            final_img.paste(pr_card_img, (0, 0))
-            # Paste Comic on bottom
-            final_img.paste(comic_img, (0, pr_card_img.height))
-            
-            final_img.save(final_path, format="PNG")
-            print("✅ Successfully stitched PR Card and Comic vertically.")
-        elif pr_card_img:
-            # Only PR Card exists
-            pr_card_img.save(final_path, format="PNG")
-            print("✅ Falling back to only PR Card.")
-        elif comic_img:
-            # Only Comic exists
-            comic_img.save(final_path, format="PNG")
-            print("✅ Falling back to only AI Comic.")
-        else:
-            print("⚠️ No images could be generated.")
-            return None
-            
-        return _upload_asset_to_linkedin(final_path, access_token, org_urn)
-    except Exception as e:
-        print(f"⚠️ Image stitching/uploading failed: {e}")
-        return None
+    return None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
