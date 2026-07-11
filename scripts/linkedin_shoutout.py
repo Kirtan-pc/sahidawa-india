@@ -371,7 +371,7 @@ def generate_post_with_gemini(pr: dict, tier_display: str, tier_desc: str) -> st
         f"Codebase URL: {PROJECT_GITHUB_URL}\n\n"
         f"Git Diff Context:\n{pr.get('diff', '')[:3000]}"
     )
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={gemini_api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={gemini_api_key}"
     payload = {
         "systemInstruction": {"parts": [{"text": system_prompt}]},
         "contents": [{"parts": [{"text": user_prompt}]}],
@@ -425,7 +425,7 @@ def generate_comic_prompt_with_gemini(pr: dict, api_key: str) -> str:
     )
     user_prompt = f"PR Title: {pr.get('title', '')}\nPR Body: {pr.get('body', '')[:500]}\nGenerate the detailed image prompt."
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}"
     payload = {
         "systemInstruction": {"parts": [{"text": system_prompt}]},
         "contents": [{"parts": [{"text": user_prompt}]}],
@@ -460,74 +460,77 @@ def generate_and_upload_image(pr: dict, access_token: str, org_urn: str) -> str 
     
     prompt = generate_comic_prompt_with_gemini(pr, api_key)
 
-    # Step 1 — Generate comic via Pollinations.ai API (Free alternative to Gemini Imagen)
-    print("🎨 Requesting engineering comic from Pollinations API...")
+    # Step 1 — Fetch GitHub OpenGraph Image (with retries for 429s)
+    print("📥 Fetching real GitHub PR Image...")
+    repo = os.environ.get('GITHUB_REPOSITORY', 'RatLoopz/sahidawa-india')
+    pr_number = pr.get('number')
+    og_url = f"https://opengraph.githubassets.com/1/{repo}/pull/{pr_number}"
+    
+    og_content = None
+    import time
+    for attempt in range(3):
+        try:
+            og_resp = requests.get(og_url, timeout=30)
+            if og_resp.status_code == 429:
+                print(f"⚠️ GitHub 429 Rate Limit. Waiting 2s...")
+                time.sleep(2)
+                continue
+            og_resp.raise_for_status()
+            og_content = og_resp.content
+            break
+        except Exception as e:
+            print(f"⚠️ GitHub fetch attempt {attempt} failed: {e}")
+            time.sleep(2)
+
+    # Step 2 — Generate AI Background via Pollinations
+    print("🎨 Requesting engineering background from Pollinations API...")
+    bg_img = None
     try:
         import urllib.parse
         import random
-        import requests
         from PIL import Image, ImageDraw, ImageFilter
         import io
         
         encoded_prompt = urllib.parse.quote(prompt)
-        # Using Pollinations API (Flux model) - Free, no auth required
-        # Size 1200x630 is perfect for LinkedIn
         seed = random.randint(1, 999999)
         image_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1200&height=630&nologo=true&seed={seed}"
         
         img_resp = requests.get(image_url, timeout=60)
         img_resp.raise_for_status()
-        
         bg_img = Image.open(io.BytesIO(img_resp.content)).convert("RGBA")
         print("✅ Pollinations API generated background successfully.")
-        
-        print("📥 Fetching real GitHub PR Image to composite...")
-        repo = os.environ.get('GITHUB_REPOSITORY', 'RatLoopz/sahidawa-india')
-        pr_number = pr.get('number')
-        og_url = f"https://opengraph.githubassets.com/1/{repo}/pull/{pr_number}"
-        
-        og_resp = requests.get(og_url, timeout=30)
-        og_resp.raise_for_status()
-        
-        pr_img = Image.open(io.BytesIO(og_resp.content)).convert("RGBA")
-        # Crop the center part containing the useful text (Title and Stats)
-        # Full is 1200x600. Title is roughly in the center block.
-        pr_cropped = pr_img.crop((70, 70, 1130, 480))
-        
-        # Add a subtle drop shadow or rounded corner effect if desired (optional)
-        # For simplicity, we just paste it cleanly in the center
-        bg_w, bg_h = bg_img.size
-        pr_w, pr_h = pr_cropped.size
-        offset = ((bg_w - pr_w) // 2, (bg_h - pr_h) // 2)
-        
-        bg_img.paste(pr_cropped, offset, pr_cropped)
-        bg_img.convert('RGB').save(comic_path, format="PNG")
-        
-        print("✅ Successfully composited AI background and Real PR Card.")
-            
     except Exception as e:
-        print(f"⚠️ AI Compositing failed: {e}")
-        print("↩️ Falling back to ONLY GitHub PR OpenGraph image...")
-        try:
-            repo = os.environ.get('GITHUB_REPOSITORY', 'RatLoopz/sahidawa-india')
-            pr_number = pr.get('number')
-            og_url = f"https://opengraph.githubassets.com/1/{repo}/pull/{pr_number}"
+        print(f"⚠️ Pollinations API failed: {e}")
+
+    # Step 3 — Composite or Fallback
+    try:
+        from PIL import Image
+        import io
+        if not og_content:
+            raise ValueError("No GitHub OG image available")
             
-            og_resp = requests.get(og_url, timeout=30)
-            og_resp.raise_for_status()
-            
-            from PIL import Image
-            import io
-            img = Image.open(io.BytesIO(og_resp.content))
-            width, height = img.size
-            # Crop just the bottom 20 pixels to remove the language color bar
-            cropped = img.crop((0, 0, width, height - 20))
-            
+        pr_img = Image.open(io.BytesIO(og_content)).convert("RGBA")
+        width, height = pr_img.size
+
+        if bg_img:
+            # Composite
+            pr_cropped = pr_img.crop((70, 70, 1130, 480))
+            bg_w, bg_h = bg_img.size
+            pr_w, pr_h = pr_cropped.size
+            offset = ((bg_w - pr_w) // 2, (bg_h - pr_h) // 2)
+            bg_img.paste(pr_cropped, offset, pr_cropped)
+            bg_img.convert('RGB').save(comic_path, format="PNG")
+            print("✅ Successfully composited AI background and Real PR Card.")
+        else:
+            # Fallback
+            print("↩️ Falling back to ONLY GitHub PR OpenGraph image...")
+            cropped = pr_img.crop((0, 0, width, height - 20))
             cropped.save(comic_path, format="PNG")
             print("✅ GitHub OG fallback image cropped and saved successfully.")
-        except Exception as fallback_e:
-            print(f"⚠️ GitHub OG fallback failed: {fallback_e}")
-            return None
+            
+    except Exception as e:
+        print(f"⚠️ Image processing completely failed: {e}")
+        return None
 
     # Step 2 — Register upload with LinkedIn
     print("📤 Registering image upload with LinkedIn...")
