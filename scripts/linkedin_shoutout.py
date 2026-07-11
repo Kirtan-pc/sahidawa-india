@@ -410,44 +410,94 @@ def assemble_final_post(ai_content: str, pr: dict) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 # IMAGE GENERATION + LINKEDIN NATIVE IMAGE UPLOAD
 # ─────────────────────────────────────────────────────────────────────────────
+def generate_comic_prompt_with_gemini(pr: dict, api_key: str) -> str:
+    print("🧠 Generating dynamic visual prompt for the PR comic...")
+    system_prompt = (
+        "You are an expert technical illustrator creating prompts for an AI image generator (Imagen 3). "
+        "Your task is to take a GitHub Pull Request and design a whiteboard-style stickman comic prompt that explains the technical change with developer humor.\n\n"
+        "RULES FOR THE PROMPT YOU GENERATE:\n"
+        "1. Visual Style: Minimalist hand-drawn stickmen on a clean off-white whiteboard with subtle gray dot grid. No 3D, no neon, no gradients.\n"
+        "2. Characters: Create two stickmen representing concepts in the PR (e.g., 'Main Thread' vs 'Web Worker', 'Frontend' vs 'Database', 'Dev' vs 'Bug', 'Old API' vs 'New Cache'). Label them clearly.\n"
+        "3. Action: Show a funny interaction metaphor for the PR. For example, one struggling with heavy boxes while the other helps, or one throwing something away.\n"
+        "4. Speech Bubbles: Include short, witty developer humor in speech bubbles.\n"
+        "5. PR Card: The prompt MUST instruct the image generator to draw a GitHub PR card at the bottom containing exactly:\n"
+        f"   - {pr.get('repo', 'RatLoopz/sahidawa-india')}\n"
+        f"   - PR #{pr.get('number', '???')}\n"
+        f"   - Title: {pr.get('title', 'Unknown')}\n"
+        f"   - @{pr.get('author', 'contributor')}\n"
+        f"   - +{pr.get('additions', '?')} additions, −{pr.get('deletions', '?')} deletions, {pr.get('files_count', '?')} files\n"
+        "   - An arrow pointing to the contributor avatar saying 'this guy cooked 👨‍🍳'.\n"
+        "6. Format: Do NOT use markdown code blocks. Output ONLY the raw image generation prompt string."
+    )
+    user_prompt = f"PR Title: {pr.get('title', '')}\nPR Body: {pr.get('body', '')[:500]}\nGenerate the detailed image prompt."
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={api_key}"
+    payload = {
+        "systemInstruction": {"parts": [{"text": system_prompt}]},
+        "contents": [{"parts": [{"text": user_prompt}]}],
+        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 800},
+    }
+    
+    try:
+        resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload, timeout=30)
+        resp.raise_for_status()
+        text = resp.json().get("candidates", [])[0].get("content", {}).get("parts", [])[0].get("text", "").strip()
+        if len(text) > 50:
+            # Clean up potential markdown formatting
+            text = text.replace("```text", "").replace("```prompt", "").replace("```", "").strip()
+            return text
+    except Exception as e:
+        print(f"⚠️ Dynamic prompt generation failed: {e}")
+    
+    # Generic fallback prompt
+    return f"""A clean, minimal, professional LinkedIn engineering micro-comic on a whiteboard background.
+Two simple stickmen developers interacting. One is struggling with heavy technical debt, the other provides a solution.
+Include speech bubbles with developer humor.
+At the bottom, draw a GitHub PR card exactly like this:
+RatLoopz/sahidawa-india
+PR #{pr.get('number', '???')}
+{pr.get('title', 'Unknown')}
+@{pr.get('author', 'contributor')}
++{pr.get('additions', '?')} additions, −{pr.get('deletions', '?')} deletions
+Draw an arrow pointing to the contributor's avatar that says "this guy cooked 👨‍🍳".
+"""
+
 def generate_and_upload_image(pr: dict, access_token: str, org_urn: str) -> str | None:
     """
-    1. Run generate_pr_comic.py to build the comic PNG.
+    1. Call Gemini API (Imagen 3) to generate the comic PNG.
     2. Upload it natively to LinkedIn via Assets API.
     Returns the image asset URN on success, or None on any failure.
     """
     comic_path = "/tmp/pr_comic.png"
-    env = {
-        **os.environ,
-        "PR_NUMBER":       pr.get("number", ""),
-        "PR_TITLE":        pr.get("title", ""),
-        "PR_AUTHOR":       pr.get("author", ""),
-        "PR_AUTHOR_AVATAR":pr.get("author_avatar", ""),
-        "PR_URL":          pr.get("url", ""),
-        "PR_REPO":         pr.get("repo", ""),
-        "PR_LINES_CHANGED":pr.get("lines_changed", "0"),
-        "PR_ADDITIONS":    pr.get("additions", "?"),
-        "PR_DELETIONS":    pr.get("deletions", "?"),
-        "PR_FILES_COUNT":  pr.get("files_count", "?"),
-        "PR_COMMITS_COUNT":pr.get("commits_count", "?"),
+    api_key = get_env_or_exit("GEMINI_API_KEY")
+    
+    prompt = generate_comic_prompt_with_gemini(pr, api_key)
+
+    # Step 1 — Generate comic via Gemini Imagen API
+    print("🎨 Requesting engineering comic from Gemini API...")
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key={api_key}"
+    payload = {
+        "instances": [{"prompt": prompt}],
+        "parameters": {
+            "sampleCount": 1,
+            "aspectRatio": "16:9"
+        }
     }
-
-    # Step 1 — Generate comic
-    print("🎨 Generating engineering comic...")
     try:
-        result = subprocess.run(
-            [sys.executable, "scripts/generate_pr_comic.py"],
-            env=env, capture_output=True, text=True, timeout=60
-        )
-        if result.returncode != 0:
-            raise RuntimeError(result.stderr)
-        print(result.stdout.strip())
+        resp = requests.post(url, headers={"Content-Type": "application/json"}, json=payload, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+        
+        # Write binary image to /tmp
+        import base64
+        b64_img = data["predictions"][0]["bytesBase64Encoded"]
+        with open(comic_path, "wb") as f:
+            f.write(base64.b64decode(b64_img))
+        print("✅ Imagen generated comic successfully.")
     except Exception as e:
-        print(f"⚠️  Comic generation failed: {e}")
-        return None
-
-    if not os.path.exists(comic_path):
-        print("⚠️  Comic file not found after generation.")
+        print(f"⚠️ Imagen API generation failed: {e}")
+        if 'resp' in locals():
+            print(f"Response: {resp.text[:500]}")
         return None
 
     # Step 2 — Register upload with LinkedIn
