@@ -7,6 +7,7 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
 
 module.exports = {
     testEnvironment: "jsdom",
+    testTimeout: 30000,
     setupFiles: ["<rootDir>/jest.env.cjs"],
     setupFilesAfterEnv: ["<rootDir>/tests/setupTests.ts"],
     roots: ["<rootDir>/tests"],
