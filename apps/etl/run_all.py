@@ -234,6 +234,11 @@ async def run(
             "(pass --backfill-ja-price to enable)."
         )
 
+    # ── CACHE INVALIDATION ─────────────────────────────────────────────────────
+    # Notify the API server to flush stale Redis entries so users see the fresh
+    # data immediately rather than waiting for TTL expiry.
+    loader.notify_cache_invalidation()
+
     _summary(stats)
     return stats
 

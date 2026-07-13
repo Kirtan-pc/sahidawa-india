@@ -640,6 +640,52 @@ class SupabaseLoader:
     def _utc_now(self) -> str:
         return datetime.now(timezone.utc).isoformat()
 
+    def notify_cache_invalidation(self) -> None:
+        """
+        Notify the API server to invalidate its Redis cache after an ETL upsert.
+
+        Makes an authenticated POST to the API's ``/api/webhooks/etl/medicines-updated``
+        endpoint so subsequent user requests serve fresh data instead of stale
+        cache entries.
+
+        Fails silently when the API is unreachable or not configured — cache
+        staleness is a performance degradation, not a data-loss event.
+        """
+        api_url = os.getenv("API_BASE_URL")
+        webhook_secret = os.getenv("SUPABASE_WEBHOOK_SECRET")
+
+        if not api_url or not webhook_secret:
+            logger.info(
+                "[Loader] Cache invalidation skipped — "
+                "API_BASE_URL or SUPABASE_WEBHOOK_SECRET not set"
+            )
+            return
+
+        endpoint = f"{api_url.rstrip('/')}/api/webhooks/etl/medicines-updated"
+
+        try:
+            response = requests.post(
+                endpoint,
+                headers={
+                    "Authorization": f"Bearer {webhook_secret}",
+                    "Content-Type": "application/json",
+                },
+                json={},
+                timeout=10,
+            )
+            if response.ok:
+                body = response.json()
+                logger.info(
+                    f"[Loader] Cache invalidation sent — "
+                    f"deleted {body.get('invalidated', 0)} key(s)"
+                )
+            else:
+                logger.warning(
+                    f"[Loader] Cache invalidation returned {response.status_code}: "
+                    f"{response.text[:200]}"
+                )
+        except requests.RequestException as e:
+            logger.warning(f"[Loader] Cache invalidation notification failed: {e}")
 
     # ── Jan Aushadhi price backfill ──────────────────────────────────────────
 
