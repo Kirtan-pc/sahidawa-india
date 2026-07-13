@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { requireAuth, AuthenticatedRequest } from "../middleware/auth";
-import { limiter } from "../middleware/rateLimit";
+import { limiter, authLimiter } from "../middleware/rateLimit";
 import { z } from "zod";
 import crypto from "crypto";
 import {
@@ -44,7 +44,7 @@ const router = Router();
 
 // POST /api/v1/abha/link
 // Initiates ABHA linking by generating an OTP for the given ABHA address
-router.post("/link", limiter, async (req: Request, res: Response): Promise<void> => {
+router.post("/link", authLimiter, async (req: Request, res: Response): Promise<void> => {
     try {
         const parsed = linkSchema.safeParse(req.body);
         if (!parsed.success) {
@@ -242,7 +242,7 @@ router.get(
 
 // GET /api/v1/abha/callback
 // Handles ABDM redirect execution flow
-router.get("/callback", limiter, async (req: Request, res: Response): Promise<void> => {
+router.get("/callback", authLimiter, async (req: Request, res: Response): Promise<void> => {
     try {
         const { code, state } = req.query;
         if (!code || !state) {

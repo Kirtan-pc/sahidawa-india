@@ -143,6 +143,14 @@ export const analyticsLimiter = createLimiter({
     prefix: "analytics",
 });
 
+/** Authentication endpoints — strict limit to prevent credential brute-forcing and OTP bombing. */
+export const authLimiter = createLimiter({
+    windowMs: 60 * 1000,
+    max: 5,
+    message: "Too many authentication attempts. Please try again later.",
+    prefix: "auth",
+});
+
 // ── Notification registration limiter ──────────────────────────────────────────
 export const notificationRegisterLimiter = rateLimit({
     skip: () => process.env.NODE_ENV === "test",
