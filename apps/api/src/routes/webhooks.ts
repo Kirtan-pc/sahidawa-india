@@ -3,6 +3,7 @@ import { safeCompare } from "../utils/cryptoUtils";
 import { redisClient } from "../utils/redis";
 import logger from "../utils/logger";
 import { webhookLimiter } from "../middleware/rateLimit";
+import { invalidateCacheByPattern } from "../services/cache.service";
 
 const router = Router();
 
@@ -305,6 +306,70 @@ router.post(
 
         const pattern = id ? `user:${id}*` : "user:*";
         handleAsyncInvalidation("users", pattern, res);
+    }
+);
+
+/**
+ * POST /api/webhooks/etl/medicines-updated
+ *
+ * Called by the ETL pipeline after it completes a medicines table upsert.
+ * Invalidates ALL drug batch, voice, and interaction cache entries so
+ * subsequent API requests pick up fresh data from Supabase.
+ *
+ * Secured via SUPABASE_WEBHOOK_SECRET environment variable.
+ */
+router.post(
+    "/etl/medicines-updated",
+    webhookLimiter,
+    async (req: Request, res: Response): Promise<void> => {
+        const secret = process.env.SUPABASE_WEBHOOK_SECRET;
+        const authHeader = req.headers["authorization"];
+
+        const isValid =
+            typeof secret === "string" &&
+            typeof authHeader === "string" &&
+            safeCompare(authHeader, `Bearer ${secret}`);
+
+        if (!isValid) {
+            logger.warn("Unauthorized webhook attempt on /api/webhooks/etl/medicines-updated", {
+                ip: req.ip,
+            });
+            res.status(401).json({ error: "Unauthorized" });
+            return;
+        }
+
+        try {
+            if (!redisClient.isOpen) {
+                logger.warn("Redis not connected — skipping ETL cache invalidation");
+                res.status(200).json({ invalidated: 0, message: "Redis unavailable" });
+                return;
+            }
+
+            const patterns = [
+                "drug:batch:*",
+                "medicine:voice:*",
+                "medicine:voice:audio:*",
+                "interactions:*",
+            ];
+
+            const results: { pattern: string; deleted: number }[] = [];
+            for (const pattern of patterns) {
+                const keys = await invalidateCacheByPattern(pattern);
+                results.push({ pattern, deleted: keys.length });
+            }
+
+            const totalDeleted = results.reduce((sum, r) => sum + r.deleted, 0);
+            logger.info(
+                `ETL cache invalidation complete — deleted ${totalDeleted} key(s) across ${patterns.length} patterns`,
+                { results }
+            );
+
+            res.status(200).json({ invalidated: totalDeleted, patterns: results });
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            logger.error("Failed to invalidate cache via ETL webhook", { error: message });
+            res.status(500).json({ error: "Cache invalidation failed" });
+        }
     }
 );
 
