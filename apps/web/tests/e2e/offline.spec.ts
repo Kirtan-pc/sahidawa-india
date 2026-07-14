@@ -82,16 +82,16 @@ test.describe("Offline Scanner and Sync Queue", () => {
 
         // Setup interception at CONTEXT level so SW-initiated requests are captured too.
         // The sync API calls either ML endpoint (/verify/batch) or Node API (/api/verify)
-        const syncRequestPromise = context.waitForRequest(
-            (request) => {
+        const syncRequestPromise = context.waitForEvent("request", {
+            predicate: (request: any) => {
                 const url = request.url();
                 const isVerifyRequest =
                     url.includes("/api/verify") || url.includes("/verify/batch");
                 const isPost = request.method() === "POST";
                 return isVerifyRequest && isPost;
             },
-            { timeout: 30000 } // increased timeout
-        );
+            timeout: 30000, // increased timeout
+        });
 
         // Reconnect the network
         await context.setOffline(false);
@@ -121,16 +121,16 @@ test.describe("Offline Scanner and Sync Queue", () => {
 
         // Fallback: Manually trigger the queue flush through the app's sync mechanism
         if (!syncRequest) {
-            const fallbackPromise = context.waitForRequest(
-                (request) => {
+            const fallbackPromise = context.waitForEvent("request", {
+                predicate: (request: any) => {
                     const url = request.url();
                     return (
                         (url.includes("/api/verify") || url.includes("/verify/batch")) &&
                         request.method() === "POST"
                     );
                 },
-                { timeout: 20000 } // increased timeout for fallback
-            );
+                timeout: 20000, // increased timeout for fallback
+            });
 
             // Dispatch online event again to re-trigger queue flush
             await page.evaluate(async () => {
