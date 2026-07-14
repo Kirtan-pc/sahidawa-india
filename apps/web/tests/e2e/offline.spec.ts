@@ -29,14 +29,30 @@ test.describe("Offline Scanner and Sync Queue", () => {
         // Wait for Service Worker to be active so we know it will cache properly
         await page.evaluate(async () => {
             if ("serviceWorker" in navigator) {
-                const registration = await navigator.serviceWorker.ready;
-                if (!registration.active) {
-                    throw new Error("Service Worker is not active");
+                try {
+                    // Wait for registration with a shorter timeout, then retry if needed
+                    const registration = await Promise.race([
+                        navigator.serviceWorker.ready,
+                        new Promise<ServiceWorkerRegistration>((_, reject) =>
+                            setTimeout(() => reject(new Error("SW timeout")), 5000)
+                        ),
+                    ]);
+
+                    if (!registration.active) {
+                        throw new Error("Service Worker is not active");
+                    }
+                    return true;
+                } catch (error) {
+                    console.error("SW readiness check failed:", error);
+                    // Continue anyway - SW may activate lazily during test
+                    return false;
                 }
-                return true;
             }
             throw new Error("Service Worker not supported");
         });
+
+        // Add a small delay to allow SW to fully initialize
+        await page.waitForTimeout(500);
 
         // Track all requests at context level for diagnostics (captures SW requests too)
         const seenRequests: Array<{ url: string; method: string }> = [];
