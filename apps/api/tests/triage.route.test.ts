@@ -57,7 +57,7 @@ describe("triage routes response validation", () => {
         it("returns 200 and passes a well-formed response through unchanged", async () => {
             mockRetrieve.mockResolvedValue([validMedicine]);
 
-            const res = await request(server)
+            const res = await request(app)
                 .post("/api/triage/medicine-query")
                 .send({ query: "fever" });
 
@@ -70,7 +70,7 @@ describe("triage routes response validation", () => {
         it("returns 502 when the RAG service yields a malformed medicine", async () => {
             mockRetrieve.mockResolvedValue([malformedMedicine]);
 
-            const res = await request(server)
+            const res = await request(app)
                 .post("/api/triage/medicine-query")
                 .send({ query: "fever" });
 
@@ -81,7 +81,7 @@ describe("triage routes response validation", () => {
         });
 
         it("returns 400 on an invalid request body (real Zod schema still runs)", async () => {
-            const res = await request(server).post("/api/triage/medicine-query").send({});
+            const res = await request(app).post("/api/triage/medicine-query").send({});
 
             expect(res.status).toBe(400);
             expect(mockRetrieve).not.toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe("triage routes response validation", () => {
         it("returns 200 with a valid response and no coordinates", async () => {
             mockRetrieve.mockResolvedValue([validMedicine]);
 
-            const res = await request(server)
+            const res = await request(app)
                 .post("/api/triage/recommend")
                 .send({ symptoms: "mild fever and headache" });
 
@@ -105,7 +105,7 @@ describe("triage routes response validation", () => {
         it("flags an emergency for urgent symptoms", async () => {
             mockRetrieve.mockResolvedValue([validMedicine]);
 
-            const res = await request(server)
+            const res = await request(app)
                 .post("/api/triage/recommend")
                 .send({ symptoms: "chest pain since morning" });
 
@@ -117,7 +117,7 @@ describe("triage routes response validation", () => {
         it("returns 502 when the RAG service yields a malformed medicine", async () => {
             mockRetrieve.mockResolvedValue([malformedMedicine]);
 
-            const res = await request(server)
+            const res = await request(app)
                 .post("/api/triage/recommend")
                 .send({ symptoms: "mild fever and headache" });
 
@@ -128,7 +128,7 @@ describe("triage routes response validation", () => {
         });
 
         it("returns 400 on an invalid request body", async () => {
-            const res = await request(server).post("/api/triage/recommend").send({});
+            const res = await request(app).post("/api/triage/recommend").send({});
 
             expect(res.status).toBe(400);
             expect(mockRetrieve).not.toHaveBeenCalled();
