@@ -17,9 +17,9 @@ import { Toaster } from "sonner";
 import Footer from "./components/Footer";
 import { AuthProvider } from "@/src/components/AuthProvider";
 import { TracingInitializer } from "@/components/TracingInitializer";
-
 import { InteractiveOverlays } from "./components/InteractiveOverlays";
 import { ReactQueryProvider } from "./components/ReactQueryProvider";
+import PrivacyConsentBanner from "@/components/PrivacyConsentBanner";
 
 export async function generateMetadata({
     params,
@@ -104,6 +104,7 @@ export default async function LocaleLayout({
                                         </main>
                                         <Footer />
                                         <InteractiveOverlays />
+                                        <PrivacyConsentBanner />
                                     </AuthProvider>
                                 </NuqsAdapter>
                             </NextIntlClientProvider>

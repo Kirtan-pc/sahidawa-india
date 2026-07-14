@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AlertCircle, Loader2 } from "lucide-react";
-import PrivacyConsentBanner from "@/components/PrivacyConsentBanner";
 /**
  * PharmacyMap Component
  * Real Leaflet.js + OpenStreetMap integration for SahiDawa
@@ -21,18 +20,6 @@ function escapeHtml(str: string): string {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
-
-export default function PharmacyMap() {
-    return (
-        <div className="relative min-h-screen">
-            {/* Aapka existing Map code */}
-
-            {/* Privacy Banner add karein */}
-            <PrivacyConsentBanner />
-        </div>
-    );
-}
-
 export interface Pharmacy {
     id: number;
     name: string;
