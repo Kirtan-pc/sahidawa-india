@@ -8,6 +8,7 @@ import { Link } from "@/i18n/routing";
 import { getChatbotPanelClasses, getChatbotPositionClasses } from "./chatbotPosition";
 import { ChatMarkdown } from "@/app/components/ChatMarkdown";
 import { isAbortError, readChatErrorMessage, readTextResponseStream } from "@/lib/chatStream";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 type Message = {
     text: string;
@@ -121,6 +122,7 @@ export default function Chatbot() {
             activeRequestRef.current?.abort();
         };
     }, []);
+    useFocusTrap(chatbotRef, isOpen);
 
     // Securely check route-based visibility after hook declarations to satisfy React Rules of Hooks
     if (pathname && pathname.includes("/health")) {
@@ -195,8 +197,16 @@ export default function Chatbot() {
 
     return (
         <div className={getChatbotPositionClasses({ pathname, isOpen })}>
+            <div aria-live="polite" className="sr-only">
+                {isOpen ? `${titleLabel} ${statusLabel}` : ""}
+            </div>
             <div
                 ref={chatbotRef}
+                role="dialog"
+                aria-modal={isOpen}
+                aria-hidden={!isOpen}
+                aria-label={titleLabel}
+                inert={!isOpen}
                 className={`${getChatbotPanelClasses({ pathname })} ${
                     isOpen
                         ? "pointer-events-auto scale-100 opacity-100"

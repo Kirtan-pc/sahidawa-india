@@ -16,6 +16,7 @@ import {
     FileText,
     User,
 } from "lucide-react";
+import { useFocusTrap } from "@/hooks/useFocusTrap";
 
 interface Command {
     id: string;
@@ -145,6 +146,7 @@ export default function CommandPalette() {
         if (isOpen) document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen]);
+    useFocusTrap(containerRef, isOpen);
 
     // Arrow key navigation
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -173,6 +175,9 @@ export default function CommandPalette() {
         <div className="fixed inset-0 z-[9999] flex items-start justify-center bg-black/50 pt-[15vh] backdrop-blur-sm">
             <div
                 ref={containerRef}
+                role="dialog"
+                aria-modal="true"
+                aria-label={t("placeholder")}
                 className="w-full max-w-lg rounded-2xl border border-(--color-border-muted) bg-(--color-surface-page) shadow-2xl"
             >
                 {/* Search input */}
