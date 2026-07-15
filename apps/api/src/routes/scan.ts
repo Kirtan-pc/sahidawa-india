@@ -7,7 +7,10 @@ import crypto from "crypto";
 import logger from "../utils/logger";
 import { supabase } from "../db/client";
 import { getMlServiceUrl, MISSING_ML_SERVICE_URL_MESSAGE } from "../config/mlService";
-import { validateUploadSize } from "../middleware/uploadSizeValidator";
+import {
+    MULTER_SCAN_FILE_SIZE_CUTOFF_BYTES,
+    validateUploadSize,
+} from "../middleware/uploadSizeValidator";
 import { uploadRateLimiter } from "../middleware/uploadRateLimit";
 import { scanQueryLimiter } from "../middleware/rateLimit";
 import { redisClient } from "../utils/redis";
@@ -51,7 +54,7 @@ const upload = multer({
             cb(null, uniqueName);
         },
     }),
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+    limits: { fileSize: MULTER_SCAN_FILE_SIZE_CUTOFF_BYTES },
     fileFilter(_req, file, cb) {
         if (ALLOWED_MIME_TYPES.has(file.mimetype)) {
             cb(null, true);
