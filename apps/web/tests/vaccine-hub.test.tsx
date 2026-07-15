@@ -213,8 +213,9 @@ describe("VaccineHubPage Integration Tests", () => {
 
         // Verify date input appears
         await waitFor(() => {
-            const dateInput = screen.getByLabelText(/birth date/i);
+            const dateInput = screen.getByLabelText(/birth date/i) as HTMLInputElement;
             expect(dateInput).toBeInTheDocument();
+            expect(dateInput).toHaveAttribute("type", "date");
         });
     });
 
@@ -234,7 +235,7 @@ describe("VaccineHubPage Integration Tests", () => {
 
         // Enter date
         const dateInput = screen.getByLabelText(/birth date/i) as HTMLInputElement;
-        await user.type(dateInput, "01012024");
+        fireEvent.change(dateInput, { target: { value: "2024-01-01" } });
 
         // Verify doses are calculated
         await waitFor(() => {
@@ -242,7 +243,7 @@ describe("VaccineHubPage Integration Tests", () => {
         });
     });
 
-    it("rejects an impossible typed date like 31/02/2026 and does not use it for the schedule", async () => {
+    it("uses one accessible native date input instead of a hidden overlay picker", async () => {
         render(<VaccineHubPage />);
 
         // Select vaccine
@@ -256,27 +257,14 @@ describe("VaccineHubPage Integration Tests", () => {
         const polioOption = screen.getAllByText(/Poliomyelitis/i)[0];
         await user.click(polioOption);
 
-        // Type an impossible date: 31/02/2026 (February never has 31 days)
         const dateInput = screen.getByLabelText(/birth date/i) as HTMLInputElement;
-        await user.type(dateInput, "31022026");
 
-        // The raw typed text is still shown to the user...
-        await waitFor(() => {
-            expect(dateInput.value).toBe("31/02/2026");
-        });
-
-        // ...but an inline validation error appears...
-        expect(screen.getByText("Please enter a valid date.")).toBeInTheDocument();
-        expect(dateInput).toHaveAttribute("aria-invalid", "true");
-
-        // ...and it must never be silently normalized (e.g. rolled over to March)
-        // or used to compute a dose schedule.
-        expect(screen.queryByText(/31 Feb 2026/)).not.toBeInTheDocument();
-        expect(screen.queryByText(/3 Mar 2026/)).not.toBeInTheDocument();
-        expect(localStorage.getItem("vaccine-hub-initial-date")).toBeNull();
+        expect(dateInput).toHaveAttribute("type", "date");
+        expect(dateInput).not.toHaveAttribute("aria-hidden", "true");
+        expect(document.querySelector('input[type="date"].opacity-0')).not.toBeInTheDocument();
     });
 
-    it("clears the invalid-date error once a real date is typed", async () => {
+    it("clears the selected date when the native input is cleared", async () => {
         render(<VaccineHubPage />);
 
         const selector = screen.getByRole("button", { name: /Select a vaccine/i });
@@ -291,17 +279,17 @@ describe("VaccineHubPage Integration Tests", () => {
 
         const dateInput = screen.getByLabelText(/birth date/i) as HTMLInputElement;
 
-        // First, an impossible date
-        await user.type(dateInput, "31022026");
-        expect(screen.getByText("Please enter a valid date.")).toBeInTheDocument();
-
-        // Clear and type a real one
-        await user.clear(dateInput);
-        await user.type(dateInput, "28022026");
+        fireEvent.change(dateInput, { target: { value: "2026-02-28" } });
 
         await waitFor(() => {
-            expect(screen.queryByText("Please enter a valid date.")).not.toBeInTheDocument();
             expect(screen.getByText(/28 Feb 2026/)).toBeInTheDocument();
+        });
+
+        fireEvent.change(dateInput, { target: { value: "" } });
+
+        await waitFor(() => {
+            expect(screen.queryByText(/28 Feb 2026/)).not.toBeInTheDocument();
+            expect(localStorage.getItem("vaccine-hub-initial-date")).toBeNull();
         });
     });
 
@@ -361,7 +349,7 @@ describe("VaccineHubPage Integration Tests", () => {
         await user.click(polioOption);
 
         const dateInput = screen.getByLabelText(/birth date/i) as HTMLInputElement;
-        await user.type(dateInput, "01012024");
+        fireEvent.change(dateInput, { target: { value: "2024-01-01" } });
 
         // Unmount and remount
         unmount();
@@ -392,7 +380,7 @@ describe("VaccineHubPage Integration Tests", () => {
         await user.click(polioOption);
 
         const dateInput = screen.getByLabelText(/birth date/i) as HTMLInputElement;
-        await user.type(dateInput, "01012024");
+        fireEvent.change(dateInput, { target: { value: "2024-01-01" } });
 
         expect(localStorage.getItem("vaccine-hub-initial-date")).toBe("2024-01-01");
 
