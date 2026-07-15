@@ -17,6 +17,7 @@ import {
     type AdherenceStats,
 } from "@/lib/scheduleApi";
 import { useSession } from "@/src/components/AuthProvider";
+import { formatTime } from "@/lib/medicineDateUtils";
 
 type LoadState =
     | { kind: "loading" }
@@ -99,14 +100,6 @@ export default function ScheduleDetailPage() {
             month: "short",
             day: "numeric",
         });
-    }
-
-    function formatTime(time: string): string {
-        const [h, m] = time.split(":");
-        const hour = parseInt(h, 10);
-        const ampm = hour >= 12 ? "PM" : "AM";
-        const hour12 = hour % 12 || 12;
-        return `${hour12}:${m} ${ampm}`;
     }
 
     return (

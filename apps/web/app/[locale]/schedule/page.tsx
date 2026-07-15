@@ -19,14 +19,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { fetchTodaySummary, logDose, type TodaySchedule } from "@/lib/scheduleApi";
 import { useSession } from "@/src/components/AuthProvider";
 import { useTranslations } from "next-intl";
-
-function formatTime(time: string): string {
-    const [h, m] = time.split(":");
-    const hour = parseInt(h, 10);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    const hour12 = hour % 12 || 12;
-    return `${hour12}:${m} ${ampm}`;
-}
+import { formatTime } from "@/lib/medicineDateUtils";
 
 function DoseStatus({ status, t }: { status: string; t: (key: string) => string }) {
     if (status === "taken") {
