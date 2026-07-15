@@ -2,7 +2,7 @@ import express, { Router } from "express";
 import { randomInt } from "node:crypto";
 import { z } from "zod";
 import { requireAuth, requireRole, optionalAuth, AuthenticatedRequest } from "../middleware/auth";
-import { notificationRegisterLimiter } from "../middleware/rateLimit";
+import { notificationRegisterLimiter, authTargetLimiter } from "../middleware/rateLimit";
 import { cacheMiddleware } from "../middleware/cache";
 import { verifyTwilioSignature } from "../middleware/twilioSignature";
 import { supabase, dbConfig } from "../db/client";
@@ -249,6 +249,7 @@ router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
 router.post(
     "/register",
     notificationRegisterLimiter,
+    authTargetLimiter,
     optionalAuth,
     async (req: AuthenticatedRequest, res) => {
         const parsed = registerSchema.safeParse(req.body);
@@ -446,7 +447,7 @@ const verifyOtpSchema = z
     })
     .strict();
 
-router.post("/verify-otp", async (req, res) => {
+router.post("/verify-otp", authTargetLimiter, async (req, res) => {
     const parsed = verifyOtpSchema.safeParse(req.body);
     if (!parsed.success) {
         res.status(400).json({ error: "Invalid payload", issues: parsed.error.issues });

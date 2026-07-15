@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { requireAuth, AuthenticatedRequest } from "../middleware/auth";
-import { limiter, authLimiter } from "../middleware/rateLimit";
+import { limiter, authLimiter, authTargetLimiter } from "../middleware/rateLimit";
 import { z } from "zod";
 import crypto from "crypto";
 import {
@@ -44,31 +44,37 @@ const router = Router();
 
 // POST /api/v1/abha/link
 // Initiates ABHA linking by generating an OTP for the given ABHA address
-router.post("/link", authLimiter, async (req: Request, res: Response): Promise<void> => {
-    try {
-        const parsed = linkSchema.safeParse(req.body);
-        if (!parsed.success) {
-            res.status(400).json({
-                error: "Invalid link payload",
-                issues: parsed.error.issues,
-            });
-            return;
-        }
+router.post(
+    "/link",
+    authLimiter,
+    authTargetLimiter,
+    async (req: Request, res: Response): Promise<void> => {
+        try {
+            const parsed = linkSchema.safeParse(req.body);
+            if (!parsed.success) {
+                res.status(400).json({
+                    error: "Invalid link payload",
+                    issues: parsed.error.issues,
+                });
+                return;
+            }
 
-        const result = await generateOTP(parsed.data.abhaAddress);
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(500).json({
-            error: error instanceof Error ? error.message : "Failed to generate OTP",
-        });
+            const result = await generateOTP(parsed.data.abhaAddress);
+            res.status(200).json(result);
+        } catch (error) {
+            res.status(500).json({
+                error: error instanceof Error ? error.message : "Failed to generate OTP",
+            });
+        }
     }
-});
+);
 
 // POST /api/v1/abha/verify-otp
 // Verifies the OTP and returns an ABHA token
 router.post(
     "/verify-otp",
     limiter,
+    authTargetLimiter,
     requireAuth,
     async (req: AuthenticatedRequest, res: Response): Promise<void> => {
         try {

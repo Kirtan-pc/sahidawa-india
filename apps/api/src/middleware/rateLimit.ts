@@ -1,4 +1,5 @@
 import rateLimit, { Store } from "express-rate-limit";
+import { Request, Response } from "express";
 import { RedisStore } from "rate-limit-redis";
 import { redisClient } from "../utils/redis";
 import logger from "../utils/logger";
@@ -17,6 +18,27 @@ const createLimiter = (options: LimiterOptions) => {
         standardHeaders: true,
         legacyHeaders: false,
         store: buildStore(options.prefix || "general"),
+        handler: (_req, res) => {
+            res.status(429).json({
+                error: options.message,
+            });
+        },
+    });
+};
+
+export interface KeyLimiterOptions extends LimiterOptions {
+    keyGenerator: (req: Request, res: Response) => string | Promise<string>;
+}
+
+export const createKeyLimiter = (options: KeyLimiterOptions) => {
+    return rateLimit({
+        skip: () => process.env.NODE_ENV === "test",
+        windowMs: options.windowMs,
+        max: options.max,
+        standardHeaders: true,
+        legacyHeaders: false,
+        keyGenerator: options.keyGenerator,
+        store: buildStore(options.prefix || "general_key"),
         handler: (_req, res) => {
             res.status(429).json({
                 error: options.message,
@@ -149,6 +171,21 @@ export const authLimiter = createLimiter({
     max: 5,
     message: "Too many authentication attempts. Please try again later.",
     prefix: "auth",
+});
+
+/** Target-based limiter to prevent OTP bombing against a specific user/target irrespective of IP */
+export const authTargetLimiter = createKeyLimiter({
+    windowMs: 10 * 60 * 1000, // 10 minutes
+    max: 5, // Max 5 requests per 10 minutes per target
+    message: "Too many requests for this target. Please try again later.",
+    prefix: "auth_target",
+    keyGenerator: (req: Request) => {
+        // Look for common identity keys in the request body
+        if (req.body?.abhaAddress) return `abha:${req.body.abhaAddress}`;
+        if (req.body?.phone_number) return `phone:${req.body.phone_number}`;
+        // Fallback to IP if no explicit target is found
+        return req.ip || "unknown";
+    },
 });
 
 // ── Notification registration limiter ──────────────────────────────────────────
