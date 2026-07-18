@@ -80,6 +80,38 @@ describe("POST /api/chat", () => {
         process.env.ML_SERVICE_URL = originalMlServiceUrl;
     });
 
+    it("returns 400 with a clear message when the request JSON is malformed", async () => {
+        const response = await POST(
+            new Request("http://localhost/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: "{ this is not valid json",
+            })
+        );
+
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toEqual({
+            error: "Invalid JSON body",
+        });
+        expect(generateContentMock).not.toHaveBeenCalled();
+        expect(generateContentStreamMock).not.toHaveBeenCalled();
+    });
+
+    it("returns 400 when the request body is empty", async () => {
+        const response = await POST(
+            new Request("http://localhost/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: "",
+            })
+        );
+
+        expect(response.status).toBe(400);
+        await expect(response.json()).resolves.toEqual({
+            error: "Invalid JSON body",
+        });
+    });
+
     it("forces emergency true when deterministic detection matches", async () => {
         generateContentMock.mockResolvedValue({
             text: JSON.stringify({

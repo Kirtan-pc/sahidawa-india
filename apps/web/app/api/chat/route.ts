@@ -208,7 +208,23 @@ export async function POST(req: Request) {
             );
         }
         const ai = getAiClient();
-        const { messages, mode, responseLanguage, locale, session_id } = await req.json();
+
+        let requestBody: any;
+        try {
+            requestBody = await req.json();
+        } catch (parseError: unknown) {
+            structuredLog({
+                log_level: "warn",
+                route: ROUTE,
+                meta: {
+                    reason: "invalid_json_body",
+                    error: parseError instanceof Error ? parseError.message : String(parseError),
+                },
+            });
+            return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+        }
+
+        const { messages, mode, responseLanguage, locale, session_id } = requestBody;
 
         if (!Array.isArray(messages) || messages.length === 0) {
             return NextResponse.json({ error: "Messages are required" }, { status: 400 });
