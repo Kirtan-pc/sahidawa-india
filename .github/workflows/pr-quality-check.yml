@@ -144,7 +144,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Build Next.js
-        run: npm run build -w web
+        run: npx turbo run build --filter=web
 
       - name: Run Playwright Tests
         run: npx playwright test
