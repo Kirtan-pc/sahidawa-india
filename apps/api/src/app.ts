@@ -69,6 +69,7 @@ import eligibilityRouter from "./routes/eligibility";
 import wishlistRouter from "./routes/wishlist";
 import webhooksRouter from "./routes/webhooks";
 import apiKeysRouter from "./routes/apiKeys";
+import safetyRouter from "./routes/safety";
 import { supabase } from "./db/client";
 import * as Sentry from "@sentry/node";
 import { createCorsOptions } from "./config/cors";
@@ -315,6 +316,7 @@ app.use("/api/webhooks", webhooksRouter);
 app.use("/api/v1/medicines", trackingRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/keys", apiKeysRouter);
+app.use("/api/medicine", safetyRouter);
 
 // ── Swagger UI Documentation (/api/docs) ──────────────────────────────────
 app.use(
