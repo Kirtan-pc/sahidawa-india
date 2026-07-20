@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { supabase } from "../db/client";
 import { uuidSchema } from "../utils/validation";
+import { setGeospatialCacheHeaders, setImmutableCacheHeaders } from "../utils/cache";
 import logger from "../utils/logger";
 import { limiter } from "../middleware/rateLimit";
 import { requireAuth, AuthenticatedRequest } from "../middleware/auth";
@@ -884,8 +885,8 @@ router.post(
                 return;
             }
 
-            const { fileContent: rawFileContent } = req.body;
-            if (!rawFileContent || typeof rawFileContent !== "string") {
+            const { fileContent } = req.body;
+            if (!fileContent || typeof fileContent !== "string") {
                 res.status(400).json({ error: "No valid file data content provided." });
                 return;
             }
