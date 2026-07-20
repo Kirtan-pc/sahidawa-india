@@ -201,6 +201,119 @@ describe("GET /api/map/nearby", () => {
         });
     });
 
+    it("preserves pharmacy data when the ASHA worker RPC rejects", async () => {
+        const rpcPharmacies = [
+            {
+                id: "pharmacy-1",
+                name: "Jan Aushadhi Kendra Pune",
+                address: "Shivajinagar",
+                district: "Pune",
+                state: "Maharashtra",
+                phone_number: null,
+                is_verified: true,
+                lat: 18.521,
+                lng: 73.855,
+                distance: 1.24,
+            },
+        ];
+        const ashaRejection = new Error("ASHA transport unavailable");
+        rpcMock
+            .mockResolvedValueOnce({ data: rpcPharmacies, error: null })
+            .mockRejectedValueOnce(ashaRejection);
+
+        const response = await request(app).get(
+            "/api/map/nearby?lat=18.5204&lng=73.8567&radius_km=5"
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body.pharmacies).toHaveLength(1);
+        expect(response.body.pharmacies[0].name).toBe("Jan Aushadhi Kendra Pune");
+        expect(response.body.asha_workers).toEqual([]);
+        expect(logger.warn).toHaveBeenCalledWith({
+            message: "Error fetching nearby ASHA workers",
+            error: ashaRejection,
+        });
+    });
+
+    it("preserves ASHA worker data when the pharmacy RPC rejects", async () => {
+        const pharmacyRejection = new Error("Pharmacy transport unavailable");
+        const rpcAshaWorkers = [{ id: "asha-1", name: "Asha Worker Pune" }];
+        rpcMock
+            .mockRejectedValueOnce(pharmacyRejection)
+            .mockResolvedValueOnce({ data: rpcAshaWorkers, error: null });
+
+        const response = await request(app).get(
+            "/api/map/nearby?lat=18.5204&lng=73.8567&radius_km=5"
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body.pharmacies).toEqual([]);
+        expect(response.body.asha_workers).toEqual(rpcAshaWorkers);
+        expect(logger.warn).toHaveBeenCalledWith({
+            message: "Error fetching nearby pharmacies",
+            error: pharmacyRejection,
+        });
+    });
+
+    it("returns 500 when both RPC promises reject", async () => {
+        const pharmacyRejection = new Error("Pharmacy transport unavailable");
+        const ashaRejection = new Error("ASHA transport unavailable");
+        rpcMock.mockRejectedValueOnce(pharmacyRejection).mockRejectedValueOnce(ashaRejection);
+
+        const response = await request(app).get(
+            "/api/map/nearby?lat=18.5204&lng=73.8567&radius_km=5"
+        );
+
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: "Internal server error" });
+        expect(logger.warn).toHaveBeenCalledWith({
+            message: "Error fetching nearby pharmacies",
+            error: pharmacyRejection,
+        });
+        expect(logger.warn).toHaveBeenCalledWith({
+            message: "Error fetching nearby ASHA workers",
+            error: ashaRejection,
+        });
+        expect(logger.error).toHaveBeenCalledWith({
+            message: "Error fetching nearby facilities",
+            error: pharmacyRejection,
+        });
+    });
+
+    it("returns 500 when one RPC rejects and the other resolves with an error", async () => {
+        const pharmacyRejection = new Error("Pharmacy transport unavailable");
+        const ashaError = { message: "ASHA lookup unavailable" };
+        rpcMock
+            .mockRejectedValueOnce(pharmacyRejection)
+            .mockResolvedValueOnce({ data: null, error: ashaError });
+
+        const response = await request(app).get(
+            "/api/map/nearby?lat=18.5204&lng=73.8567&radius_km=5"
+        );
+
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: "Internal server error" });
+        expect(logger.warn).toHaveBeenCalledTimes(2);
+    });
+
+    it("treats an empty successful lookup as partial success", async () => {
+        const ashaRejection = new Error("ASHA transport unavailable");
+        rpcMock
+            .mockResolvedValueOnce({ data: [], error: null })
+            .mockRejectedValueOnce(ashaRejection);
+
+        const response = await request(app).get(
+            "/api/map/nearby?lat=18.5204&lng=73.8567&radius_km=5"
+        );
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ pharmacies: [], asha_workers: [] });
+        expect(logger.warn).toHaveBeenCalledWith({
+            message: "Error fetching nearby ASHA workers",
+            error: ashaRejection,
+        });
+    });
+
     it("returns 500 when both Supabase RPCs report errors", async () => {
         const pharmacyError = { message: "Pharmacy lookup unavailable" };
         const ashaError = { message: "ASHA lookup unavailable" };
