@@ -79,7 +79,7 @@ router.get(
         const clampedRadius = Math.min(radius_km, 100);
 
         try {
-            const [pharmaciesResult, ashaWorkersResult] = await Promise.allSettled([
+            const [pharmaciesRes, ashaWorkersRes] = await Promise.all([
                 supabase.rpc("get_nearest_pharmacies", {
                     query_lat: lat,
                     query_lng: lng,
@@ -92,42 +92,13 @@ router.get(
                 }),
             ]);
 
-            const pharmaciesRes =
-                pharmaciesResult.status === "fulfilled"
-                    ? pharmaciesResult.value
-                    : { data: null, error: pharmaciesResult.reason };
-            const ashaWorkersRes =
-                ashaWorkersResult.status === "fulfilled"
-                    ? ashaWorkersResult.value
-                    : { data: null, error: ashaWorkersResult.reason };
-            const pharmaciesFailed =
-                pharmaciesResult.status === "rejected" || Boolean(pharmaciesRes.error);
-            const ashaWorkersFailed =
-                ashaWorkersResult.status === "rejected" || Boolean(ashaWorkersRes.error);
+            if (pharmaciesRes.error) throw pharmaciesRes.error;
+            if (ashaWorkersRes.error) throw ashaWorkersRes.error;
+            const pharmacies = Array.isArray(pharmaciesRes.data)
+                ? (pharmaciesRes.data as PharmacyRpcResult[]).map(formatNearbyPharmacy)
+                : [];
 
-            if (pharmaciesFailed) {
-                logger.warn({
-                    message: "Error fetching nearby pharmacies",
-                    error: pharmaciesRes.error,
-                });
-            }
-            if (ashaWorkersFailed) {
-                logger.warn({
-                    message: "Error fetching nearby ASHA workers",
-                    error: ashaWorkersRes.error,
-                });
-            }
-            if (pharmaciesFailed && ashaWorkersFailed) {
-                throw pharmaciesRes.error ?? ashaWorkersRes.error;
-            }
-
-            const pharmacies =
-                !pharmaciesFailed && Array.isArray(pharmaciesRes.data)
-                    ? (pharmaciesRes.data as PharmacyRpcResult[]).map(formatNearbyPharmacy)
-                    : [];
-
-            const ashaWorkers =
-                !ashaWorkersFailed && Array.isArray(ashaWorkersRes.data) ? ashaWorkersRes.data : [];
+            const ashaWorkers = Array.isArray(ashaWorkersRes.data) ? ashaWorkersRes.data : [];
 
             res.json({
                 pharmacies,
