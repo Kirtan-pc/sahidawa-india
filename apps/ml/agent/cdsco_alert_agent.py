@@ -124,8 +124,8 @@ def scrape_cdsco_alerts():
         logging.info("No PDF links found on the alerts page.")
         return
         
-    # Process all PDFs for full extraction
-    for pdf_url in pdf_links:
+    # Process the next 5 PDFs to quickly seed real data without hitting rate limits
+    for pdf_url in pdf_links[1:6]:
         logging.info(f"Processing alert PDF: {pdf_url}")
         process_alert_pdf(pdf_url)
         
