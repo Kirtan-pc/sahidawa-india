@@ -8,6 +8,8 @@ import { verifyTwilioSignature } from "../middleware/twilioSignature";
 import { supabase, dbConfig } from "../db/client";
 import { smsService } from "../services/sms-service";
 import { whatsappService } from "../services/whatsapp-service";
+import { memorySubscriberStore, InMemorySubscriber } from "../services/memorySubscriberStore";
+import { formatPhoneNumber } from "../utils/phone";
 import logger from "../utils/logger";
 import {
     getMockRecallFeed,
@@ -148,25 +150,26 @@ const deletePhoneSchema = z
     })
     .strict();
 
-import { formatPhoneNumber } from "../utils/phone"; // Local in-memory fallback store for development when Supabase is offline
-interface InMemorySubscriber {
-    id: string;
-    user_id: string | null;
-    phone: string;
-    channels: ("sms" | "whatsapp")[];
-    language: string;
-    district: string;
-    is_active: boolean;
-    status: string;
-    verification_otp: string | null;
-    otp_expires_at: string | null;
-    created_at: string;
-    updated_at: string;
-}
+// The only subscriber fields any client is allowed to receive. Everything else on
+// a row is either a secret (verification_otp, otp_expires_at) or account-linkage
+// PII (user_id) and must never be serialized into a response. Returning the raw
+// row from /status let an unauthenticated caller read another subscriber's OTP and
+// Supabase user_id just by knowing their phone number, so every subscriber we hand
+// back — from the DB or the in-memory fallback — goes through this projection.
+type PublicSubscriber = Pick<
+    InMemorySubscriber,
+    "phone" | "channels" | "language" | "district" | "is_active"
+>;
 
-// Global flag to track Supabase offline status and skip connection retries instantly
-// (Live view of dbConfig.isSupabaseOffline is read directly inside request handlers)
-const memorySubscribers = new Map<string, InMemorySubscriber>();
+function toPublicSubscriber(sub: PublicSubscriber): PublicSubscriber {
+    return {
+        phone: sub.phone,
+        channels: sub.channels,
+        language: sub.language,
+        district: sub.district,
+        is_active: sub.is_active,
+    };
+}
 
 router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {
@@ -179,7 +182,9 @@ router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
             }
             phone = formatted;
         }
-        let query = supabase.from("notification_subscribers").select("*");
+        let query = supabase
+            .from("notification_subscribers")
+            .select("phone, channels, language, district, is_active");
 
         if (req.user) {
             query = query.eq("user_id", req.user.id);
@@ -226,11 +231,11 @@ router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
                 "Supabase database is offline. Falling back to in-memory subscription store."
             );
             if (req.user) {
-                subscriber = Array.from(memorySubscribers.values()).find(
+                subscriber = memorySubscriberStore.find(
                     (s) => s.user_id === req.user!.id
                 );
             } else if (phone) {
-                subscriber = memorySubscribers.get(phone);
+                subscriber = memorySubscriberStore.get(phone);
             }
         }
 
@@ -239,7 +244,7 @@ router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
             return;
         }
 
-        res.json({ registered: true, subscriber });
+        res.json({ registered: true, subscriber: toPublicSubscriber(subscriber) });
     } catch (err) {
         logger.error({ message: "Error in /status endpoint", error: err });
         res.status(500).json({ error: "Internal server error" });
@@ -317,7 +322,7 @@ router.post(
             let result;
             if (dbFailed) {
                 logger.warn("Supabase database is offline. Registering subscriber in-memory.");
-                existing = memorySubscribers.get(formattedPhone);
+                existing = memorySubscriberStore.get(formattedPhone);
 
                 if (existing) {
                     existing.user_id = req.user?.id || existing.user_id;
@@ -349,7 +354,7 @@ router.post(
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString(),
                     };
-                    memorySubscribers.set(formattedPhone, result);
+                    memorySubscriberStore.set(formattedPhone, result);
                 }
             } else {
                 if (existing) {
@@ -432,7 +437,7 @@ router.post(
                 await Promise.allSettled(sends);
             }
 
-            res.status(201).json({ success: true, subscriber: result });
+            res.status(201).json({ success: true, subscriber: toPublicSubscriber(result) });
         } catch (err) {
             logger.error({ message: "Error in /register endpoint", error: err });
             res.status(500).json({ error: "Internal server error" });
@@ -499,7 +504,7 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
         }
 
         if (dbFailed) {
-            subscriber = memorySubscribers.get(formattedPhone);
+            subscriber = memorySubscriberStore.get(formattedPhone);
         }
 
         if (!subscriber) {
@@ -620,15 +625,15 @@ router.patch(
 
             if (dbFailed) {
                 logger.warn("Supabase database is offline. Updating subscriber in-memory.");
-                let sub = Array.from(memorySubscribers.values()).find(
+                let sub = memorySubscriberStore.find(
                     (s) => s.user_id === req.user!.id
                 );
 
                 if (sub) {
                     if (formattedNewPhone) {
-                        memorySubscribers.delete(sub.phone);
+                        memorySubscriberStore.delete(sub.phone);
                         sub.phone = formattedNewPhone;
-                        memorySubscribers.set(formattedNewPhone, sub);
+                        memorySubscriberStore.set(formattedNewPhone, sub);
                     }
                     if (channels) sub.channels = channels;
                     if (language) sub.language = language;
@@ -646,7 +651,7 @@ router.patch(
                 return;
             }
 
-            res.json({ success: true, subscriber: data[0] });
+            res.json({ success: true, subscriber: toPublicSubscriber(data[0]) });
         } catch (err) {
             logger.error({ message: "Error in /phone update endpoint", error: err });
             res.status(500).json({ error: "Internal server error" });
@@ -712,13 +717,13 @@ router.delete("/phone", optionalAuth, async (req: AuthenticatedRequest, res) => 
         if (dbFailed) {
             logger.warn("Supabase database is offline. Deleting subscriber in-memory.");
             let sub = req.user
-                ? Array.from(memorySubscribers.values()).find((s) => s.user_id === req.user!.id)
+                ? memorySubscriberStore.find((s) => s.user_id === req.user!.id)
                 : phone
-                  ? memorySubscribers.get(phone)
+                  ? memorySubscriberStore.get(phone)
                   : undefined;
 
             if (sub) {
-                memorySubscribers.delete(sub.phone);
+                memorySubscriberStore.delete(sub.phone);
                 data = [sub];
             } else {
                 data = [];
