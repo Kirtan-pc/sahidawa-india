@@ -181,7 +181,10 @@
         "features_description": "ओहि सभ तरीकाक खोज करू जाहि सँ SahiDawa अहाँक औषधिक सत्यापित करैत आ सुरक्षित रहऽ में मदद कऽ सकैत अछि।",
         "trusted_by_citizens": "नागरिकक द्वारा विश्वसनीय",
         "voices_title": "SahiDawa समुदायक आवाज",
-        "voices_description": "औषधिक सुरक्षाक आसान बनेबाक लेल SahiDawa क उपयोग करयवला परिवार, फार्मासिस्ट, डॉक्टर आ योगदानकर्ता लोकनि।"
+        "voices_description": "औषधिक सुरक्षाक आसान बनेबाक लेल SahiDawa क उपयोग करयवला परिवार, फार्मासिस्ट, डॉक्टर आ योगदानकर्ता लोकनि।",
+        "search_input_aria": "दवाई, ब्रांड, या बैच नंबर खोजू",
+        "submit_search": "खोजें",
+        "clear_search": "खोज साफ करू"
     },
     "Navigation": {
         "how_it_works": "कोना काज करैत अछि",
@@ -255,7 +258,11 @@
         "genericName": "जेनेरिक नाम",
         "dosageForm": "खुराक प्रकार",
         "composition": "संरचना",
-        "offlineVerify": "स्कैन कतारमे राखू"
+        "offlineVerify": "स्कैन कतारमे राखू",
+        "ScanBarcode": "स्कैन बारकोड",
+        "batch_recalled_title": "एहि बैच कए रिकॉल क देल गेल अछि",
+        "batch_recalled_body": "कृपया एहि दवाई के प्रयोग नहि करू। तुरंत अपन दवाई के दोकान पर वापस क दियौ।",
+        "save_to_abha": "ABHA Record मे सेव करे |"
     },
     "BackToTopButton": {
         "label": "ऊपर जाऊ"
@@ -596,7 +603,8 @@
         "status": "ऑनलाइन",
         "welcome": "नमस्ते! हम SahiDawa AI सहायक छी। आइ अहाँक दवाइक बारेमे कोना सहायता करू?",
         "placeholder": "दवाइक बारेमे पूछू...",
-        "tooltipLabel": "AI Health Assistant"
+        "tooltipLabel": "AI Health Assistant",
+        "clear": "साफ"
     },
     "Alerts": {
         "backHome": "होम पेज पर वापस जाऊ",
@@ -732,7 +740,16 @@
         "statusExpiringSoon": "जल्दी समाप्त ({days}दिन)",
         "statusSafe": "सुरक्षित",
         "deleteSelected": "चुनल मेटाऊ",
-        "selectMedicine": "{name} चुनू"
+        "selectMedicine": "{name} चुनू",
+        "saving": "बचत क रहल छी...",
+        "print": "प्रिंट",
+        "exportPDF": "पीडीएफ निर्यात करू",
+        "deleteMedicine": "दवाई मेटाउ",
+        "cancelButton": "रद्द करू",
+        "deleteConfirmTitle": "दवाई मेटाउ?",
+        "deleteConfirmMessage": "एहि सँ अहाँक ट्रैक कएल गेल दवाई सभ सँ \"{medicine}\" केँ स्थायी रूप सँ हटा देल जायत. ई क्रिया पूर्ववत नहि कएल जा सकैत अछि ।",
+        "bulkDeleteConfirmTitle": "एकाधिक दवाई मेटाउ?",
+        "bulkDeleteConfirmMessage": "एहि सं अहां कें ट्रैक कएल गेल सूची सं {count} दवाई (अक) कें स्थायी रूप सं हटा देल जेतय. ई क्रिया पूर्ववत नहि कएल जा सकैत अछि ।"
     },
     "ChildVaccinationTracker": {
         "childTrackerTitle": "बाल टीकाकरण ट्रैकर",
@@ -1297,7 +1314,8 @@
         "clinicalRecommendation": "क्लिनिकल अनुशंसा:",
         "mechanism": "क्रियाविधि:",
         "source": "स्रोत:",
-        "errorMessage": "अंतःक्रिया जाँच पूरा करबामे विफल। कृपया फेर प्रयास करू।"
+        "errorMessage": "अंतःक्रिया जाँच पूरा करबामे विफल। कृपया फेर प्रयास करू।",
+        "offlineBadge": "ऑफलाइन परिणाम — नवीनतम डाटा कें लेल इंटरनेट सं कनेक्ट करू"
     },
     "ScanHistory": {
         "export_modal_title": "स्कैन इतिहास निर्यात करू",
@@ -1357,7 +1375,8 @@
         "no_photo_label": "कोनो फोटो नहि",
         "report_card_district_label": "जिला",
         "report_card_submitted_label": "दाखिल कयल गेल",
-        "report_card_batch_label": "बैच"
+        "report_card_batch_label": "बैच",
+        "load_more_button": "और लोड करें"
     },
     "Map": {
         "errors": {
@@ -1665,7 +1684,9 @@
         "networkErrorAction": "Try again",
         "emptyTitle": "No medicines scheduled",
         "emptyDescription": "You have no medicines scheduled for today. Add one to get started.",
-        "emptyAction": "Add Medicine"
+        "emptyAction": "Add Medicine",
+        "doseLoggedSuccess": "खुराक स्थिति सफलतापूर्वक अपडेट कएल गेल।",
+        "doseSkippedSuccess": "खुराक छोड़ल गेल के रूप मे चिह्नित।"
     },
     "scheduleNew": {
         "pageTitle": "Add Medicine",
@@ -1719,5 +1740,116 @@
         "statTaken": "Taken",
         "statSkipped": "Skipped",
         "statExpected": "Expected"
+    },
+    "A11y": {
+        "confirmClearConversation": "स्पष्ट गप्प-सप्पक पुष्टि करू",
+        "cancelClearConversation": "स्पष्ट गप्प-सप्प रद्द करू",
+        "goToHomepage": "होमपेज पर जाउ",
+        "closeChat": "गप्प-सप्प बंद करू",
+        "sendMessage": "संदेश भेजें",
+        "openAiChat": "एआई चैट खोलू",
+        "closeAiChat": "एआई चैट बंद करू",
+        "mainNavigation": "मुख्य नेविगेशन",
+        "mobileNavigation": "मोबाइल नेविगेशन",
+        "toggleSystemParameters": "सिस्टम पैरामीटर टॉगल करू"
+    },
+    "Accessibility": {
+        "logo": "सहिदावा लोगो",
+        "health_companion": "स्वास्थ्य साथी",
+        "select_language": "भाषा चुनें",
+        "language_options": "भाषा के विकल्प",
+        "go_back": "पिछला पृष्ठ पर वापस जाउ",
+        "go_back_short": "वापस जाउ",
+        "current_language": "वर्तमान भाषा: {language}",
+        "toggle_theme": "थीम टॉगल करू",
+        "switch_light": "लाइट मोड पर स्विच करू",
+        "switch_dark": "डार्क मोड मे स्विच करू"
+    },
+    "voiceVerify": {
+        "heading": "आवाज चिकित्सा जांच",
+        "subtitle": "दवाई के नाम अपन भाषा मे बाजू",
+        "statusVerifying": "दवाई के सत्यापन...",
+        "statusRecording": "रिकॉर्डिंग... रुकबाक लेल टैप करू",
+        "statusIdle": "दवाई के नाम बजबाक लेल टैप करू",
+        "supportedLanguages": "समर्थन : हिन्दी • तमिल • तेलुगु • कन्नड़ • बंगला • मलयालम + अधिक",
+        "errorMicDenied": "माइक्रोफोन एक्सेस मना क देल गेल। कृपया माइक पहुँच के अनुमति दिअ आ फेर कोशिश करू.",
+        "errorNetwork": "नेटवर्क त्रुटि। कृपया अपन कनेक्शन देखू आ फेर कोशिश करू.",
+        "fallbackText": "माइक नहि?",
+        "fallbackLinkText": "एकर बदला मे पाठ इनपुट क उपयोग करू",
+        "tryAgain": "फेर कोशिश करू",
+        "checkAnother": "दोसर दवाईक जाँच करू",
+        "statusVerified": "सत्यापित",
+        "statusSuspicious": "संदिग्ध",
+        "statusNotFound": "नहि भेटल",
+        "cdscoRegistered": "पंजीकृत",
+        "cdscoUnverified": "असत्यापित",
+        "scriptLabel": "चिकित्सा ({script} लिपि) २.",
+        "manufacturerLabel": "निर्माता",
+        "categoryLabel": "श्रेणी",
+        "languageDetectedLabel": "भाषा पता चलल",
+        "youSaidLabel": "अहाँ कहलौं",
+        "warningsLabel": "चेतावनी",
+        "ariaStartRecording": "रिकॉर्डिंग शुरू करू",
+        "ariaStopRecording": "रिकॉर्डिंग बंद करू"
+    },
+    "AdminSynonyms": {
+        "title": "ओसीआर पर्यायवाची",
+        "subtitle": "ओसीआर गलत पढ़ल आ दवाई पर्यायवाची के प्रबंधन करू।",
+        "refresh": "ताज़ा करू",
+        "addNew": "नया नियम जोड़े",
+        "originalTerm": "मूल पद",
+        "normalizedTerm": "सामान्यीकृत अवधि",
+        "originalPlaceholder": "जेना, एस्प्रिन",
+        "normalizedPlaceholder": "जेना, एस्पिरिन",
+        "typeLabel": "प्रकार",
+        "typeSynonym": "पर्यायवाची",
+        "typeMisread": "ओसीआर गलत पढ़ल गेल",
+        "addButton": "नियम जोड़ू",
+        "listTitle": "मौजूदा नियम",
+        "emptyList": "कोनो नियम नहि भेटल।",
+        "actions": "कर्म",
+        "delete": "मेटाउ",
+        "confirmDelete": "की अहाँ निश्चित छी जे अहाँ एहि नियम केँ मेटाबए चाहैत छी?",
+        "fetchError": "नियम आनबा मे असफल।",
+        "addError": "नियम जोड़बा मे असफल।",
+        "deleteError": "नियम मेटाबय मे असफल।",
+        "uploadCsv": "सीएसवी अपलोड करू",
+        "uploading": "अपलोड क रहल छी...",
+        "uploadSuccess": "सफलतापूर्वक {count} नि��म जोड़ल गेल.",
+        "invalidCsv": "अमान्य CSV प्रारूप। स्तंभ सुनिश्चित करू: original_term, normalized_term, प्रकार.",
+        "uploadError": "CSV नियम अपलोड करबा मे विफल."
+    },
+    "AbhaSetup": {
+        "back": "प्रोफाइल पर वापस जाएँ",
+        "title": "आभा सेटअप",
+        "success": "ABHA सफलतापूर्वक लिंक किया।",
+        "placeholders": {
+            "address": "आभा पता दर्ज करू",
+            "otp": "ओटीपी दर्ज करू"
+        },
+        "buttons": {
+            "generateOtp": "ओटीपी उत्पन्न करब",
+            "verifyOtp": "ओटीपी सत्यापित करू",
+            "resendIn": "{seconds}s मे पुनः भेजें"
+        },
+        "errors": {
+            "addressRequired": "आभा पता आवश्यक अछि",
+            "otpRequired": "ओटीपी आवश्यक अछि",
+            "generic": "किछु गड़बड़ भ’ गेलै"
+        }
+    },
+    "Navbar": {
+        "logo_alt": "सहिदावा लोगो"
+    },
+    "PrivacyConsent": {
+        "title": "गोपनीयता एवं डेटा सहमति",
+        "description": "अहां कें सुरक्षित अनुभव प्रदान करय कें लेल साहिदावा कें डाटा एकत्र करय कें लेल अहां कें अनुमति कें जरूरत छै.",
+        "locationPurpose": "हम नक्शा पर अहां के पास के सत्यापन फार्मेसी खोजय लेल अहां के स्थान के उपयोग करैत छी.",
+        "scanHistoryPurpose": "हम अहां कें स्कैन इतिहास कें स्���ानीय रूप सं संग्रहीत करय छी या ओकरा सुरक्षित रूप सं सिंक करय छी ताकि अहां कें सत्यापन रिकॉर्ड कें ट्रैक करय मे मदद मिल सकय.",
+        "acceptAll": "सब स्वीकार करू",
+        "denyAll": "इनकार करब",
+        "savePreferences": "वरीयता सहेजें",
+        "locationLabel": "स्थान सेवाएँ",
+        "scanHistoryLabel": "स्कैन इतिहास भंडारण"
     }
 }

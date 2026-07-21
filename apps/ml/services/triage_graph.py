@@ -1,11 +1,16 @@
 import os
 import json
+import time
 import logging
+import tempfile
+import threading
+from pathlib import Path
 from typing import List, Dict, Any, Optional, TypedDict
 from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 from services.retrieval import retrieve_relevant_medicines
 from utils.database import redis_client, REDIS_URL
+from filelock import FileLock
 
 load_dotenv()
 
@@ -29,15 +34,134 @@ _PERSISTED_STATE_FIELDS = (
 )
 
 
+# ── Redis Circuit Breaker ────────────────────────────────────────────────────
+# A single, module-wide circuit breaker shared by every Redis touchpoint in the
+# triage flow (native checkpointer + manual JSON persistence). When Redis is
+# genuinely down, the native checkpointer call and the manual _load/_save calls
+# would each block until their own timeout, stacking into a "double timeout" on
+# a single request. After `failure_threshold` consecutive failures this breaker
+# "opens": subsequent Redis calls short-circuit instantly, so the request serves
+# the stateless in-memory triage response without waiting on Redis at all. After
+# `cooldown_seconds` it half-opens to let the next call test whether Redis has
+# recovered.
+
+# ── Shared cross-process state file ──────────────────────────────────────────
+# time.monotonic() cannot be shared across processes (it's per-process), so
+# the persisted state uses time.time() (wall-clock) instead. A FileLock
+# guards every read-modify-write cycle so concurrent Uvicorn/Gunicorn workers
+# never race on the same file.
+_BREAKER_STATE_DIR = Path(os.getenv("TRIAGE_BREAKER_STATE_DIR", tempfile.gettempdir()))
+_BREAKER_STATE_FILE = _BREAKER_STATE_DIR / "sahidawa_redis_breaker_state.json"
+_BREAKER_LOCK_FILE = str(_BREAKER_STATE_FILE) + ".lock"
+_BREAKER_LOCK_TIMEOUT_SECONDS = 2.0
+
+
+class _RedisCircuitBreaker:
+    """Circuit breaker whose open/closed state is shared across every worker
+    process via a lock-guarded JSON file on disk (Redis itself can't be used
+    for this state — it's precisely what we're tracking the health of).
+
+    Semantics (closed → open → half-open → closed) are unchanged from the
+    original in-memory version; only the storage backend changed.
+    """
+
+    def __init__(self, failure_threshold: int = 3, cooldown_seconds: float = 60.0) -> None:
+        self._threshold = max(1, failure_threshold)
+        self._cooldown = cooldown_seconds
+        # Thread-safety within a single process; FileLock below handles
+        # process-safety across workers.
+        self._thread_lock = threading.Lock()
+        self._file_lock = FileLock(_BREAKER_LOCK_FILE, timeout=_BREAKER_LOCK_TIMEOUT_SECONDS)
+
+    def _read_state(self) -> Dict[str, Any]:
+        try:
+            raw = _BREAKER_STATE_FILE.read_text()
+            data = json.loads(raw)
+            return {
+                "failures": int(data.get("failures", 0)),
+                "opened_at": data.get("opened_at"),
+            }
+        except (FileNotFoundError, ValueError, TypeError, json.JSONDecodeError):
+            return {"failures": 0, "opened_at": None}
+
+    def _write_state(self, failures: int, opened_at: Optional[float]) -> None:
+        # Atomic write: write to a temp file in the same dir, then os.replace
+        # so concurrent readers never see a partially-written file.
+        _BREAKER_STATE_DIR.mkdir(parents=True, exist_ok=True)
+        tmp_fd, tmp_path = tempfile.mkstemp(dir=_BREAKER_STATE_DIR, suffix=".tmp")
+        try:
+            with os.fdopen(tmp_fd, "w") as f:
+                json.dump({"failures": failures, "opened_at": opened_at}, f)
+            os.replace(tmp_path, _BREAKER_STATE_FILE)
+        except Exception:
+            try:
+                os.unlink(tmp_path)
+            except OSError:
+                pass
+            raise
+
+    def is_open(self) -> bool:
+        """Whether Redis calls should currently be skipped.
+
+        Half-opens automatically once the cooldown has elapsed, so the next
+        call across ANY worker is allowed through to probe recovery.
+        """
+        with self._thread_lock, self._file_lock:
+            state = self._read_state()
+            opened_at = state["opened_at"]
+
+            if opened_at is None:
+                return False
+
+            if time.time() - opened_at >= self._cooldown:
+                self._write_state(failures=0, opened_at=None)
+                return False
+
+            return True
+
+    def record_success(self) -> None:
+        with self._thread_lock, self._file_lock:
+            self._write_state(failures=0, opened_at=None)
+
+    def record_failure(self) -> None:
+        with self._thread_lock, self._file_lock:
+            state = self._read_state()
+            failures = state["failures"] + 1
+            opened_at = state["opened_at"]
+
+            if failures >= self._threshold and opened_at is None:
+                opened_at = time.time()
+
+            self._write_state(failures=failures, opened_at=opened_at)
+            
+def _breaker_int_env(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+# Shared across all sessions — Redis health is a global condition, not per-session.
+_redis_breaker = _RedisCircuitBreaker(
+    failure_threshold=_breaker_int_env("TRIAGE_REDIS_BREAKER_THRESHOLD", 3),
+    cooldown_seconds=_breaker_int_env("TRIAGE_REDIS_BREAKER_COOLDOWN_SECONDS", 60),
+)
+
+
 def _session_key(session_id: str) -> str:
     return f"{SESSION_KEY_PREFIX}{session_id}"
 
 
 async def _load_session_state(session_id: str) -> Optional[Dict[str, Any]]:
     """Fetch previously persisted triage state for a session_id, if any."""
+    if _redis_breaker.is_open():
+        # Redis is presumed down — skip the call to avoid a blocking timeout.
+        return None
     try:
         raw = await redis_client.get(_session_key(session_id))
+        _redis_breaker.record_success()
     except Exception:
+        _redis_breaker.record_failure()
         logging.exception("Failed to load triage session '%s' from Redis.", session_id)
         return None
 
@@ -53,6 +177,8 @@ async def _load_session_state(session_id: str) -> Optional[Dict[str, Any]]:
 
 async def _save_session_state(session_id: str, state: Dict[str, Any]) -> None:
     """Persist the relevant subset of triage state for session_id with a TTL."""
+    if _redis_breaker.is_open():
+        return
     to_store = {field: state.get(field) for field in _PERSISTED_STATE_FIELDS}
     try:
         await redis_client.set(
@@ -60,7 +186,9 @@ async def _save_session_state(session_id: str, state: Dict[str, Any]) -> None:
             json.dumps(to_store),
             ex=SESSION_TTL_SECONDS,
         )
+        _redis_breaker.record_success()
     except Exception:
+        _redis_breaker.record_failure()
         logging.exception("Failed to save triage session '%s' to Redis.", session_id)
 
 
@@ -70,9 +198,13 @@ async def _clear_session_state(session_id: str) -> bool:
     Returns True if a stored session was removed, False if there was nothing
     to clear (unknown/expired session_id) or the delete failed.
     """
+    if _redis_breaker.is_open():
+        return False
     try:
         removed = await redis_client.delete(_session_key(session_id))
+        _redis_breaker.record_success()
     except Exception:
+        _redis_breaker.record_failure()
         logging.exception("Failed to clear triage session '%s' from Redis.", session_id)
         return False
 
@@ -668,10 +800,16 @@ async def run_triage_flow(
     # ── Native checkpointer path ──────────────────────────────────────────────
     # _native_triage_app was compiled with the AsyncRedisSaver; it requires a
     # thread_id config so LangGraph can read/write the correct checkpoint.
-    if CHECKPOINTER_MODE == "native" and session_id and _native_triage_app is not None:
+    if (
+        CHECKPOINTER_MODE == "native"
+        and session_id
+        and _native_triage_app is not None
+        and not _redis_breaker.is_open()
+    ):
         config = {"configurable": {"thread_id": session_id}}
         try:
             final_state = await _native_triage_app.ainvoke(initial_state, config=config)
+            _redis_breaker.record_success()
             result = _format_triage_result(final_state)
 
             # Shadow-write to the manual key namespace.  Cheap (just a Redis
@@ -687,6 +825,7 @@ async def run_triage_flow(
 
             return result
         except Exception:
+            _redis_breaker.record_failure()
             logging.exception(
                 "Native checkpointer call failed mid-run for session '%s'; "
                 "falling through to manual Redis persistence.",

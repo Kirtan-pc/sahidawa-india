@@ -1,5 +1,72 @@
 [
   {
+    "prNumber": 3761,
+    "title": "refactor(api): extract business logic into services and repositories",
+    "author": "Avinash-sdbegin",
+    "mergedAt": "2026-07-20",
+    "area": "Backend",
+    "score": 52,
+    "docPath": "docs/devtrack/2026-07/PR-3761-refactor-api-extract-business-logic-into-services-.md",
+    "linkedIssue": "#3681",
+    "labels": "level:advanced,quality:exceptional,gssoc:approved,type:refactor",
+    "filesChanged": [
+      "apps/api/src/repositories/pharmacy.repository.ts",
+      "apps/api/src/repositories/redis.repository.ts",
+      "apps/api/src/repositories/scan.repository.ts",
+      "apps/api/src/routes/pharmacies.ts",
+      "apps/api/src/routes/scan.ts",
+      "apps/api/src/services/pharmacy.service.ts",
+      "apps/api/src/services/scan.service.ts"
+    ],
+    "adr": "docs/devtrack/adr/ADR-058-refactor-api-extract-business-logic-into-services-.md"
+    "prNumber": 3769,
+    "title": "feat(web): serve stale cached GET responses during CSRF refresh",
+    "author": "Avinash-sdbegin",
+    "mergedAt": "2026-07-20",
+    "area": "Frontend",
+    "score": 7,
+    "docPath": "docs/devtrack/2026-07/PR-3769-feat-web-serve-stale-cached-get-responses-during-c.md",
+    "linkedIssue": "#3648",
+    "labels": "level:advanced,quality:clean,gssoc:approved,type:feature",
+    "filesChanged": [
+      "apps/web/lib/apiWithRetry.ts",
+      "apps/web/worker/index.js"
+    ],
+    "adr": null
+  },
+  {
+    "prNumber": 3755,
+    "title": "feat: implement automated sensitive data redaction in logger and remove manual header sanitization in webhooks",
+    "author": "TanCodeX",
+    "mergedAt": "2026-07-20",
+    "area": "Backend",
+    "score": 15,
+    "docPath": "docs/devtrack/2026-07/PR-3755-feat-implement-automated-sensitive-data-redaction-.md",
+    "linkedIssue": "#3672",
+    "labels": "level:intermediate,quality:exceptional,gssoc:approved,type:security,shoutout:approved",
+    "filesChanged": [
+      "apps/api/src/routes/webhooks.ts",
+      "apps/api/src/utils/logger.ts"
+    ],
+    "adr": "docs/devtrack/adr/ADR-057-feat-implement-automated-sensitive-data-redaction-.md"
+  },
+  {
+    "prNumber": 3749,
+    "title": "perf : Add Redis Cache on ML Image Analysis Proxies",
+    "author": "hrx01-dev",
+    "mergedAt": "2026-07-20",
+    "area": "Backend",
+    "score": 13,
+    "docPath": "docs/devtrack/2026-07/PR-3749-perf-add-redis-cache-on-ml-image-analysis-proxies.md",
+    "linkedIssue": "#3680",
+    "labels": "level:intermediate,quality:exceptional,gssoc:approved,type:performance,type:devops,shoutout:approved",
+    "filesChanged": [
+      "apps/api/src/routes/scan.ts",
+      "package.json"
+    ],
+    "adr": null
+  },
+  {
     "prNumber": 3740,
     "title": "feat(ml): add LangGraph-native Redis checkpointer for triage session",
     "author": "Khanvilkarshravani27",

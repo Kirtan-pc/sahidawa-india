@@ -174,7 +174,17 @@
         "heroTitle": {
             "prefix": "توهان جي صحت، ",
             "highlight": "تصديق ٿيل ۽ محفوظ."
-        }
+        },
+        "scan_section_title": "اسڪين ۽ تصديق ڪريو دوائون",
+        "scan_section_subtitle": "بارڪوڊ يا پيڪيج اسڪيننگ استعمال ڪندي دوا جي صداقت جي تصديق ڪريو.",
+        "powerful_capabilities": "طاقتور صلاحيتون",
+        "features_description": "سڀ طريقا دريافت ڪريو SahiDawa توهان جي دوائن جي تصديق ڪرڻ ۽ محفوظ رهڻ ۾ توهان جي مدد ڪري سگهي ٿي.",
+        "trusted_by_citizens": "شهرين پاران اعتماد",
+        "voices_title": "SahiDawa برادري جو آواز",
+        "voices_description": "خاندان، فارماسسٽ، ڊ��ڪٽر، ۽ امداد ڏيندڙ SahiDawa استعمال ڪري رهيا آهن ته جيئن دوائن جي حفاظت کي آسان بڻائي سگهجي.",
+        "search_input_aria": "دوائن جي ڳولا ڪريو, brands, يا بيچ نمبر",
+        "submit_search": "ڳولا",
+        "clear_search": "صاف ڳولا"
     },
     "Navigation": {
         "how_it_works": "هي ڪيئن ڪم ڪري ٿو",
@@ -216,7 +226,20 @@
         "genericName": "عام نالو",
         "dosageForm": "دوا جي شڪل",
         "composition": "ترڪيب",
-        "offlineVerify": "اسڪين قطار ۾ شامل ڪريو"
+        "offlineVerify": "اسڪين قطار ۾ شامل ڪريو",
+        "scanMedicine": "اسڪين دوا",
+        "positionBarcode": "بارڪوڊ کي پوزيشن ڪريو",
+        "enterBatchNumber": "بيچ نمبر داخل ڪريو",
+        "verify": "تصديق ڪريو",
+        "batchNumberHelp": "دوا جي پيڪيج تي ڇپيل بيچ نمبر داخل ڪريو",
+        "viewHistory": "تاريخ ڏسو",
+        "stopScanner": "اسٽاپ اسڪينر",
+        "scanBarcode": "بارڪوڊ اسڪين ڪريو",
+        "uploadPhoto": "فوٽو اپ لوڊ ڪريو",
+        "ScanBarcode": "بارڪوڊ اسڪين ڪريو",
+        "batch_recalled_title": "هن بيچ کي ياد ڪيو ويو آهي",
+        "batch_recalled_body": "مهرباني ڪري هي دوا استعمال نه ڪريو. ان کي فوري طور تي پنهنجي فارميسي ڏانهن واپس آڻيو.",
+        "save_to_abha": "ABHA رڪارڊ ۾ محفوظ ڪريو"
     },
     "BackToTopButton": {
         "label": "مٿي وڃو"
@@ -557,7 +580,8 @@
         "status": "آن لائن",
         "welcome": "سلام! مان SahiDawa AI اسسٽنٽ آهيان. اڄ آئون توهان جي دوائن بابت ڪيئن مدد ڪري سگهان ٿو؟",
         "placeholder": "مون کان ڪنهن دوا بابت پڇو...",
-        "tooltipLabel": "AI Health Assistant"
+        "tooltipLabel": "AI Health Assistant",
+        "clear": "پڌرو"
     },
     "Alerts": {
         "backHome": "هوم پيج ڏانهن واپس وڃو",
@@ -693,7 +717,16 @@
         "statusExpiringSoon": "{days} ڏينهن ۾ ختم ٿيندي",
         "statusSafe": "محفوظ",
         "deleteSelected": "چونڊيل ختم ڪريو",
-        "selectMedicine": "{name} چونڊيو"
+        "selectMedicine": "{name} چونڊيو",
+        "saving": "محفوظ ڪري رهيو آهي...",
+        "print": "ڇپائي",
+        "exportPDF": "PDF برآمد ڪريو",
+        "deleteMedicine": "دوا ختم ڪريو",
+        "cancelButton": "منسوخ ڪريو",
+        "deleteConfirmTitle": "دوا ختم ڪريو؟",
+        "deleteConfirmMessage": "اهو مستقل طور تي \"{medicine}\" کي توهان جي ٽريڪ ڪيل دوائن مان هٽائي ڇڏيندو. ھن عمل کي رد نٿو ڪري سگھجي.",
+        "bulkDeleteConfirmTitle": "گھڻن دوائن کي ختم ڪريو؟",
+        "bulkDeleteConfirmMessage": "اهو مستقل طور تي {count} دوا(دوا) کي توهان جي ٽريڪ ڪيل فهرست مان هٽائي ڇڏيندو. ھن عمل کي رد نٿو ڪري سگھجي."
     },
     "ChildVaccinationTracker": {
         "childTrackerTitle": "ٻار جي ويڪسين ٽريڪر",
@@ -716,7 +749,14 @@
         "dueStatus": "واجب",
         "overdueStatus": "دير ٿيل",
         "upcomingStatus": "ايندڙ",
-        "markCompleteButton": "مڪمل طور نشان لڳايو"
+        "markCompleteButton": "مڪمل طور نشان لڳايو",
+        "exportCSV": "CSV برآمد ڪريو",
+        "exportPDF": "PDF برآمد ڪريو",
+        "print": "ڇپائي",
+        "csvExportSuccess": "CSV ڪاميابيءَ سان برآمد ٿيو",
+        "pdfExportSuccess": "PDF ڪاميابي سان برآمد ڪئي وئي",
+        "noMedicinesToDisplay": "ظاهر ڪرڻ لاءِ ڪابه دوائون نه آهن",
+        "generatedOn": "ٺاهيل آن"
     },
     "Login": {
         "brandSubtitle": "دوا جي حفاظت جو پليٽفارم",
@@ -1250,7 +1290,8 @@
         "clinicalRecommendation": "طبي سفارش:",
         "mechanism": "طريقو:",
         "source": "ذريعو:",
-        "errorMessage": "باهمي اثرن جي جاچ مڪمل نه ٿي سگهي. مهرباني ڪري ٻيهر ڪوشش ڪريو."
+        "errorMessage": "باهمي اثرن جي جاچ مڪمل نه ٿي سگهي. مهرباني ڪري ٻيهر ڪوشش ڪريو.",
+        "offlineBadge": "آف لائن نتيجو — جديد ڊيٽا لاءِ انٽرنيٽ سان ڳنڍيو"
     },
     "ScanHistory": {
         "export_modal_title": "اسڪين تاريخ ايڪسپورٽ ڪريو",
@@ -1310,7 +1351,8 @@
         "no_photo_label": "تصوير موجود ناهي",
         "report_card_district_label": "ضلعو",
         "report_card_submitted_label": "جمع ڪرايل",
-        "report_card_batch_label": "بيچ"
+        "report_card_batch_label": "بيچ",
+        "load_more_button": "وڌيڪ لوڊ ڪريو"
     },
     "Map": {
         "errors": {
@@ -1566,7 +1608,9 @@
         "networkErrorAction": "Try again",
         "emptyTitle": "No medicines scheduled",
         "emptyDescription": "You have no medicines scheduled for today. Add one to get started.",
-        "emptyAction": "Add Medicine"
+        "emptyAction": "Add Medicine",
+        "doseLoggedSuccess": "دوز جي صورتحال ڪاميابي سان اپڊيٽ ڪئي وئي.",
+        "doseSkippedSuccess": "دوز نشان لڳل طور ڇڏي ويو."
     },
     "scheduleNew": {
         "pageTitle": "Add Medicine",
@@ -1620,5 +1664,191 @@
         "statTaken": "Taken",
         "statSkipped": "Skipped",
         "statExpected": "Expected"
+    },
+    "A11y": {
+        "confirmClearConversation": "واضح گفتگو جي تصديق ڪريو",
+        "cancelClearConversation": "صاف گفتگو منسوخ ڪريو",
+        "goToHomepage": "هوم پيج ڏانهن وڃو",
+        "closeChat": "چيٽ بند ڪريو",
+        "sendMessage": "پيغام موڪليو",
+        "openAiChat": "AI چيٽ کوليو",
+        "closeAiChat": "AI چيٽ بند ڪريو",
+        "mainNavigation": "مکيه نيويگيشن",
+        "mobileNavigation": "موبائل نيويگيشن",
+        "toggleSystemParameters": "سسٽم جي پيٽرولن کي ٽوگل ڪريو"
+    },
+    "Accessibility": {
+        "logo": "SahiDawa لوگو",
+        "health_companion": "صحت جو ساٿي",
+        "select_language": "ٻولي چونڊيو",
+        "language_options": "ٻولي جا اختيار",
+        "go_back": "پوئين صفحي ڏانھن واپس وڃو",
+        "go_back_short": "واپس وڃو",
+        "current_language": "موجوده ٻولي: {language}",
+        "toggle_theme": "ٽوگل موضوع",
+        "switch_light": "لائيٽ موڊ ۾ تبديل ڪريو",
+        "switch_dark": "اونداهي موڊ ۾ تبديل ڪريو"
+    },
+    "ABHA": {
+        "title": "ABHA صحت رڪارڊ",
+        "setupTitle": "ABHA سيٽ اپ",
+        "recordsTitle": "ABHA رڪارڊ",
+        "link": "لنڪ ABHA",
+        "linked": "ABHA ڳنڍيل",
+        "notLinked": "ABHA سان ڳنڍيل ناهي",
+        "generateOtp": "OTP ٺاھيو",
+        "verifyOtp": "OTP جي تصديق ڪريو",
+        "enterAbha": "ABHA ايڊريس داخل ڪريو",
+        "enterOtp": "OTP داخل ڪريو",
+        "success": "ABHA ڪاميابي سان ڳنڍيل آهي.",
+        "saveRecord": "ABHA رڪارڊ ۾ محفوظ ڪريو",
+        "noRecords": "ڪوبه نسخو نه مليو."
+    },
+    "Tracking": {
+        "success": "دوائون ڪاميابي سان ٽريڪ ڪيو!",
+        "trackButton": "ٽريڪ ختم ٿيڻ"
+    },
+    "SchemeEligibility": {
+        "validationAgeError": "مھرباني ڪري صحيح عمر داخل ڪريو.",
+        "validationStateError": "مھرباني ڪري ھڪ رياست چونڊيو.",
+        "validationIncomeError": "مھرباني ڪري صحيح سالياني آمدني داخل ڪريو.",
+        "validationFamilySizeError": "مھرباني ڪري صحيح خانداني سائيز داخل ڪريو.",
+        "eligibilityCheckedSuccess": "قابليت ڪاميابي سان چڪاس ڪئي وئي!",
+        "eligibilityCheckFailed": "قابليت چيڪ ڪرڻ ۾ ناڪام ٿيو. مهرباني ڪري ٻيهر ڪوشش ڪريو.",
+        "title": "چيڪ ڪريو پنھنجي <highlight> اسڪيم جي قابليت</highlight>",
+        "description": "3 سادي قدمن ۾ معلوم ڪريو ته توهان ۽ توهان جو خاندان ڪهڙن سرڪاري صحت جي اسڪيمن لاءِ اهل آهيو.",
+        "stepDemographics": "ڊيموگرافڪ",
+        "stepIncomeFamily": "آمدني ۽ خاندان",
+        "stepIdentification": "سڃاڻپ",
+        "ageLabel": "توهان جي عمر ڇا آهي؟",
+        "ageDescription": "عمر سينئر شهرين جي صحت جي ڪوريج جي تصديق ڪرڻ ۾ مدد ڪري ٿي.",
+        "agePlaceholder": "مثال طور 45",
+        "stateLabel": "توهان ڪهڙي رياست ۾ رهندا آهيو؟",
+        "stateDescription": "حڪومتي صحت انشورنس پروگرام رياست طرفان مختلف آهن.",
+        "incomeLabel": "توهان جي خاندان جي ڪل سالياني آمدني ڇا آهي؟",
+        "incomeDescription": "توهان جي ڪل گڏيل گهريلو آمدني رپيا في سال ۾.",
+        "incomePlaceholder": "مثال 120000",
+        "familySizeLabel": "توهان جي خاندان ۾ ڪيترا ميمبر آهن؟",
+        "familySizeDescription": "گهر ۾ گڏ رهندڙ ڪٽنب جا ڪل ميمبر.",
+        "familySizePlaceholder": "مثال طور 5",
+        "bplQuestion": "ڇا توهان وٽ بي پي ايل (غربت جي لڪير کان هيٺ) ڪارڊ آهي؟",
+        "abhaQuestion": "ڇا توھان وٽ آھي ABHA (Ayushman Bharat Health Account) ID؟",
+        "yesOption": "ها، مان ڪريان ٿو",
+        "noOption": "نه، مان نه ٿو ڪريان",
+        "backButton": "پوئتي",
+        "nextButton": "اڳيون قدم",
+        "findSchemesButton": "اسڪيمون ڳوليو",
+        "checkingButton": "چيڪ ڪري رهيو آهي...",
+        "resultsTitle": "توهان جي قابل اسڪيمون",
+        "resultsDescription": "اسان مليا <countTag>_{count} اسڪيمون</countTag> توهان لاءِ اهل آهيو.",
+        "eligibleBadge": "لائق",
+        "benefitsCoverage": "فائدا / ڪوريج",
+        "howToApply": "ڪيئن لاڳو ڪجي",
+        "visitOfficialPortal": "دورو ڪريو سرڪاري پورٽل",
+        "noSchemesTitle": "ڪابه اسڪيم ملندڙ تفصيل نه ملي.",
+        "noSchemesDescription": "مھرباني ڪري ھڪ ڳوٺاڻي عملدار سان صلاح ڪريو يا پنھنجي مقامي حڪومتي ڪوٺي چيڪ ڪريو.",
+        "printPdfButton": "PDF طور پرن��/محفوظ ڪريو",
+        "checkAgainButton": "ٻيهر چيڪ ڪريو",
+        "printBrandTitle": "SahiDawa - ڳوٺاڻي صحت پل",
+        "printReportTitle": "سرڪاري صحت اسڪيمن جي قابليت جي رپورٽ",
+        "dateGenerated": "ٺاهيل تاريخ",
+        "website": "ويب سائيٽ",
+        "age": "عمر",
+        "years": "سال",
+        "stateOfResidence": "رهائش جي حالت",
+        "annualFamilyIncome": "سالياني خانداني آمدني",
+        "familySize": "خانداني سائيز",
+        "members": "ميمبر",
+        "bplRationCardHolder": "BPL راشن ڪارڊ هولڊر",
+        "abhaHealthIdHolder": "ABHA صحت ID هولڊر",
+        "yes": "ها",
+        "no": "نه"
+    },
+    "voiceVerify": {
+        "heading": "وائس دوائن جي چڪاس",
+        "subtitle": "توهان جي ٻولي ۾ دوا جو نالو ڳالهايو",
+        "statusVerifying": "دوائن جي تصديق...",
+        "statusRecording": "رڪارڊنگ... روڪڻ لاءِ ٽيپ ڪريو",
+        "statusIdle": "دوا جو نالو ڳالهائڻ لاءِ ٽيپ ڪريو",
+        "supportedLanguages": "سپورٽ: هندي • تامل • تيلگو • ڪنڙ • بنگالي • مليالم + وڌيڪ",
+        "errorMicDenied": "مائڪروفون جي رسائي رد ڪئي وئي. مھرباني ڪري مائڪروفون تائين رسائي جي اجازت ڏيو ۽ ٻيهر ڪوشش ڪريو.",
+        "errorNetwork": "نيٽ ورڪ غلطي. مھرباني ڪري پنھنجو ڪنيڪشن چيڪ ڪريو ۽ وري ڪوشش ڪريو.",
+        "fallbackText": "مائڪروفون ناهي؟",
+        "fallbackLinkText": "بدران ٽيڪسٽ ان پٽ استعمال ڪريو",
+        "tryAgain": "ٻيهر ڪوشش ڪريو",
+        "checkAnother": "ٻي دوا چيڪ ڪريو",
+        "statusVerified": "تصديق ٿيل",
+        "statusSuspicious": "شڪي",
+        "statusNotFound": "نه مليو",
+        "cdscoRegistered": "رجسٽر ٿيل",
+        "cdscoUnverified": "اڻ تصديق ٿيل",
+        "scriptLabel": "دوائون ({script} اسڪرپٽ)",
+        "manufacturerLabel": "ٺاهيندڙ",
+        "categoryLabel": "زمرو",
+        "languageDetectedLabel": "ٻولي معلوم ڪئي وئي",
+        "youSaidLabel": "توهان چيو",
+        "warningsLabel": "ڊيڄاريندڙ",
+        "ariaStartRecording": "رڪارڊنگ شروع ڪريو",
+        "ariaStopRecording": "رڪارڊنگ بند ڪريو"
+    },
+    "AdminSynonyms": {
+        "title": "OCR مترادفات",
+        "subtitle": "منظم ڪريو OCR misreads ۽ دوائن جي مترادفات.",
+        "refresh": "تازو ڪريو",
+        "addNew": "نئون ضابطو شامل ڪريو",
+        "originalTerm": "اصل اصطلاح",
+        "normalizedTerm": "عام اصطلاح",
+        "originalPlaceholder": "مثال طور، اسپرين",
+        "normalizedPlaceholder": "مثال طور، اسپرين",
+        "typeLabel": "قسم",
+        "typeSynonym": "مترادف",
+        "typeMisread": "OCR غلط پڙھڻ",
+        "addButton": "ضابطو شامل ڪريو",
+        "listTitle": "موجوده ضابطا",
+        "emptyList": "ڪوبه ضابطو نه ��ليو.",
+        "actions": "عمل",
+        "delete": "حذف ڪريو",
+        "confirmDelete": "ڇا توهان واقعي هن قاعدي کي ختم ڪرڻ چاهيو ٿا؟",
+        "fetchError": "ضابطا آڻڻ ۾ ناڪام.",
+        "addError": "ضابطو شامل ڪرڻ ۾ ناڪام ٿيو.",
+        "deleteError": "ضابطي کي ختم ڪرڻ ۾ ناڪام ٿيو.",
+        "uploadCsv": "CSV اپ لوڊ ڪريو",
+        "uploading": "اپ لوڊ ٿي رهيو آهي...",
+        "uploadSuccess": "ڪاميابيءَ سان {count} ضابطا شامل ڪيا ويا.",
+        "invalidCsv": "غلط CSV فارميٽ. ڪالمن کي يقيني بڻايو: original_term، normalized_term، قسم.",
+        "uploadError": "CSV ضابطا اپ لوڊ ڪرڻ ۾ ناڪام."
+    },
+    "AbhaSetup": {
+        "back": "پروفائل ڏانھن واپس وڃو",
+        "title": "ABHA سيٽ اپ",
+        "success": "ABHA ڪاميابي سان ڳنڍيل آهي.",
+        "placeholders": {
+            "address": "ABHA ايڊريس داخل ڪريو",
+            "otp": "OTP داخل ڪريو"
+        },
+        "buttons": {
+            "generateOtp": "OTP ٺاھيو",
+            "verifyOtp": "OTP جي تصديق ڪريو",
+            "resendIn": "{seconds}s ۾ ٻيهر موڪليو"
+        },
+        "errors": {
+            "addressRequired": "ABHA ايڊريس گهربل آهي",
+            "otpRequired": "OTP گھربل آھي",
+            "generic": "ڪجهه غلط ٿي ويو"
+        }
+    },
+    "Navbar": {
+        "logo_alt": "SahiDawa لوگو"
+    },
+    "PrivacyConsent": {
+        "title": "رازداري ۽ ڊيٽا جي رضامندي",
+        "description": "توهان کي محفوظ تجربو مهيا ڪرڻ لاءِ، SahiDawa کي ڊيٽا گڏ ڪرڻ لاءِ توهان جي اجازت جي ضرورت آهي.",
+        "locationPurpose": "اسان نقشي تي توهان جي ويجهو تصديق ٿيل دواسازي ڳولڻ لاءِ توهان جو مقام استعمال ڪندا آهيون.",
+        "scanHistoryPurpose": "اسان توهان جي اسڪين جي تاريخ مقامي طور تي ذخيرو ڪندا آهيون يا توهان جي تصديق جي رڪارڊ کي ٽريڪ ڪرڻ ۾ مدد لاءِ ان کي محفوظ طور تي هم وقت سازي ڪندا آهيون.",
+        "acceptAll": "سڀ قبول ڪريو",
+        "denyAll": "انڪار ڪرڻ",
+        "savePreferences": "محفوظ ڪريو ترجيحات",
+        "locationLabel": "جڳھ جون خدمتون",
+        "scanHistoryLabel": "اسڪين تاريخ اسٽوريج"
     }
 }

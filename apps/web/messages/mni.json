@@ -174,7 +174,17 @@
         "heroTitle": {
             "prefix": "ꯅꯪꯒꯤ ꯍꯦꯜꯊ, ",
             "highlight": "ꯌꯥꯊꯪꯈ꯭ꯔꯕ ꯑꯃꯁꯨꯡ ꯁꯤꯟꯗꯣꯛꯈ꯭ꯔꯕ꯫"
-        }
+        },
+        "scan_section_title": "ꯃꯦꯗꯤꯁꯤꯟ ꯁ꯭ꯀꯦꯟ ꯇꯧꯕꯥ & ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯥ꯫",
+        "scan_section_subtitle": "ꯕꯥꯔꯀꯣꯗ ꯅꯠꯠꯔꯒꯥ ꯄꯦꯀꯦꯖ ꯁ꯭ꯀꯦꯅꯤꯡ ꯁꯤꯖꯤꯟꯅꯗꯨꯅꯥ ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯛꯀꯤ ꯑꯣꯊꯦꯟꯇꯤꯁꯤꯇꯤ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯥ꯫",
+        "powerful_capabilities": "ꯁꯛꯇꯤ ꯂꯩꯕꯥ ꯀꯦꯄꯦꯕꯤꯂꯤꯇꯤꯁꯤꯡ꯫",
+        "features_description": "ꯁꯥꯍꯤꯗꯥꯋꯥꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯍꯤꯗꯥꯀꯁꯤꯡ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯗꯥ ꯑꯃꯁꯨꯡ ꯁꯥꯐꯅꯥ ꯂꯩꯕꯗꯥ ꯃꯇꯦꯡ ꯄꯥꯡꯕꯥ ꯌꯥꯕꯥ ꯃꯑꯣꯡ ꯄꯨꯝꯅꯃꯛ ꯈꯪꯖꯤꯅꯕꯤꯌꯨ꯫",
+        "trusted_by_citizens": "ꯅꯥꯒꯔꯤꯀꯁꯤꯡꯅꯥ ꯊ��ꯖꯕꯥ ꯊꯝꯕꯥ꯫",
+        "voices_title": "ꯁꯥꯍꯤꯗꯥꯋꯥ ꯀꯝꯝꯌꯨꯅꯤꯇꯤꯗꯒꯤ ꯈꯣꯟꯖꯦꯂꯁꯤꯡ꯫",
+        "voices_description": "ꯏꯃꯨꯡ ꯃꯅꯨꯡꯁꯤꯡ, ꯐꯥꯔꯃꯥꯁꯤꯁ꯭ꯇꯁꯤꯡ, ꯗꯣꯛꯇꯔꯁꯤꯡ, ꯑꯃꯁꯨꯡ ꯀꯟꯠꯔꯤꯕ꯭ꯌꯨꯇꯔꯁꯤꯡꯅꯥ ꯍꯤꯗꯥꯛ ꯂꯥꯡꯊꯛꯀꯤ ꯁꯦꯐꯇꯤꯗꯥ ꯍꯦꯟꯅꯥ ꯂꯥꯌꯅꯥ ꯊꯕꯛ ꯄꯥꯌꯈꯠꯅꯕꯥ ꯁꯥꯍꯤꯗꯥꯋꯥ ꯁꯤꯖꯤꯟꯅꯔꯤꯕꯥ꯫",
+        "search_input_aria": "ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯀꯁꯤꯡ, ꯕ꯭ꯔꯥꯟꯗꯁꯤꯡ ꯅꯠꯠꯔꯒꯥ ꯕꯦꯆ ꯅꯝꯕꯔꯁꯤꯡ ꯊꯤꯌꯨ꯫",
+        "submit_search": "ꯁꯥꯔꯆ ꯇꯧꯕꯥ꯫",
+        "clear_search": "ꯃꯌꯦꯛ ꯁꯦꯡꯅꯥ ꯊꯤꯕꯥ꯫"
     },
     "Navigation": {
         "how_it_works": "ꯃꯁꯤ ꯀꯔꯝꯅꯥ ꯊꯧꯕꯒꯦ",
@@ -216,7 +226,20 @@
         "genericName": "ꯖꯦꯅꯦꯔꯤꯛ ꯃꯤꯡ",
         "dosageForm": "ꯍꯤꯗꯥꯛꯀꯤ ꯃꯑꯣꯡ (ꯗꯣꯁꯦꯖ)",
         "composition": "ꯀꯝꯄꯣꯖꯤꯁꯟ",
-        "offlineVerify": "ꯁ꯭ꯀꯦꯟ ꯀ꯭ꯌꯨꯗꯥ ꯊꯝꯕꯥ"
+        "offlineVerify": "ꯁ꯭ꯀꯦꯟ ꯀ꯭ꯌꯨꯗꯥ ꯊꯝꯕꯥ",
+        "scanMedicine": "ꯁ꯭ꯀꯦꯟ ꯃꯦꯗꯤꯁꯤꯟ ꯇꯧꯕꯥ꯫",
+        "positionBarcode": "ꯕꯥꯔꯀꯣꯗ ꯑꯗꯨ ꯄꯣꯖꯤꯁꯟ ꯇꯧꯕꯥ꯫",
+        "enterBatchNumber": "ꯕꯦꯆ ꯅꯝꯕꯔ ꯑꯦꯟꯇꯔ ꯇꯧꯔꯣ꯫",
+        "verify": "ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯥ꯫",
+        "batchNumberHelp": "ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯛ ꯄꯦꯀꯦꯖ ꯑꯗꯨꯗꯥ ꯄ꯭ꯔꯤꯟꯇ ꯇꯧꯔꯕꯥ ꯕꯦꯆ ꯅꯝꯕꯔ ꯑꯗꯨ ꯑꯦꯟꯇꯔ ꯇꯧ꯫",
+        "viewHistory": "ꯍꯤꯁ꯭ꯇꯔꯤ ꯌꯦꯡꯕꯥ꯫",
+        "stopScanner": "ꯁ꯭ꯀꯦꯅꯔ ꯊꯤꯡꯖꯤꯜꯂꯨ꯫",
+        "scanBarcode": "ꯕꯥꯔꯀꯣꯗ ꯁ꯭ꯀꯦꯟ ꯇꯧꯕꯥ꯫",
+        "uploadPhoto": "ꯐꯣꯇꯣ ꯑꯄꯂꯣꯗ ꯇꯧꯕꯥ꯫",
+        "ScanBarcode": "ꯕꯥꯔꯀꯣꯗ ꯁ꯭ꯀꯦꯟ ꯇꯧꯕꯥ꯫",
+        "batch_recalled_title": "ꯃꯁꯤꯒꯤ ꯕꯦꯆ ꯑꯁꯤ ꯔꯤꯀꯣꯜ ꯇꯧꯈ꯭ꯔꯦ꯫",
+        "batch_recalled_body": "ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯍꯤꯗꯥꯛ ꯑꯁꯤ ꯁꯤꯖꯤꯟꯅꯕꯤꯒꯅꯨ꯫ ꯈꯨꯗꯛꯇꯥ ꯅꯍꯥꯛꯀꯤ ꯐꯥꯔꯃꯥꯁꯤꯗꯥ ꯍꯟꯖꯤꯅꯍꯅꯒꯗꯕꯅꯤ꯫",
+        "save_to_abha": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯔꯦꯀꯣꯔꯗꯇꯥ ꯁꯦꯚ ꯇꯧꯕꯥ꯫"
     },
     "BackToTopButton": {
         "label": "ꯃꯊꯛꯇꯥ ꯑꯃꯨꯛ ꯍꯟꯕꯥ"
@@ -557,7 +580,8 @@
         "status": "ꯑꯣꯟꯂꯥꯏꯟ",
         "welcome": "ꯍꯥꯏ! ꯑꯩꯍꯥꯛ ꯁꯍꯤꯗꯋꯥ AI ꯑꯦꯁꯤꯁ꯭ꯇꯦꯟꯠꯅꯤ꯫ ꯉꯁꯤ ꯅꯍꯥꯛꯀꯤ ꯍꯤꯗꯥꯛꯁꯤꯡꯒꯤ ꯃꯇꯥꯡꯗꯥ ꯀꯔꯅꯥ ꯃꯇꯦꯡ ꯄꯥꯡꯒꯦ?",
         "placeholder": "ꯍꯤꯗꯥꯛ ꯑꯃꯒꯤ ꯃꯇꯥꯡꯗꯥ ꯑꯩꯉꯣꯟꯗꯥ ꯍꯪꯕꯤꯌꯨ…",
-        "tooltipLabel": "AI Health Assistant"
+        "tooltipLabel": "AI Health Assistant",
+        "clear": "ꯀ꯭ꯂꯤꯌꯥꯔ ꯇꯧꯕꯥ꯫"
     },
     "Alerts": {
         "backHome": "ꯍꯣꯝ ꯄꯦꯖꯗꯥ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯆꯠꯄꯥ",
@@ -693,7 +717,16 @@
         "statusExpiringSoon": "ꯊꯨꯅꯥ ꯑꯦꯛꯁꯄꯥꯏꯔ ꯑꯣꯏꯒꯗ꯭ꯔꯦ ({days}ꯅꯤ)",
         "statusSafe": "ꯆꯦꯛꯁꯤꯟꯅꯥ ꯂꯩꯔꯤ",
         "deleteSelected": "ꯈꯟꯂꯕꯥ ꯃꯥꯡꯍꯟꯕꯥ",
-        "selectMedicine": "{name} ꯈꯟꯕꯤꯌꯨ"
+        "selectMedicine": "{name} ꯈꯟꯕꯤꯌꯨ",
+        "saving": "ꯁꯦꯚꯤꯡ ꯇꯧꯕꯥ...",
+        "print": "ꯄ꯭ꯔꯤ���ꯇ ꯇꯧꯕꯥ꯫",
+        "exportPDF": "ꯄꯤ.ꯗꯤ.ꯑꯦꯐ.ꯇꯥ ꯑꯦꯛꯁꯄꯣꯔꯠ ꯇꯧꯕꯥ꯫",
+        "deleteMedicine": "ꯍꯤꯗꯥꯛ ꯂꯥꯡꯊꯛ ꯃꯨꯠꯊꯠꯄꯥ꯫",
+        "cancelButton": "ꯀꯦꯟꯁꯦꯜ ꯇꯧꯕꯥ꯫",
+        "deleteConfirmTitle": "ꯃꯦꯗꯤꯁꯤꯟ ꯃꯨꯠꯊꯠꯄꯥ?",
+        "deleteConfirmMessage": "ꯃꯁꯤꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯇ꯭ꯔꯦꯛ ꯇꯧꯔꯕꯥ ꯍꯤꯗꯥꯀꯁꯤꯡꯗꯒꯤ \"{medicine}\" ꯃꯇꯝ ꯆꯨꯞꯄꯒꯤ ꯑꯣꯏꯅꯥ ꯂꯧꯊꯣꯛꯀꯅꯤ꯫ ꯃꯁꯤꯒꯤ ꯑꯦꯛꯁꯟ ꯑꯁꯤ ���ꯧꯊꯣꯀꯄꯥ ꯌꯥꯔꯣꯏ꯫",
+        "bulkDeleteConfirmTitle": "ꯃꯁꯤꯡ ꯌꯥꯝꯂꯕꯥ ꯍꯤꯗꯥꯀꯁꯤꯡ ꯃꯨꯠꯊꯠꯄꯥ?",
+        "bulkDeleteConfirmMessage": "ꯃꯁꯤꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯇ꯭ꯔꯦꯛ ꯇꯧꯔꯕꯥ ꯂꯤꯁ꯭ꯇꯇꯒꯤ {count} ꯍꯤꯗꯥꯛ(ꯁꯤꯡ) ꯑꯗꯨ ꯃꯇꯝ ꯆꯨꯞꯄꯒꯤ ꯑꯣꯏꯅꯥ ꯂꯧꯊꯣꯛꯀꯅꯤ꯫ ꯃꯁꯤꯒꯤ ꯑꯦꯛꯁꯟ ꯑꯁꯤ ꯂꯧꯊꯣꯀꯄꯥ ꯌꯥꯔꯣꯏ꯫"
     },
     "ChildVaccinationTracker": {
         "childTrackerTitle": "ꯑꯉꯥꯡꯒꯤ ꯀꯥꯞꯊꯣꯛꯄꯒꯤ (Vaccination) ꯇ꯭ꯔꯦꯀꯔ",
@@ -716,7 +749,14 @@
         "dueStatus": "ꯀꯥꯞꯊꯣꯛꯀꯗꯕꯥ ꯃꯇꯝ ꯑꯣꯏꯔꯕꯥ",
         "overdueStatus": "ꯃꯇꯝ ꯍꯦꯟꯈꯤꯕꯥ",
         "upcomingStatus": "ꯂꯥꯛꯀꯗꯧꯔꯤꯕꯥ",
-        "markCompleteButton": "ꯂꯣꯏꯁꯤꯟꯂꯦ ꯍꯥꯌꯅꯥ ꯇꯧꯕꯥ"
+        "markCompleteButton": "ꯂꯣꯏꯁꯤꯟꯂꯦ ꯍꯥꯌꯅꯥ ꯇꯧꯕꯥ",
+        "exportCSV": "ꯑꯦꯛꯁꯄꯣꯔꯠ ꯇꯧꯕꯥ ꯁꯤ.ꯑꯦꯁ.ꯚꯤ",
+        "exportPDF": "ꯄꯤ.ꯗꯤ.ꯑꯦꯐ.ꯇꯥ ꯑꯦꯛꯁꯄꯣꯔꯠ ꯇꯧꯕꯥ꯫",
+        "print": "ꯄ꯭ꯔꯤꯟꯇ ꯇꯧꯕꯥ꯫",
+        "csvExportSuccess": "ꯁꯤ.ꯑꯦꯁ.ꯚꯤ.ꯅꯥ ꯃꯥꯌ ꯄꯥꯛꯅꯥ ꯑꯦꯛꯁꯄꯣꯔꯠ ꯇꯧꯈꯤ꯫",
+        "pdfExportSuccess": "ꯄꯤ.ꯗꯤ.ꯑꯦꯐ.ꯅꯥ ꯃꯥꯌ ꯄꯥꯛꯅꯥ ꯑꯦꯛꯁꯄꯣꯔꯠ ꯇꯧꯈꯤ꯫",
+        "noMedicinesToDisplay": "ꯌꯦꯟꯊꯣꯛꯅꯕꯥ ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯀꯁꯤꯡ ꯂꯩꯇꯦ꯫",
+        "generatedOn": "ꯖꯦꯅꯦꯔꯦꯠ ꯇꯧꯔꯕꯥ ꯑꯣꯟ꯫"
     },
     "Login": {
         "brandSubtitle": "ꯍꯤꯗꯥꯛ ꯆꯦꯛꯁꯤꯟꯊꯧꯒꯤ ꯄ꯭ꯂꯦꯠꯐꯣꯔꯝ",
@@ -1250,7 +1290,8 @@
         "clinicalRecommendation": "ꯀ꯭ꯂꯤꯅꯤꯀꯦꯜ ꯄꯥꯎꯇꯥꯛ:",
         "mechanism": "ꯃꯑꯣꯡ (Mechanism):",
         "source": "ꯍꯧꯔꯛꯐꯝ:",
-        "errorMessage": "ꯄꯨꯟꯅꯥ ꯆꯥꯕꯒꯤ ꯆꯦꯛ ꯇꯧꯕꯥ ꯃꯥꯌ ꯄꯥꯛꯈꯤꯗꯦ꯫ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯕꯤꯌꯨ꯫"
+        "errorMessage": "ꯄꯨꯟꯅꯥ ꯆꯥꯕꯒꯤ ꯆꯦꯛ ꯇꯧꯕꯥ ꯃꯥꯌ ꯄꯥꯛꯈꯤꯗꯦ꯫ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯕꯤꯌꯨ꯫",
+        "offlineBadge": "ꯑꯣꯐꯂꯥꯏꯟ ꯔꯤꯖꯜꯇ — ꯈ꯭ꯕꯥꯏꯗꯒꯤ ꯅꯧꯕꯥ ꯗꯦꯇꯥꯒꯤꯗꯃꯛ ꯏꯟꯇꯔꯅꯦꯇꯇꯥ ꯀꯅꯦꯛꯇ ꯇꯧꯕꯥ꯫"
     },
     "ScanHistory": {
         "export_modal_title": "ꯁ꯭ꯀꯦꯟ ꯍꯤꯁ꯭ꯇ꯭ꯔꯤ ꯑꯦꯛꯁꯄꯣꯔꯠ ꯇꯧꯕꯥ",
@@ -1310,7 +1351,8 @@
         "no_photo_label": "ꯐꯣꯇꯣ ꯂꯩꯇꯦ",
         "report_card_district_label": "ꯗꯤꯁ꯭ꯇ꯭ꯔꯤꯛꯠ",
         "report_card_submitted_label": "ꯊꯥꯈꯤꯕꯥ ꯇꯥꯡ",
-        "report_card_batch_label": "ꯕꯦꯆ (Batch)"
+        "report_card_batch_label": "ꯕꯦꯆ (Batch)",
+        "load_more_button": "ꯂꯣꯗ ꯃꯣꯔ꯫"
     },
     "Map": {
         "errors": {
@@ -1566,7 +1608,9 @@
         "networkErrorAction": "Try again",
         "emptyTitle": "No medicines scheduled",
         "emptyDescription": "You have no medicines scheduled for today. Add one to get started.",
-        "emptyAction": "Add Medicine"
+        "emptyAction": "Add Medicine",
+        "doseLoggedSuccess": "ꯗꯣꯖ ꯁ꯭ꯇꯦꯇꯁ ꯃꯥꯌꯄꯥꯛꯅꯥ ꯑꯄꯗꯦꯠ ꯇꯧꯈ꯭ꯔꯦ꯫",
+        "doseSkippedSuccess": "ꯁ꯭ꯀꯤꯞ ꯇꯧꯔꯕꯥ ꯍꯥꯌꯅꯥ ꯃꯥꯔꯛ ꯇꯧꯔꯕꯥ ꯗꯣꯖ꯫"
     },
     "scheduleNew": {
         "pageTitle": "Add Medicine",
@@ -1620,5 +1664,191 @@
         "statTaken": "Taken",
         "statSkipped": "Skipped",
         "statExpected": "Expected"
+    },
+    "A11y": {
+        "confirmClearConversation": "ꯃꯌꯦꯛ ꯁꯦꯡꯕꯥ ꯋꯥꯔꯤ-ꯋꯥꯇꯥꯏ ꯑꯗꯨ ꯀꯅꯐꯥꯔꯝ ꯇꯧ꯫",
+        "cancelClearConversation": "ꯃꯌꯦꯛ ꯁꯦꯡꯕꯥ ꯋꯥꯔꯤ ꯁꯥꯅꯕꯥ ꯑꯗꯨ ꯀꯦꯟꯁꯦꯜ ꯇꯧ꯫",
+        "goToHomepage": "ꯍꯣꯃꯄꯦꯖꯗꯥ ꯆꯠꯂꯨ꯫",
+        "closeChat": "ꯀ꯭ꯂꯣꯖ ꯆꯦꯠ ꯇꯧꯕꯥ꯫",
+        "sendMessage": "ꯃꯦꯁꯦꯖ ꯊꯥꯕꯤꯌꯨ꯫",
+        "openAiChat": "��ꯦ.ꯑꯥꯏ.ꯒꯤ ꯆꯦꯠ ꯍꯥꯡꯗꯣꯀꯄꯥ꯫",
+        "closeAiChat": "ꯑꯦ.ꯑꯥꯏ.ꯒꯤ ꯆꯦꯠ ꯀ꯭ꯂꯣꯖ ꯇꯧꯕꯥ꯫",
+        "mainNavigation": "ꯃꯦꯟ ꯅꯦꯚꯤꯒꯦꯁꯟ ꯇꯧꯕꯥ꯫",
+        "mobileNavigation": "ꯃꯣꯕꯥꯏꯜ ꯅꯦꯚꯤꯒꯦꯁꯟ ꯇꯧꯕꯥ꯫",
+        "toggleSystemParameters": "ꯁꯤꯁ꯭ꯇꯦꯝ ꯄꯦꯔꯥꯃꯤꯇꯔꯁꯤꯡ ꯇꯣꯒꯜ ꯇꯧꯕꯥ꯫"
+    },
+    "Accessibility": {
+        "logo": "ꯁꯥꯍꯤꯗꯥꯋꯥ ꯂꯣꯒꯣ꯫",
+        "health_companion": "ꯍꯦꯜꯊ ꯀꯝꯄꯦꯅꯤ꯫",
+        "select_language": "ꯂꯣꯜ ꯈꯜꯂꯨ꯫",
+        "language_options": "ꯂꯣꯂꯒꯤ ꯑꯣꯄꯁꯅꯁꯤꯡ꯫",
+        "go_back": "ꯃꯃꯥꯡꯒꯤ ꯄꯦꯖꯗꯥ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯆꯪꯁꯤꯜꯂꯨ꯫",
+        "go_back_short": "ꯍꯜꯂꯀꯎ꯫",
+        "current_language": "ꯍꯧꯖꯤꯛꯀꯤ ꯂꯣꯜ: {language}",
+        "toggle_theme": "���ꯤꯝ ꯇꯣꯒꯜ ꯇꯧꯕꯥ꯫",
+        "switch_light": "ꯂꯥꯏꯠ ꯃꯣꯗꯇꯥ ꯍꯣꯡꯗꯣꯀꯎ꯫",
+        "switch_dark": "ꯗꯥꯔꯛ ꯃꯣꯗꯇꯥ ꯍꯣꯡꯗꯣꯀꯎ꯫"
+    },
+    "ABHA": {
+        "title": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯍꯦꯜꯊ ꯔꯦꯀꯣꯔꯗꯁꯤꯡ꯫",
+        "setupTitle": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯁꯦꯇꯑꯞ꯫",
+        "recordsTitle": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯔꯦꯀꯣꯔꯗꯁꯤꯡ꯫",
+        "link": "ꯂꯤꯉ꯭ꯛ ꯇꯧꯕꯥ ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ",
+        "linked": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯅꯥ ꯂꯤꯉ꯭ꯛ ꯇꯧꯈꯤ꯫",
+        "notLinked": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯅꯥ ꯂꯤꯉ꯭ꯛ ꯇꯧꯗꯦ꯫",
+        "generateOtp": "ꯑꯣ.ꯇꯤ.ꯄꯤ",
+        "verifyOtp": "ꯑꯣ.ꯇꯤ.ꯄꯤ.ꯒꯤ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯥ꯫",
+        "enterAbha": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯑꯦꯗ꯭ꯔꯦꯁ ꯑꯗꯨ ꯑꯦꯟꯇꯔ ꯇꯧꯔꯣ꯫",
+        "enterOtp": "ꯑꯣ.ꯇꯤ.ꯄꯤ.ꯗꯥ ꯆꯪꯕꯤꯌꯨ꯫",
+        "success": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯅꯥ ꯃꯥꯌ ꯄꯥꯛꯅꯥ ꯂꯤꯉ꯭ꯛ ꯇꯧꯈꯤ꯫",
+        "saveRecord": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯔꯦꯀꯣꯔꯗꯇꯥ ꯁꯦꯚ ꯇꯧꯕꯥ꯫",
+        "noRecords": "ꯄ꯭ꯔꯦꯁꯛꯔꯤꯄꯁꯟ ꯑꯃꯠꯇꯥ ꯐꯪꯈꯤꯗꯦ꯫"
+    },
+    "Tracking": {
+        "success": "ꯃꯦꯗꯤꯁꯤꯟ ꯃꯥꯌ ꯄꯥꯛꯅꯥ ꯇ꯭ꯔꯦꯛ ꯇꯧꯈꯤ!",
+        "trackButton": "ꯇ꯭ꯔꯦꯛ ꯑꯦꯛꯁꯄꯥꯏꯔ ꯇꯧꯕꯥ꯫"
+    },
+    "SchemeEligibility": {
+        "validationAgeError": "ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯆꯠꯅꯕꯥ ꯌꯥꯕꯥ ꯆꯍꯤ ꯑꯃꯥ ꯑꯦꯟꯇꯔ ꯇꯧꯕꯤꯌꯨ꯫",
+        "validationStateError": "ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯔꯥꯖ꯭ꯌ ꯑꯃ��� ꯈꯅꯕꯤꯌꯨ꯫",
+        "validationIncomeError": "ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯆꯠꯅꯕꯥ ꯌꯥꯕꯥ ꯆꯍꯤꯒꯤ ꯑꯣꯏꯕꯥ ꯏꯅꯀꯝ ꯑꯃꯥ ꯑꯦꯟꯇꯔ ꯇꯧꯕꯤꯌꯨ꯫",
+        "validationFamilySizeError": "ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯆꯠꯅꯕꯥ ꯌꯥꯕꯥ ꯏꯃꯨꯡꯒꯤ ꯁꯥꯏꯖ ꯑꯃꯥ ꯑꯦꯟꯇꯔ ꯇꯧꯕꯤꯌꯨ꯫",
+        "eligibilityCheckedSuccess": "ꯏꯂꯤꯖꯤꯕꯤꯂꯤꯇꯤ ꯃꯥꯌ ꯄꯥꯛꯅꯥ ꯆꯦꯛ ꯇꯧꯈ꯭ꯔꯦ!",
+        "eligibilityCheckFailed": "ꯏꯂꯤꯖꯤꯕꯤꯂꯤꯇꯤ ꯆꯦꯛ ꯇꯧꯕꯥ ꯉꯃꯈꯤꯗꯦ꯫ ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯕꯤꯌꯨ꯫",
+        "title": "ꯅꯍꯥꯛꯀꯤ <highlight>ꯁ꯭ꯀꯤꯃꯒꯤ ꯏꯂꯤꯖꯤꯕꯤꯂꯤꯇꯤ</highlight> ꯆꯦꯛ ꯇꯧ꯫",
+        "description": "ꯅꯍꯥꯛ ꯑꯃꯁꯨꯡ ꯅꯍꯥꯛꯀꯤ ꯏꯃꯨꯡ-ꯃꯅꯨꯡꯅꯥ ꯀꯔꯝꯕꯥ ꯁꯔꯀꯥꯔꯒꯤ ꯍꯦꯂꯊ ꯁ꯭ꯀꯤꯃꯁꯤꯡꯒꯤꯗꯃꯛ ꯀ꯭ꯕꯥꯂꯤꯐꯥꯏ ꯑꯣꯏꯕꯒꯦ ꯍꯥꯌꯕꯗꯨ ꯏꯆꯝ ꯆꯝꯕꯥ ꯈꯣꯡꯊꯥꯡ 3ꯗꯥ ꯈꯪꯖꯤꯅꯕꯤꯌꯨ꯫",
+        "stepDemographics": "ꯗꯦꯃꯣꯒ꯭ꯔꯥꯐꯤꯛ ꯑꯣꯏꯕꯥ꯫",
+        "stepIncomeFamily": "ꯏꯅꯀꯝ ꯑꯃꯁꯨꯡ ꯏꯃꯨꯡ ꯃꯅꯨꯡ꯫",
+        "stepIdentification": "ꯃꯁꯛ ꯈꯪꯗꯣꯀꯄꯥ꯫",
+        "ageLabel": "ꯅꯍꯥꯛꯀꯤ ꯆꯍꯤ ꯀꯌꯥ ꯀꯔꯤꯅꯣ?",
+        "ageDescription": "ꯆꯍꯤꯅꯥ ꯁꯦꯅꯤꯌꯔ ꯁꯤꯇꯤꯖꯟ ꯍꯦꯂꯊ ꯀꯣꯚꯔꯦꯖꯁꯤꯡ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕ��ꯥ ꯃꯇꯦꯡ ꯄꯥꯡꯏ꯫",
+        "agePlaceholder": "ꯈꯨꯗꯝ ꯑꯣꯏꯅꯥ, ꯌꯨ.ꯑꯦꯁ. ꯴꯵ ꯑꯃꯁꯨꯡ ꯑꯦꯟ",
+        "stateLabel": "ꯑꯗꯣꯝ ꯀꯔꯝꯕꯥ ꯔꯥꯖ꯭ꯌꯗꯥ ꯂꯩꯔꯤꯕꯒꯦ?",
+        "stateDescription": "ꯁꯔꯀꯥꯔꯒꯤ ꯍꯦꯜꯊ ꯏꯟꯁꯨꯔꯦꯟꯁ ꯄ꯭ꯔꯣꯒ꯭ꯔꯥꯃꯁꯤꯡ ꯑꯁꯤ ꯔꯥꯖ꯭ꯌꯒꯤ ꯃꯇꯨꯡ ꯏꯟꯅꯥ ꯈꯦꯠꯅꯩ꯫",
+        "incomeLabel": "ꯅꯍꯥꯛꯀꯤ ꯏꯃꯨꯡꯒꯤ ꯑꯄꯨꯅꯕꯥ ꯆꯍꯤꯒꯤ ꯏꯅꯀꯝ ꯑꯁꯤ ꯀꯌꯥꯅꯣ?",
+        "incomeDescription": "ꯆꯍꯤ ꯑꯃꯗꯥ ꯅꯍꯥꯛꯀꯤ ꯑꯄꯨꯅꯕꯥ ꯌꯨꯃꯊꯣꯡꯒꯤ ꯑꯄꯨꯅꯕꯥ ꯏꯅꯀꯝ ꯑꯗꯨ ꯂꯨꯄꯥꯗꯥ꯫",
+        "incomePlaceholder": "ꯈꯨꯗꯝ ꯑꯣꯏꯅꯥ, ꯌꯨ.ꯑꯦꯁ. ꯱꯲꯰꯰꯰꯰꯰ ꯍꯦꯟꯅꯥ ꯄꯤꯈꯤ꯫",
+        "familySizeLabel": "ꯅꯍꯥꯛꯀꯤ ꯏꯃꯨꯡꯗꯥ ꯃꯤꯑꯣꯏ ꯀꯌꯥ ꯂꯩꯔꯤꯕꯒꯦ?",
+        "familySizeDescription": "ꯌꯨꯃꯗꯥ ꯄꯨꯟꯅꯥ ꯂꯩꯃꯤꯟꯅꯔꯤꯕꯥ ꯑꯄꯨꯅꯕꯥ ꯏꯃꯨꯡꯒꯤ ꯃꯤꯑꯣꯏꯁꯤꯡ꯫",
+        "familySizePlaceholder": "ꯈꯨꯗꯝ ꯑꯣꯏꯅꯥ, ꯌꯨ.ꯑꯦꯁ. ꯵",
+        "bplQuestion": "ꯅꯍꯥꯛꯀꯤ BPL (Below Poverty Line) ꯀꯥꯔꯗ ꯂꯩꯕ꯭ꯔꯥ?",
+        "abhaQuestion": "ꯑꯗꯣꯃꯒꯤ ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.(ꯑꯌꯨꯁ꯭ꯃꯥꯟ ꯚꯥꯔꯠ ꯍꯦꯜꯊ ꯑꯦꯀꯥꯎꯟꯇ) ꯑꯥꯏ.ꯗꯤ.",
+        "yesOption": "ꯍꯣꯌ, ꯑꯩꯅꯥ ꯇꯧꯏ꯫",
+        "noOption": "ꯅꯠꯇꯦ, ꯑꯩꯅꯥ ꯇꯧꯗꯦ꯫",
+        "backButton": "ꯕꯦꯛ ꯇꯧꯕꯥ꯫",
+        "nextButton": "ꯃꯊꯪꯒꯤ ꯁ꯭ꯇꯦꯞ꯫",
+        "findSchemesButton": "ꯁ꯭ꯀꯤꯃꯁꯤꯡ ꯊꯤꯕꯥ꯫",
+        "checkingButton": "ꯆꯦꯛ ꯇꯧꯔꯤ...",
+        "resultsTitle": "ꯅꯍꯥꯛꯀꯤ ꯏꯂꯤꯖꯤꯕꯜ ꯑꯣꯏꯕꯥ ꯁ꯭ꯀꯤꯃꯁꯤꯡ꯫",
+        "resultsDescription": "ꯑꯩꯈꯣꯌꯅꯥ <countTag>{count} ꯁ꯭ꯀꯤꯃꯁꯤꯡ</countTag> ꯅꯍꯥꯛꯅꯥ ꯀ꯭ꯕꯥꯂꯤꯐꯥꯏ ꯑꯣꯏꯕꯥ ꯐꯪꯂꯦ꯫",
+        "eligibleBadge": "ꯏꯂꯤꯖꯤꯕꯜ ꯑꯣꯏꯕꯥ꯫",
+        "benefitsCoverage": "ꯀꯥꯟꯅꯕꯥ / ꯀꯚꯔꯦꯖ꯫",
+        "howToApply": "ꯃꯇꯧ ꯀꯔꯝꯅꯥ ꯑꯦꯞꯂꯥꯏ ꯇꯧꯒꯗꯒꯦ꯫",
+        "visitOfficialPortal": "ꯑꯣꯐꯤꯁꯤꯑꯦꯜ ꯄꯣꯔꯇꯦꯂꯗꯥ ꯆꯠꯄꯤꯌꯨ꯫",
+        "noSchemesTitle": "ꯁ꯭ꯀꯤꯝ ꯑꯃꯠꯇꯥ ꯃꯥꯟꯅꯕꯥ ꯑꯀꯨꯞꯄꯥ ꯃꯔꯣꯂꯁꯤꯡ ꯐꯪꯈꯤꯗꯦ꯫",
+        "noSchemesDescription": "ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯈꯨꯉ꯭ꯒꯪꯒꯤ ꯑꯣꯐꯤꯁꯤꯑꯦꯜ ꯑꯃꯒꯥ ꯇꯥꯟꯅꯕꯤꯌꯨ ꯅꯠꯠꯔꯒꯥ ꯅꯍꯥꯛꯀꯤ ꯂꯣꯀꯦꯜ ꯒꯕꯔꯅꯃꯦꯟꯇꯀꯤ ꯀꯤꯑꯣꯁ꯭ꯛ ꯑꯗꯨ ꯆꯦꯛ ꯇꯧꯕꯤꯌꯨ꯫",
+        "printPdfButton": "ꯄꯤ.ꯗꯤ.ꯑꯦꯐ.ꯇꯥ ꯄ꯭ꯔꯤꯟꯇ ꯇꯧꯕꯥ / ꯁꯦꯚ ꯇꯧꯕꯥ꯫",
+        "checkAgainButton": "ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯆꯦꯛ ꯇꯧꯕꯤꯌꯨ꯫",
+        "printBrandTitle": "ꯁꯥꯍꯤꯗꯥꯋꯥ — ꯈꯨꯉ꯭ꯒꯪꯒꯤ ꯍꯀꯁꯦꯂꯒꯤ ꯊꯣꯡ꯫",
+        "printReportTitle": "ꯁꯔꯀꯥꯔꯒꯤ ꯍꯦꯜꯊ ꯁ꯭ꯀꯤꯃꯁꯤꯡꯒꯤ ꯏꯂꯤꯖꯤꯕꯤꯂꯤꯇꯤ ꯔꯤꯄꯣꯔꯠ꯫",
+        "dateGenerated": "ꯖꯦꯅꯦꯔꯦꯠ ꯇꯧꯈꯤꯕꯥ ꯇꯥꯡ꯫",
+        "website": "ꯋꯦꯕꯁꯥꯏꯠ꯫",
+        "age": "ꯆꯍꯤ꯫",
+        "years": "ꯆꯍꯤ ꯀꯌꯥ ꯁꯨꯈ꯭ꯔꯦ꯫",
+        "stateOfResidence": "ꯔꯦꯁꯤꯗꯦꯟꯁꯀꯤ ꯔꯥꯖ꯭ꯌ꯫",
+        "annualFamilyIncome": "ꯆꯍꯤꯒꯤ ꯑꯣꯏꯕꯥ ꯏꯃꯨꯡꯒꯤ ꯏꯅꯀꯝ꯫",
+        "familySize": "ꯏꯃꯨꯡ ꯃꯅꯨꯡꯒꯤ ꯆꯥꯡ꯫",
+        "members": "ꯃꯦꯝꯕꯔꯁꯤꯡ ꯌꯥꯑꯣꯔꯤ꯫",
+        "bplRationCardHolder": "ꯕꯤ.ꯄꯤ.ꯑꯦꯜ.ꯒꯤ ꯔꯦꯁꯟ ꯀꯥꯔꯗ ꯍꯣꯜꯗꯔ꯫",
+        "abhaHealthIdHolder": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯍꯦꯜꯊ ꯑꯥꯏ.ꯗꯤ",
+        "yes": "ꯍꯣꯌ꯫",
+        "no": "ꯅꯪ"
+    },
+    "voiceVerify": {
+        "heading": "ꯚꯣꯏꯁ ꯃꯦꯗꯤꯁꯤꯟ ꯆꯦꯛ ꯇꯧꯕꯥ꯫",
+        "subtitle": "ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯛꯀꯤ ꯃꯃꯤꯡ ꯑꯗꯨ ꯅꯍꯥꯛꯀꯤ ꯂꯣꯟꯗꯥ ꯉꯥꯡꯕꯤꯌꯨ꯫",
+        "statusVerifying": "ꯃꯦꯗꯤꯁꯤꯟ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯥ...",
+        "statusRecording": "ꯔꯦꯀꯣꯔꯗ ꯇꯧꯔꯤ... ꯊꯤꯡꯅꯕꯥ ꯇꯦꯞ ꯇꯧ꯫",
+        "statusIdle": "ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯛꯀꯤ ꯃꯃꯤꯡ ꯉꯥꯡꯅꯕꯒꯤꯗꯃꯛ ꯇꯦꯞ ꯇꯧ꯫",
+        "supportedLanguages": "ꯁꯄꯣꯔꯇꯁꯤꯡ: ꯍꯤꯟꯗꯤ • ꯇꯥꯃꯤꯜ • ꯇꯦꯂꯨꯒꯨ • ꯀꯟꯅꯥꯗꯥ • ꯕꯦꯉ꯭ꯒꯂꯤ • ꯃꯂꯌꯥꯂꯝ + ꯍꯦꯟꯅꯥ꯫",
+        "errorMicDenied": "ꯃꯥꯏꯛꯔꯣꯐꯣꯟ ꯑꯦꯛꯁꯦꯁ ꯇꯧꯕꯥ ꯌꯥꯍꯟꯗꯦ꯫ ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯃꯥꯏꯛꯔꯣꯐꯣꯟ ꯑꯦꯛꯁꯦꯁ ꯇꯧꯕꯥ ꯌꯥꯍꯅꯕꯤꯌꯨ ꯑꯃꯁꯨꯡ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯕꯤꯌꯨ꯫",
+        "errorNetwork": "ꯅꯦꯇꯋꯥꯔꯀꯀꯤ ꯑꯁꯣꯌꯕꯥ ꯂꯩ꯫ ꯆꯥꯅꯕꯤꯗꯨꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯀꯅꯦꯛꯁꯟ ꯑꯗꯨ ꯆꯦꯛ ꯇꯧꯕꯤꯌꯨ ꯑꯃꯁꯨꯡ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯕꯤꯌꯨ꯫",
+        "fallbackText": "ꯃꯥꯏꯛꯔꯣꯐꯣꯟ ꯂꯩꯇꯦ?",
+        "fallbackLinkText": "ꯃꯗꯨꯒꯤ ꯃꯍꯨꯠꯇꯥ ꯇꯦꯛꯁꯠ ꯏꯅꯄꯨꯠ ꯁꯤꯖꯤꯟꯅꯧ꯫",
+        "tryAgain": "ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯍꯣꯠꯅꯧ꯫",
+        "checkAnother": "ꯑꯇꯣꯞꯄꯥ ꯍꯤꯗꯥꯛ ꯑꯃꯥ ꯆꯦꯛ ꯇꯧꯕꯤꯌꯨ꯫",
+        "statusVerified": "ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯈ꯭ꯔꯦ꯫",
+        "statusSuspicious": "ꯆꯤꯡꯅꯕꯥ ꯂꯩꯕꯥ꯫",
+        "statusNotFound": "ꯐꯪꯗ꯭ꯔꯤ꯫",
+        "cdscoRegistered": "ꯔꯦꯖꯤꯁ꯭ꯇꯔ ꯇꯧꯔꯕꯥ꯫",
+        "cdscoUnverified": "ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯗꯕꯥ꯫",
+        "scriptLabel": "ꯍꯤꯗꯥꯛ-ꯂꯥꯡꯊꯛ ({script} ꯁ꯭ꯛꯔꯤꯞꯇ)",
+        "manufacturerLabel": "ꯃꯦꯟꯌꯨꯐꯦꯀꯆꯔꯔ ꯇꯧꯕꯥ꯫",
+        "categoryLabel": "ꯀꯦꯇꯦꯒꯣꯔꯤꯗꯥ ꯂꯩ꯫",
+        "languageDetectedLabel": "ꯂꯣꯜ ꯈꯉꯗꯣꯀꯄꯥ꯫",
+        "youSaidLabel": "ꯑꯗꯣꯝꯅꯥ ꯍꯥꯌꯕꯤꯔꯝꯃꯤ꯫",
+        "warningsLabel": "ꯆꯦꯀꯁꯤꯅꯋꯥ ꯄꯤꯕꯥ꯫",
+        "ariaStartRecording": "ꯔꯦꯀꯣꯔꯗ ꯇꯧꯕꯥ ꯍꯧꯒꯗꯕꯅꯤ꯫",
+        "ariaStopRecording": "ꯔꯦꯀꯣꯔꯗ ꯇꯧꯕꯥ ꯂꯦꯄꯀꯅꯨ꯫"
+    },
+    "AdminSynonyms": {
+        "title": "ꯑꯣ.ꯁꯤ.ꯑꯥꯔ.ꯒꯤ ꯁꯤꯅꯣꯅꯤꯃꯁꯤꯡ꯫",
+        "subtitle": "ꯑꯣ.ꯁꯤ.ꯑꯥꯔ.ꯒꯤ ꯃꯤꯁꯔꯤꯗꯁꯤꯡ ꯑꯃꯁꯨꯡ ꯃꯦꯗꯤꯁꯤꯅꯒꯤ ꯁꯤꯅꯣꯅꯤꯃꯁꯤꯡ ꯃꯦꯅꯦꯖ ꯇꯧꯕꯥ꯫",
+        "refresh": "ꯔꯤꯐ꯭ꯔꯦꯁ ꯇꯧꯕꯥ꯫",
+        "addNew": "ꯑꯅꯧꯕꯥ ꯔꯨꯜ ꯑꯃꯥ ꯍꯥꯄꯆꯤꯜꯂꯨ꯫",
+        "originalTerm": "ꯑꯔꯤꯖꯤꯅꯦꯜ ꯇꯔꯝ꯫",
+        "normalizedTerm": "ꯅꯣꯔꯃꯦꯂꯥꯏꯖ ꯇꯧꯔꯕꯥ ꯇꯔꯝ꯫",
+        "originalPlaceholder": "ꯈꯨꯗꯝ ꯑꯣꯏꯅꯥ, ꯑꯦꯁ꯭ꯞꯔꯤꯟ",
+        "normalizedPlaceholder": "ꯈꯨꯗꯝ ꯑꯣꯏꯅꯥ, ꯑꯦꯁ꯭ꯄꯤꯔꯤꯟ꯫",
+        "typeLabel": "ꯃꯈꯜ꯫",
+        "typeSynonym": "ꯁꯤꯅꯣꯅꯤꯝ꯫",
+        "typeMisread": "ꯑꯣ.ꯁꯤ.ꯑꯥꯔ.ꯅꯥ ꯃꯤꯁꯔꯦꯗ ꯇꯧꯕꯥ꯫",
+        "addButton": "ꯔꯨꯜ ꯍꯥꯄꯆꯤꯅꯕꯥ꯫",
+        "listTitle": "ꯍꯧꯖꯤꯛ ꯂꯩꯔꯤꯕꯥ ꯔꯨꯂꯁꯤꯡ꯫",
+        "emptyList": "ꯔꯨꯜ ꯑꯃꯠꯇꯥ ꯐꯪꯈꯤꯗꯦ꯫",
+        "actions": "ꯑꯦꯛꯁꯅꯁꯤꯡ ꯂꯧꯈꯠꯄꯥ꯫",
+        "delete": "ꯃꯨꯠꯊꯠꯄꯥ꯫",
+        "confirmDelete": "ꯅꯍꯥꯛꯅꯥ ꯔꯨꯜ ꯑꯁꯤ ꯃꯨꯠꯊꯠꯄꯥ ꯄꯥꯝꯂꯤꯕ꯭ꯔꯥ?",
+        "fetchError": "ꯅꯤꯌꯃꯁꯤꯡ ꯂꯧꯕꯥ ꯉꯃꯈꯤꯗꯦ꯫",
+        "addError": "ꯔꯨꯜ ꯍꯥꯄꯆꯤꯅꯕꯥ ꯉꯃꯈꯤꯗꯦ꯫",
+        "deleteError": "ꯔꯨꯜ ꯃꯨꯠꯊꯠꯄꯥ ꯉꯃꯈꯤꯗꯦ꯫",
+        "uploadCsv": "ꯁꯤ.ꯑꯦꯁ.ꯚꯤ.ꯕꯨ ꯑꯄꯂꯣꯗ ꯇꯧꯕꯥ꯫",
+        "uploading": "ꯑꯄꯂꯣꯗ ꯇꯧꯔꯤ...",
+        "uploadSuccess": "ꯃꯥꯌ ꯄꯥꯛꯅꯥ {count} ꯔꯨꯂꯁꯤꯡ ꯍꯥꯄꯆꯤꯜꯂꯦ꯫",
+        "invalidCsv": "ꯑꯁꯣꯌꯕꯥ CSV ꯐꯣꯔꯃꯦꯠ꯫ ꯀꯣꯂꯃꯁꯤꯡ ꯁꯣꯌꯗꯅꯥ ꯂꯩꯍꯅꯒꯗꯕꯅꯤ: original_term, normalized_term, ꯃꯈꯜ.",
+        "uploadError": "CSV ꯔꯨꯂꯁꯤꯡ ꯑꯄꯂꯣꯗ ꯇꯧꯕꯥ ꯉꯃꯗꯦ꯫"
+    },
+    "AbhaSetup": {
+        "back": "ꯄ꯭ꯔꯣꯐꯥꯏꯂꯗꯥ ꯍꯜꯂꯀꯎ꯫",
+        "title": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯁꯦꯇꯑꯞ꯫",
+        "success": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯅꯥ ꯃꯥꯌ ꯄꯥꯛꯅꯥ ꯂꯤꯉ꯭ꯛ ꯇꯧꯈꯤ꯫",
+        "placeholders": {
+            "address": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯑꯦꯗ꯭ꯔꯦꯁ ꯑꯗꯨ ꯑꯦꯟꯇꯔ ꯇꯧꯔꯣ꯫",
+            "otp": "ꯑꯣ.ꯇꯤ.ꯄꯤ.ꯗꯥ ꯆꯪꯕꯤꯌꯨ꯫"
+        },
+        "buttons": {
+            "generateOtp": "ꯑꯣ.ꯇꯤ.ꯄꯤ",
+            "verifyOtp": "ꯑꯣ.ꯇꯤ.ꯄꯤ.ꯒꯤ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯕꯥ꯫",
+            "resendIn": "{seconds}sꯗꯥ ꯑꯃꯨꯛ ꯍꯟꯅꯥ ꯊꯥꯕꯤꯌꯨ꯫"
+        },
+        "errors": {
+            "addressRequired": "ꯑꯦ.ꯕꯤ.ꯑꯩꯆ.ꯑꯦ.ꯒꯤ ꯑꯦꯗ꯭ꯔꯦꯁ ꯃꯊꯧ ꯇꯥꯏ꯫",
+            "otpRequired": "ꯑꯣ.ꯇꯤ.ꯄꯤ.ꯒꯤ ꯃꯊꯧ ꯇꯥꯏ꯫",
+            "generic": "ꯀꯔꯤꯒꯨꯝꯕꯥ ꯈꯔꯥ ꯑꯁꯣꯌꯕꯥ ꯑꯃꯥ ꯊꯣꯀꯈꯤ꯫"
+        }
+    },
+    "Navbar": {
+        "logo_alt": "ꯁꯥꯍꯤꯗꯥꯋꯥ ꯂꯣꯒꯣ꯫"
+    },
+    "PrivacyConsent": {
+        "title": "ꯄ꯭ꯔꯥꯏꯚꯦꯁꯤ & ꯗꯦꯇꯥ ꯀꯟꯁꯦꯟꯇ ꯇꯧꯕꯥ꯫",
+        "description": "ꯅꯍꯥꯀꯄꯨ ꯁꯦꯛꯌꯨꯑꯣꯔ ꯑꯣꯏꯕꯥ ꯑꯦꯛꯁꯄꯤꯔꯤꯑꯦꯟꯁ ꯑꯃꯥ ꯄꯤꯅꯕꯒꯤꯗꯃꯛ, ꯁꯥꯍꯤꯗꯥꯋꯥꯅꯥ ꯗꯦꯇꯥ ꯈꯣꯃꯖꯤꯟꯅꯕꯒꯤ ꯅꯍꯥꯛꯀꯤ ꯑꯌꯥꯕꯥ ꯃꯊꯧ ꯇꯥꯏ꯫",
+        "locationPurpose": "ꯑꯩꯈꯣꯌꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯃꯐꯝ ꯑꯗꯨ ꯃꯦꯄꯇꯥ ꯅꯍꯥꯛꯀꯤ ꯃꯅꯥꯛꯇꯥ ꯂꯩꯕꯥ ꯚꯦꯔꯤꯐꯥꯏ ꯇꯧꯔꯕꯥ ꯐꯥꯔꯃꯥꯁꯤꯁꯤꯡ ꯊꯤꯅꯕꯥ ꯁꯤꯖꯤꯟꯅꯩ꯫",
+        "scanHistoryPurpose": "ꯑꯩꯈꯣꯌꯅꯥ ꯅꯍꯥꯛꯀꯤ ꯁ꯭ꯀꯦꯟ ꯍꯤꯁ꯭ꯇꯔꯤ ꯑꯗꯨ ꯂꯣꯀꯦꯜ ꯑꯣꯏꯅꯥ ꯁ꯭ꯇꯣꯔ ꯇꯧꯏ ꯅꯠꯠꯔꯒꯥ ꯅꯍꯥꯛꯀꯤ ꯚꯦꯔꯤꯐꯤꯀꯦꯁꯟ ꯔꯦꯀꯣꯔꯗꯁꯤꯡ ꯇ꯭ꯔꯦꯛ ꯇꯧꯕꯗꯥ ꯃꯇꯦꯡ ꯄꯥꯡꯅꯕꯥ ꯁꯦꯛꯌꯨꯑꯣꯔ ꯑꯣꯏꯅꯥ ꯁꯤꯉ꯭ꯛ ꯇꯧꯏ꯫",
+        "acceptAll": "ꯄꯨꯝꯅꯃꯛ ꯌꯥꯕꯥ꯫",
+        "denyAll": "ꯌꯥꯗꯕꯥ꯫",
+        "savePreferences": "ꯄ꯭ꯔꯤꯐꯔꯦꯟꯁꯁꯤꯡ ꯁꯦꯚ ꯇꯧꯕꯥ꯫",
+        "locationLabel": "ꯂꯣꯀꯦꯁꯟ ꯁꯔꯚꯤꯁꯁꯤꯡ꯫",
+        "scanHistoryLabel": "ꯁ꯭ꯀꯦꯟ ꯍꯤꯁ꯭ꯇꯔꯤ ꯁ꯭ꯇꯣꯔꯦꯖ꯫"
     }
 }

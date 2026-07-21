@@ -181,7 +181,10 @@
         "features_description": "सहिदावा (SahiDawa) तुमकां तुमच्या वखदांची पडताळणी करपाक आनी सुरक्षित उरपाक कशे तरेन मदत करू शकता ते सगळे मार्ग सोदा.",
         "trusted_by_citizens": "नागरिकां कडल्यान विस्वाशी",
         "voices_title": "सहिदावा समुदायाचे ताळे",
-        "voices_description": "वखदांची सुरक्षा सवाय करपाक सहिदावा वापरपी कुटुंब, फार्मासिस्ट, दोतोर आनी योगदानकर्ते."
+        "voices_description": "वखदांची सुरक्षा सवाय करपाक सहिदावा वापरपी कुटुंब, फार्मासिस्ट, दोतोर आनी योगदानकर्ते.",
+        "search_input_aria": "वखदां, ब्रँड, वा बॅच क्रमांक सोदचे",
+        "submit_search": "सोद घेवचो",
+        "clear_search": "सोद स्पश्ट करचो"
     },
     "Navigation": {
         "how_it_works": "हें कशें काम करता",
@@ -195,7 +198,8 @@
         "scans": "स्कॅन केल्लें",
         "map": "नॅशा",
         "profile": "व्यक्तिगत माहिती",
-        "language": "कोंकणी"
+        "language": "कोंकणी",
+        "more": "चड"
     },
     "Scan": {
         "share": {
@@ -215,7 +219,27 @@
             "shared_success": "निकाल यशस्वीपणान शेअर केलो",
             "copy_success": "निकाल क्लिपबोर्डाचेर कॉपी केलो",
             "failure": "ह्या वेळार हो निकाल शेअर करूंक शकना"
-        }
+        },
+        "calculateSavings": "बचतीची गणना करप",
+        "scanMedicine": "स्कॅन मेडिसीन",
+        "positionBarcode": "बारकोडाची सुवात दवरची",
+        "enterBatchNumber": "बॅच क्रमांक दाखयात",
+        "verify": "सत्यापीत करात",
+        "batchNumberHelp": "वखदां पॅकेजीचेर छापून आयिल्लो बॅच क्रमांक दाखयात",
+        "viewHistory": "इतिहास पळयात",
+        "stopScanner": "स्कॅनर थांबयात",
+        "scanBarcode": "बारकोड स्कॅन करचो",
+        "uploadPhoto": "फोटो अपलोड करचो",
+        "showMoreDetails": "चड तपशील दाखोवचें",
+        "showLess": "उणें दाखोवचें",
+        "genericName": "सामान्य नांव",
+        "dosageForm": "डोस फॉर्म",
+        "composition": "रचना",
+        "ScanBarcode": "बारकोड स्कॅन करचो",
+        "offlineVerify": "रांक स्कॅन करप",
+        "batch_recalled_title": "हो बॅच परतून आपयला",
+        "batch_recalled_body": "कृपा करून हें वखद वापरूं नाकात. रोखडेंच तुमच्या फार्मसींत परत करचें.",
+        "save_to_abha": "आभा रेकॉर्डांत जतनाय घेयात"
     },
     "BackToTopButton": {
         "label": "परतून वयर वचात"
@@ -440,7 +464,8 @@
         "realIncident": {
             "title": "खरी घडणूक — जुलै २०२५",
             "description": "दिल्ली पोलिसांनी खोट्या वखदांचें रॅकेट मोडलां जें सरकारी हॉस्पिटलां मरेन Johnson & Johnson आनी GSK चीं खोटीं वखदां (खडूची पावडरी पसून केल्लीं) पाडळ्ळीं. गिरायकांक खावचे आदीं <highlight>खात्री करपाक खंयचोच मार्ग नाशिल्लो</highlight>.",
-            "highlight": "सहीदवा हें दुरुस्त करता. फुकट. सदांकाळ. ओपन सोर्स."
+            "highlight": "सहीदवा हें दुरुस्त करता. फुकट. सदांकाळ. ओपन सोर्स.",
+            "text": "दिल्ली पुलिसांनी सरकारी हॉस्पिटलांत मेरेन बनावट जॉन्सन अँड जॉन्सन आनी जीएसके वखदां — खडू पावडर आनी स्टार्च हांचेपसून तयार केल्लीं — पुरवण करपी बनावट वखदां रिंग बंद केली. दुयेंतींक हीं वखदां सेवन करचे पयलीं</highlight> सत्यापीत करपाची <highlight>शून्य मार्ग आशिल्लो."
         },
         "mission": {
             "title": "आमचें ध्येय",
@@ -547,7 +572,8 @@
         "status": "ऑनलाइन",
         "welcome": "नमस्कार! हांव सहीदवा AI सहाय्यक. आज वखदांविशीं तुमकां कशी मदत करूंक शकता?",
         "placeholder": "म्हाका वखदाविशीं विचारात...",
-        "tooltipLabel": "AI Health Assistant"
+        "tooltipLabel": "AI Health Assistant",
+        "clear": "स्पश्ट करचें"
     },
     "Alerts": {
         "backHome": "मुखेल पानाचेर परत वचात",
@@ -646,7 +672,20 @@
         "pdfExportSuccess": "PDF यशस्वीरित्या निर्यात केले",
         "noMedicinesToDisplay": "दाखवण्यासाठी कोणतीही औषधे नाहीत",
         "generatedOn": "अप फाईल. कृपा करून योग्य ",
-        "deleteMedicine": "औषध हटवा"
+        "deleteMedicine": "औषध हटवा",
+        "editMedicine": "वैजकी संपादन करचें",
+        "saveChanges": "बदल जतनाय घेयात",
+        "saving": "बचत करप...",
+        "cancel": "रद्द करचें",
+        "notesLabel": "टिपा (पर्यायी) 1.1.",
+        "notesPlaceholder": "साठवण सुचोवण्यो वा डोस नोंदी...",
+        "deleteSelected": "काडून उडोवप निवडलां",
+        "selectMedicine": "{name} निवडात.",
+        "cancelButton": "रद्द करचें",
+        "deleteConfirmTitle": "वखद काडून उडोवप?",
+        "deleteConfirmMessage": "हाका लागून तुमच्या ट्रॅक केल्ल्या वखदां वयल्यान \"{medicine}\" कायमचे काडून उडयतले. ही कृती फाटीं घेवंक मेळना.",
+        "bulkDeleteConfirmTitle": "एका परस चड वखदां काडून उडोवप?",
+        "bulkDeleteConfirmMessage": "हाका लागून तुमच्या ट्रॅक केल्ल्या वळेरेंतल्यान {count} वखदां(वखदां) कायमचे काडून उडयतले. ही कृती फाटीं घेवंक मेळना."
     },
     "Login": {
         "brandSubtitle": "वखद सुरक्षितताय व्यासपीठ",
@@ -1141,7 +1180,8 @@
         "clinicalRecommendation": "क्लिनिकल सुचोवणी:",
         "mechanism": "कार्यपद्धती (Mechanism):",
         "source": "स्त्रोत:",
-        "errorMessage": "परस्परक्रिया तपासणी पूर्ण करूंक अपेशी. कृपा करून परतून प्रयत्न करात."
+        "errorMessage": "परस्परक्रिया तपासणी पूर्ण करूंक अपेशी. कृपा करून परतून प्रयत्न करात.",
+        "offlineBadge": "ऑफलायन परिणाम — नवीनतम डेटा खातीर इंटरनॅटाक जोडणी करात"
     },
     "ScanHistory": {
         "export_modal_title": "स्कॅन इतिहास एक्सपोर्ट करात",
@@ -1157,7 +1197,26 @@
         "export_button": "CSV तयार करात",
         "cancel": "रद्द करात",
         "search_placeholder": "वखद सोदात...",
-        "no_search_results": "तुमच्या सोदा आड कसलेच वखद मेळ्ळे ना."
+        "no_search_results": "तुमच्या सोदा आड कसलेच वखद मेळ्ळे ना.",
+        "title": "इतिहास स्कॅन करचो",
+        "export_csv_button": "CSV कडेन निर्यात करप",
+        "sync_cloud_button": "मेघाक सम���्रमण करचें",
+        "clear_all_button": "सगळो इतिहास निवळ करचो",
+        "clear_all_button_aria_label": "सगळो स्कॅन इतिहास निवळ करचो",
+        "clear_confirm_message": "तुमकां सगळो स्कॅन इतिहास कायमचे काडून उडोवपाचो आसा हाची खात्री आसा? ही कृती फाटीं घेवंक मेळना.",
+        "clear_cancel_button": "रद्द",
+        "clear_confirm_button": "सगळें निवळ करचें",
+        "sync_success": "इतिहास मेघा वांगडा समक्रमीत केल्लो.",
+        "sync_error": "मेघ समक्रमण सध्या उपलब्ध ना.",
+        "stat_total": "एकूण",
+        "stat_verified": "सत्यापीत केलां",
+        "stat_suspicious": "दुबावीत",
+        "stat_fake": "नकली",
+        "empty_title": "अजून स्कॅन इतिहास ना",
+        "empty_description": "तुमचीं सत्यापीत केल्लीं वखदां हांगा दिसतलीं.",
+        "item_status_label": "स्थिती: १.",
+        "item_delete_button": "काडून उडोवप",
+        "item_copy_success": "वखदाचें नांव नकल केलें!"
     },
     "SchemeEligibility": {
         "validationAgeError": "कृपया वैध वय दाखल करा.",
@@ -1343,7 +1402,29 @@
         "languageOptionMl": "മലയാളം",
         "languageOptionPa": "ਪੰਜਾਬੀ",
         "languageOptionUr": "اردو",
-        "languageOptionAs": "অসমীয়া"
+        "languageOptionAs": "অসমীয়া",
+        "title": "अधिसुचोवणी प्राधान्यां",
+        "subtitle": "एसएमएस आनी व्हॉट्सअॅपा वरवीं गंभीर अलर्ट मेळोवचे",
+        "phoneLabel": "फोन नंबर",
+        "phonePlaceholder": "10 अंकांचो मोबायल क्रमांक घालात",
+        "channelsLabel": "पसंतीचे चॅनल",
+        "smsLabel": "एसएमएस अलर्ट",
+        "smsDesc": "सीडीएससीओ रिकॉल आनी बनावट शिटकावणी खातीर मजकूर संदेश मेळोवचे",
+        "whatsappLabel": "व्हॉट्सअॅप अलर्ट",
+        "whatsappDesc": "व्हॉट्सअॅपांत थेट गिरेस्त संदेश आनी टेम्पलेट मेळोवचे",
+        "langLabel": "सावधान भास",
+        "langDesc": "मेळिल्ल्या मजकूर इशाऱ्यां खातीर पसंतीची भास",
+        "districtLabel": "जिल्लो",
+        "districtDesc": "ह्या जिल्ह्या खातीर विशिश्ट इशारो मेळोवचो",
+        "districtPlaceholder": "उदा. नैऋत्य दिल्ली",
+        "saveButton": "प्राधान्यां जतनाय घेयात",
+        "optOutButton": "ऑप्ट आउट / सदस्यताय रद्द करात",
+        "saving": "बचत करप...",
+        "successMessage": "प्राधान्यां यशस्वीपणान जतनाय घेतलीं!",
+        "optOutSuccess": "सगळ्या अधिसुचोवण्यां मदल्यान येसस्वीपणान भायर सरलो.",
+        "errorMessage": "मांडावळी अद्ययावत करपाक अपेस आयलें. उपकार करून परतून यत्न करात.",
+        "phoneInvalid": "उप���ार करून वैध 10 अंकांचो भारतीय फोन क्रमांक घालात.",
+        "districtRequired": "उपकार करून थळावी शिटकावणी मेळोवपा खातीर जिल्लो स्पश्ट करचो."
     },
     "AbhaRecords": {
         "backToProfile": "फाटी वचात",
@@ -1478,7 +1559,9 @@
         "networkErrorAction": "Try again",
         "emptyTitle": "No medicines scheduled",
         "emptyDescription": "You have no medicines scheduled for today. Add one to get started.",
-        "emptyAction": "Add Medicine"
+        "emptyAction": "Add Medicine",
+        "doseLoggedSuccess": "डोस स्थिती यशस्वीपणान अद्ययावत केल्या.",
+        "doseSkippedSuccess": "वगडायला अशें चिन्न केल्लो डोस."
     },
     "scheduleNew": {
         "pageTitle": "Add Medicine",
@@ -1532,5 +1615,246 @@
         "statTaken": "Taken",
         "statSkipped": "Skipped",
         "statExpected": "Expected"
+    },
+    "A11y": {
+        "confirmClearConversation": "स्पश्ट संवादाची खात्री करात",
+        "cancelClearConversation": "स्पश्ट संवाद रद्द करचो",
+        "goToHomepage": "मुखेल पानाचेर वचात",
+        "closeChat": "गप्पा बंद करात",
+        "sendMessage": "संदेश धाडचो",
+        "openAiChat": "एआय गप्पा उगडात",
+        "closeAiChat": "एआय गप्पा बंद करात",
+        "mainNavigation": "मुखेल संचारण",
+        "mobileNavigation": "मोबायल नेव्हिगेशन",
+        "toggleSystemParameters": "प्रणाली मापदंड टॉगल करात"
+    },
+    "Accessibility": {
+        "logo": "सहिदावा लोगो",
+        "health_companion": "भलायकी साथीदार",
+        "select_language": "भास निवडात",
+        "language_options": "भाशेचे पर्याय",
+        "go_back": "फाटल्या पानाचेर परत वचचें",
+        "go_back_short": "परत वच",
+        "current_language": "सद्याची भास: {language}",
+        "toggle_theme": "थीम टॉगल करप",
+        "switch_light": "लायट मोडांत वचचें",
+        "switch_dark": "डार्क मोडांत वचचें"
+    },
+    "ScanQueue": {
+        "title": "प्रलंबीत आशिल्लीं सत्यापनां",
+        "subtitle": "तुमी परत ऑनलायन आसतना सत्यापीत जावपाची वाट पळयतात स्कॅन",
+        "queued": "स्कॅन थळाव्यान जतनाय घेतला. सत्यापन आपोआप परतून सुरू जातलें.",
+        "syncing": "{count} रांकीत स्कॅनांची खात्री करप...",
+        "synced": "{count} रांकीत केल्लें स्कॅन (स्कॅन) यशस्वीपणान सत्यापीत केलां.",
+        "pendingBadge": "प्रलंबीत आसा",
+        "empty": "प्रलंबीत स्कॅन ना"
+    },
+    "Calculator": {
+        "pageTitle": "वखदांचो खर्च बचत कॅल्क्युलेटर",
+        "pageSubtitle": "जेनेरिक समतुल्य सोदून काडात आनी तुमची बचत मेजची",
+        "searchLabel": "बचतीचो हिशोब करपाक वखद निवडात",
+        "searchPlaceholder": "ब्रँड वा जेनेरिक नांव सोदचें",
+        "loading": "जेनेरिक ���र्याय लोड करतात...",
+        "error": "पर्यायी तपशील हाडपाक अपेस आयलें.",
+        "brandPriceLabel": "ब्रँड किंमत (एमआरपी) 1.1.",
+        "genericPriceLabel": "जन औषधी किंमत",
+        "brandName": "ब्रँड नांव",
+        "genericName": "सामान्य पर्यायी",
+        "savingsLabel": "दर खरेदी खातीर बचत",
+        "alternativeTitle": "जन औषधी पर्यायी तपशील",
+        "noAlternative": "ह्या वखदा खातीर अजून जन औषधी जेनेरिक पर्याय नकाशे केल्लो ना.",
+        "quantityLabel": "प्रमाण (दर ��्हयन्याक पट्टी/पॅक)",
+        "monthlySavings": "म्हयन्याळी बचत",
+        "yearlySavings": "वर्सुकी बचत",
+        "perPurchaseSavings": "दर खरेदी खातीर बचत",
+        "dosageSectionTitle": "इनपुट खरेदी प्रमाण",
+        "projectionsTitle": "अदमास खर्च बचत अदमास",
+        "brandCostLabel": "ब्रँड खर्च",
+        "genericCostLabel": "जेनेरिक खर्च",
+        "costPerMonth": "दर म्हयन्याक मेळटा",
+        "brandTierTitle": "ब्रँड विधीन दिल्लें",
+        "brandTierDesc": "मानक वेवसायीक ब्रँड किंमत",
+        "genericTierTitle": "सामान्य पर्यायी",
+        "genericTierDesc": "वेवसायीक ब्रँडेड जेनेरिक समतुल्य",
+        "janAushadhiTierTitle": "जन औषधी जेनेरिक",
+        "janAushadhiTierDesc": "सरकारी अनुदानीत दर नियंत्रीत जेनेरिक",
+        "bestValue": "बेस्ट व्हॅल्यू",
+        "mrpLabel": "एमआरपी हांणी केला",
+        "estimatedLabel": "(अदमास) ६.",
+        "costPerMonthGeneric": "जेनेरिक खर्च",
+        "costPerMonthJanAushadhi": "जन औषधी खर्च",
+        "costPerMonthBrand": "ब्रँड खर्च",
+        "packUnit": "पॅक",
+        "packsUnit": "पॅक करतात"
+    },
+    "ChildVaccinationTracker": {
+        "childTrackerTitle": "भुरग्यांच्या लसीकरणाचो ट्रॅकर",
+        "childTrackerSubtitle": "पूर्णताय ट्रॅकिंग सयत वैयक्तीक राष्ट्रीय इम्युनायझेशन वेळापत्रक वेळरेखा तयार करपाक भुरग्यांची प्रो��ायल दाखयात.",
+        "childReminderButton": "स्मरणपत्रां डाउनलोड करात",
+        "childNameLabel": "भुरग्याचें नांव",
+        "childNamePlaceholder": "भुरग्याचें नांव दाखयात",
+        "childDobLabel": "जल्म तारीख",
+        "childDefaultName": "भुरगो",
+        "childDobPrompt": "वैयक्तीक लसीकरणाची वेळरेखा तयार करपाक जल्म तारीक दाखया���.",
+        "childDobFutureError": "जल्म तारीख फुडाराक आसूंक शकना.",
+        "childDobInvalidError": "जल्माची वैध तारीख घालची.",
+        "childProfileSummary": "भुरग्यांचें स्वरूप",
+        "scheduleSourceLabel": "वेळापत्रकाचो आदार",
+        "childTimelineHeading": "वैयक्तीक वेळरेखा",
+        "whereApplicableBadge": "जंय लागू जाता थंय",
+        "dueDateLabel": "नियत तारीख",
+        "officialTimingLabel": "अधिकृत वेळ",
+        "completedStatus": "पुराय जालां",
+        "dueStatus": "देय",
+        "overdueStatus": "मुजतवाड जाल्या",
+        "upcomingStatus": "येवपी",
+        "markCompleteButton": "मार्क पुराय केलो",
+        "exportCSV": "CSV निर्यात करात",
+        "exportPDF": "पीडीएफ निर्यात करात",
+        "print": "छापप",
+        "csvExportSuccess": "CSV यशस्वीपणान निर्यात केलो",
+        "pdfExportSuccess": "पीडीएफ यशस्वीपणान न��र्यात केला",
+        "noMedicinesToDisplay": "दाखोवपाक वखदां नात",
+        "generatedOn": "जनरेट केल्लें चालू"
+    },
+    "MyReports": {
+        "header_title": "म्हजे अहवाल",
+        "header_subtitle": "तुमी दाखल केल्ल्या अहवालांची स्थिती",
+        "page_title": "म्हजे अहवाल",
+        "page_description": "तुमी कळयल्ल्या बनावट वखदांचो कितें जालां ताचो मागोवपाक.",
+        "refresh_button_aria_label": "अहवाल ताजे करात",
+        "loading_aria_label": "तुमचे अहवाल लोड करप",
+        "status_pending_review": "पुनरावलोकन प्रलंबीत आसा",
+        "status_verified_fake": "सत्यापित नकली",
+        "status_false_alarm": "खोटो गजर",
+        "auth_error_title": "सायन इन करपाची गरज आसा",
+        "auth_error_expired": "तुमचें सत्र कालबाह्य जालां. उपकार करून परतून सायन इन करात.",
+        "auth_error_description": "उपकार करून तुमी दाखल केल्ले अहवाल पळोवपाक सायन इन करात.",
+        "auth_error_action": "लॉगिनांत वचचें",
+        "network_error_title": "जोडणी ��्रुटी",
+        "network_error_action": "परतून यत्न करात",
+        "network_error_api_unreachable": "एपीआय मेरेन पावूंक शकना. बॅकएंड सर्वर पोर्ट 4000 चेर चलता?",
+        "empty_state_title": "तुमी अजून कसलोच अहवाल दाखल करूंक ना",
+        "empty_state_description": "दुबावीत वा बनावट वखद दिसलें? ताचो अहवाल दिवप तुमच्या समाजाची राखण करपाक मदत करता.",
+        "empty_state_action": "तुमचो पयलो अहवाल दाखल करचो",
+        "no_photo_label": "फोटो ना",
+        "report_card_district_label": "जिल्लो",
+        "report_card_submitted_label": "सादर केला",
+        "report_card_batch_label": "बॅच",
+        "load_more_button": "आनीक लोड करात"
+    },
+    "Map": {
+        "errors": {
+            "denied": "थळ प्रवेश नाका. उपकार करून ब्राउझर मांडावळींनी तें सक्षम करचें.",
+            "unavailable": "थळाची म्हायती उपलब्ध ना.",
+            "timeout": "थळाची विनंती वेळ सोंपली.",
+            "generic": "तुमचें स्थान मेळोवंक शकना."
+        }
+    },
+    "ABHA": {
+        "title": "आभा भलायकी नोंदी",
+        "setupTitle": "आभा सेटअप",
+        "recordsTitle": "आभा रेकॉर्ड्स",
+        "link": "लिंक आभा",
+        "linked": "आभा लिंक केला",
+        "notLinked": "आभा लिंक ना",
+        "generateOtp": "ओटीपी तयार करप",
+        "verifyOtp": "ओटीपी तपासात",
+        "enterAbha": "आभा पत्तो दाखयात",
+        "enterOtp": "ओटीपी दाखयात",
+        "success": "आभा येसस्वीपणान जोडले.",
+        "saveRecord": "आभा रेकॉर्डांत जतनाय घेयात",
+        "noRecords": "कसलीच वखदां मेळूंक नात."
+    },
+    "Tracking": {
+        "success": "वखदांचो यशस्वीपणान ट्रॅक जालो!",
+        "trackButton": "ट्रॅक कालबाह्य"
+    },
+    "voiceVerify": {
+        "heading": "आवाज वैजकी तपासणी",
+        "subtitle": "वखदाचें नांव तुमच्या भाशेंत उलोवचें",
+        "statusVerifying": "वखदां सत्यापीत करप...",
+        "statusRecording": "रेकॉर्डिंग... थांबवपाक टॅप करात",
+        "statusIdle": "वखदाचें नांव उलोवपाक टॅप करात",
+        "supportedLanguages": "समर्थन: हिंदी • तमिळ • तेलुगू • कन्नड • बंगाली • मलयाळम + चड",
+        "errorMicDenied": "मायक्रोफोन प्रवेश नाका. उपकार करून मायक्रोफोन प्रवेश परवानगी दिवची आनी परतून यत्न करचो.",
+        "errorNetwork": "नेटवर्क त्रुटी. उपकार करून तुमचें जोडणी तपासात आनी परतून यत्न करात.",
+        "fallbackText": "मायक्रोफोन ना?",
+        "fallbackLinkText": "ताचे बदला मजकूर इनपुट वापरात",
+        "tryAgain": "परतून यत्न करात",
+        "checkAnother": "दुसरें वखद तपासात",
+        "statusVerified": "सत्यापीत केलां",
+        "statusSuspicious": "दुबावीत",
+        "statusNotFound": "मेळूंक ना",
+        "cdscoRegistered": "नोंदणी केल्ली",
+        "cdscoUnverified": "सत्यापीत ना",
+        "scriptLabel": "वैजकी ({script} लिपी) 1.1.",
+        "manufacturerLabel": "निर्मातो",
+        "categoryLabel": "श्रेणी",
+        "languageDetectedLabel": "भास सोदून काडली",
+        "youSaidLabel": "तुमी म्हणलें",
+        "warningsLabel": "शिटकावणी दिवप",
+        "ariaStartRecording": "रेकॉर्डिंग सुरू करचें",
+        "ariaStopRecording": "रेकॉर्डिंग बंद करचें"
+    },
+    "AdminSynonyms": {
+        "title": "ओसीआर पर्यायवाची",
+        "subtitle": "ओसीआर चुकीचे वाचन आनी वखदां पर्यायवाची वेवस्था करप.",
+        "refresh": "ताजें करचें",
+        "addNew": "नवो नेम जोडचो",
+        "originalTerm": "मूळ संज्ञा",
+        "normalizedTerm": "सामान्यीकृत मुजत",
+        "originalPlaceholder": "देखीक- एस्प्रिन",
+        "normalizedPlaceholder": "देखीक- एस्पिरिन",
+        "typeLabel": "प्रकार",
+        "typeSynonym": "पर्यायवाची",
+        "typeMisread": "ओसीआर चुकीचें वाचन",
+        "addButton": "नियम जोडचो",
+        "listTitle": "सद्याचे नेम",
+        "emptyList": "नेम मेळूंक नात.",
+        "actions": "कृती करप",
+        "delete": "काडून उडोवप",
+        "confirmDelete": "तुमकां हो नेम काडून उडोवपाचो आसा हाची खात्री आसा?",
+        "fetchError": "नेम हाडपाक अपेस आयलें.",
+        "addError": "नेम जोडपाक अपेस आयलें.",
+        "deleteError": "नियम काडून उडोवपाक अपेस आयलें.",
+        "uploadCsv": "CSV अपलोड करचें",
+        "uploading": "अपलोड करतना...",
+        "uploadSuccess": "{count} नेम यशस्वीपणान जोडले.",
+        "invalidCsv": "अवैध CSV स्वरूप. स्तंभ सुनिश्चीत करात: original_term, normalized_term, प्रकार.",
+        "uploadError": "CSV नेम अपलोड करपाक अपेस आयलें."
+    },
+    "AbhaSetup": {
+        "back": "परत प्रोफायलाचेर",
+        "title": "आभा सेटअप",
+        "success": "आभा येसस्वीपणान जोडले.",
+        "placeholders": {
+            "address": "आभा पत्तो दाखयात",
+            "otp": "ओटीपी दाखयात"
+        },
+        "buttons": {
+            "generateOtp": "ओटीपी तयार करप",
+            "verifyOtp": "ओटीपी तपासात",
+            "resendIn": "{seconds}s मदीं परतून धाडचें"
+        },
+        "errors": {
+            "addressRequired": "आभा पत्तो गरजेचो आसा",
+            "otpRequired": "ओटीपी गरजेचें आसता",
+            "generic": "कितें तरी चुकलें"
+        }
+    },
+    "Navbar": {
+        "logo_alt": "सहिदावा लोगो"
+    },
+    "PrivacyConsent": {
+        "title": "गुप्तताय आनी डेटा संमती",
+        "description": "तुमकां सुरक्षीत अणभव दिवपाक, SahiDawa कडेन डेटा एकठांय करपाक तुमची परवानगी जाय.",
+        "locationPurpose": "तुमच्या लागसारच्यो सत्यापीत फार्मसी नकाशांत सोदपा खातीर आमी तुमचें स्थान वापरतात.",
+        "scanHistoryPurpose": "तुमच्या सत्यापन रेकॉर्डांचो मागोवपाक मदत करपाक आमी तुमचो स्कॅन इतिहास थळाव्यान सांठोवन दवरतात वा सुरक्षीतपणान समक्रमीत करतात.",
+        "acceptAll": "सगळें मान्य करचें",
+        "denyAll": "नाकारप",
+        "savePreferences": "प्राधान्यां जतनाय घेयात",
+        "locationLabel": "थळ सेवा",
+        "scanHistoryLabel": "स्कॅन इतिहास सांठो"
     }
 }

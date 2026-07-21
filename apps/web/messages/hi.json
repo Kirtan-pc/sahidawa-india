@@ -181,7 +181,10 @@
         "features_description": "उन सभी तरीकों की खोज करें जिनसे SahiDawa आपकी दवाओं को सत्यापित करने और सुरक्षित रहने में मदद कर सकता है।",
         "trusted_by_citizens": "नागरिकों द्वारा विश्वसनीय",
         "voices_title": "सहिदवा समुदाय की आवाज़ें",
-        "voices_description": "दवा सुरक्षा को आसान बनाने के लिए SahiDawa का उपयोग करने वाले परिवार, फार्मासिस्ट, डॉक्टर और योगदानकर्ता।"
+        "voices_description": "दवा सुरक्षा को आसान बनाने के लिए SahiDawa का उपयोग करने वाले परिवार, फार्मासिस्ट, डॉक्टर और योगदानकर्ता।",
+        "search_input_aria": "दवाओं, ब्रांडों या बैच नंबरों को खोजें",
+        "submit_search": "खोजें",
+        "clear_search": "खोज साफ करें"
     },
     "ChildVaccinationTracker": {
         "childTrackerTitle": "बाल टीकाकरण ट्रैकर",
@@ -304,7 +307,10 @@
         "dosageForm": "खुराक का रूप",
         "composition": "सामग्री",
         "ScanBarcode": "बारकोड स्कैन करें",
-        "offlineVerify": "स्कैन कतार में जोड़ें"
+        "offlineVerify": "स्कैन कतार में जोड़ें",
+        "batch_recalled_title": "यह बैच रिकॉल (वापस) कर लिया गया है",
+        "batch_recalled_body": "कृपया इस दवा का उपयोग न करें। इसे तुरंत अपनी फार्मेसी में वापस करें।",
+        "save_to_abha": "आभा (ABHA) रिकॉर्ड में सहेजें"
     },
     "BackToTopButton": {
         "label": "ऊपर जाएँ"
@@ -645,7 +651,8 @@
         "status": "ऑनलाइन",
         "welcome": "नमस्ते! मैं SahiDawa AI सहायक हूँ। आज आपकी दवाओं के बारे में मैं कैसे मदद कर सकता हूँ?",
         "placeholder": "दवा के बारे में पूछें...",
-        "tooltipLabel": "AI Health Assistant"
+        "tooltipLabel": "AI Health Assistant",
+        "clear": "साफ करें"
     },
     "Alerts": {
         "backHome": "मुख्य पृष्ठ पर वापस जाएँ",
@@ -783,7 +790,14 @@
         "statusExpiringSoon": "जल्द समाप्त होगी ({days} दिन)",
         "statusSafe": "सुरक्षित",
         "deleteSelected": "चुनी हुई हटाएं",
-        "selectMedicine": "{name} चुनें"
+        "selectMedicine": "{name} चुनें",
+        "saving": "सहेजा जा रहा है...",
+        "deleteMedicine": "दवा हटाएं",
+        "cancelButton": "रद्द करें",
+        "deleteConfirmTitle": "दवा हटाएं?",
+        "deleteConfirmMessage": "यह आपकी ट्रैक की गई दवाओं से \"{medicine}\" को स्थायी रूप से हटा देगा। इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+        "bulkDeleteConfirmTitle": "कई दवाएं हटाएं?",
+        "bulkDeleteConfirmMessage": "यह आपकी ट्रैक की गई सूची से {count} दवाओं को स्थायी रूप से हटा देगा। इस कार्रवाई को पूर्ववत नहीं किया जा सकता।"
     },
     "Login": {
         "brandSubtitle": "दवा सुरक्षा मंच",
@@ -1420,7 +1434,8 @@
         "no_photo_label": "कोई फ़ोटो नहीं",
         "report_card_district_label": "जिला",
         "report_card_submitted_label": "दर्ज की गई",
-        "report_card_batch_label": "बैच"
+        "report_card_batch_label": "बैच",
+        "load_more_button": "और लोड करें"
     },
     "Map": {
         "errors": {
@@ -1713,7 +1728,9 @@
         "networkErrorAction": "Try again",
         "emptyTitle": "No medicines scheduled",
         "emptyDescription": "You have no medicines scheduled for today. Add one to get started.",
-        "emptyAction": "Add Medicine"
+        "emptyAction": "Add Medicine",
+        "doseLoggedSuccess": "खुराक की स्थिति सफलतापूर्वक अपडेट की गई।",
+        "doseSkippedSuccess": "खुराक को छोड़ दिया गया के रूप में चिह्नित किया गया।"
     },
     "scheduleNew": {
         "pageTitle": "Add Medicine",
@@ -1767,5 +1784,77 @@
         "statTaken": "Taken",
         "statSkipped": "Skipped",
         "statExpected": "Expected"
+    },
+    "A11y": {
+        "confirmClearConversation": "बातचीत मिटाने की पुष्टि करें",
+        "cancelClearConversation": "बातचीत मिटाना रद्द करें",
+        "goToHomepage": "होमपेज पर जाएं",
+        "closeChat": "चैट बंद करें",
+        "sendMessage": "संदेश भेजें",
+        "openAiChat": "एआई चैट खोलें",
+        "closeAiChat": "एआई चैट बंद करें",
+        "mainNavigation": "मुख्य नेविगेशन",
+        "mobileNavigation": "मोबाइल नेविगेशन",
+        "toggleSystemParameters": "सिस्टम पैरामीटर बदलें"
+    },
+    "AdminSynonyms": {
+        "title": "ओसीआर (OCR) समानार्थी शब्द",
+        "subtitle": "ओसीआर गलत रीडिंग और दवा समानार्थी शब्दों को प्रबंधित करें।",
+        "refresh": "रिफ्रेश करें",
+        "addNew": "नया नियम जोड़ें",
+        "originalTerm": "मूल शब्द",
+        "normalizedTerm": "सामान्यीकृत शब्द",
+        "originalPlaceholder": "जैसे, asprin",
+        "normalizedPlaceholder": "जैसे, aspirin",
+        "typeLabel": "प्रकार",
+        "typeSynonym": "समानार्थी शब्द",
+        "typeMisread": "ओसीआर गलत रीडिंग",
+        "addButton": "नियम जोड़ें",
+        "listTitle": "मौजूदा नियम",
+        "emptyList": "कोई नियम नहीं मिला।",
+        "actions": "कार्रवाइयाँ",
+        "delete": "हटाएं",
+        "confirmDelete": "क्या आप निश्चित रूप से इस नियम को हटाना चाहते हैं?",
+        "fetchError": "नियम प्राप्त करने में विफल।",
+        "addError": "नियम जोड़ने में विफल।",
+        "deleteError": "नियम हटाने में विफल।",
+        "uploadCsv": "सीएसवी (CSV) अपलोड करें",
+        "uploading": "अपलोड किया जा रहा है...",
+        "uploadSuccess": "सफलतापूर्वक {count} नियम जोड़े गए।",
+        "invalidCsv": "अमान्य सीएसवी प्रारूप। सुनिश्चित करें कि कॉलम: original_term, normalized_term, type हैं।",
+        "uploadError": "सीएसवी नियम अपलोड करने में विफल।"
+    },
+    "AbhaSetup": {
+        "back": "प्रोफाइल पर वापस जाएं",
+        "title": "आभा (ABHA) सेटअप",
+        "success": "आभा (ABHA) सफलतापूर्वक लिंक हो गया।",
+        "placeholders": {
+            "address": "आभा (ABHA) पता दर्ज करें",
+            "otp": "ओटीपी दर्ज करें"
+        },
+        "buttons": {
+            "generateOtp": "ओटीपी जनरेट करें",
+            "verifyOtp": "ओटीपी सत्यापित करें",
+            "resendIn": "{seconds} सेकंड में पुनः भेजें"
+        },
+        "errors": {
+            "addressRequired": "आभा (ABHA) पता आवश्यक है",
+            "otpRequired": "ओटीपी आवश्यक है",
+            "generic": "कुछ गलत हो गया"
+        }
+    },
+    "Navbar": {
+        "logo_alt": "सहीदवा लोगो"
+    },
+    "PrivacyConsent": {
+        "title": "गोपनीयता और डेटा सहमति",
+        "description": "आपको एक सुरक्षित अनुभव प्रदान करने के लिए, सहीदवा को डेटा एकत्र करने की आपकी अनुमति की आवश्यकता है।",
+        "locationPurpose": "हम मानचित्र पर आपके पास सत्यापित फार्मेसियों को खोजने के लिए आपके स्थान का उपयोग करते हैं।",
+        "scanHistoryPurpose": "हम आपके स्कैन इतिहास को स्थानीय रूप से सहेजते हैं या आपके सत्यापन रिकॉर्ड को ट्रैक करने में मदद करने के लिए इसे सुरक्षित रूप से सिंक करते हैं।",
+        "acceptAll": "सभी स्वीकार करें",
+        "denyAll": "अस्वीकार करें",
+        "savePreferences": "प्राथमिकताएं सहेजें",
+        "locationLabel": "स्थान सेवाएं",
+        "scanHistoryLabel": "स्कैन इतिहास भंडारण"
     }
 }
