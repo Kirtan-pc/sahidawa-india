@@ -47,6 +47,22 @@ const nextConfig = {
     reactStrictMode: true,
     poweredByHeader: false,
     async headers() {
+        const connectSrc = [
+            ...new Set(
+                ["'self'", process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_API_URL, process.env.NEXT_PUBLIC_ML_SERVICE_URL]
+                    .filter(Boolean)
+                    .map((u) => {
+                        if (u === "'self'") return u;
+                        try {
+                            return new URL(u).origin;
+                        } catch {
+                            return "";
+                        }
+                    })
+                    .filter(Boolean)
+            ),
+        ].join(" ");
+
         return [
             {
                 source: "/(.*)",
@@ -56,7 +72,22 @@ const nextConfig = {
                     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
                     { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
                     { key: "Permissions-Policy", value: "camera=(self), microphone=(self), geolocation=(self)" },
-                    // CSP removed — now handled dynamically per-request in middleware.ts
+                    {
+                        key: "Content-Security-Policy",
+                        value: [
+                            "default-src 'self'",
+                            "script-src 'self'",
+                            "style-src 'self' 'unsafe-inline'",
+                            `connect-src ${connectSrc}`,
+                            "img-src 'self' blob: data: https://res.cloudinary.com",
+                            "font-src 'self'",
+                            "object-src 'none'",
+                            "base-uri 'self'",
+                            "form-action 'self'",
+                            "frame-ancestors 'none'",
+                            "upgrade-insecure-requests",
+                        ].join("; "),
+                    },
                 ],
             },
             {
