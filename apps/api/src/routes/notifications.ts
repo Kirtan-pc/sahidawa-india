@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { randomInt } from "node:crypto";
+import { randomInt, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { requireAuth, requireRole, optionalAuth, AuthenticatedRequest } from "../middleware/auth";
 import { notificationRegisterLimiter, authTargetLimiter } from "../middleware/rateLimit";
@@ -160,6 +160,8 @@ interface InMemorySubscriber {
     status: string;
     verification_otp: string | null;
     otp_expires_at: string | null;
+    failed_attempts: number;
+    locked_until: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -470,6 +472,18 @@ const verifyOtpSchema = z
     })
     .strict();
 
+function constantTimeCompare(a: string, b: string): boolean {
+    const bufA = Buffer.from(a, "utf8");
+    const bufB = Buffer.from(b, "utf8");
+    const maxLen = Math.max(bufA.length, bufB.length);
+    const padA = Buffer.alloc(maxLen, bufA);
+    const padB = Buffer.alloc(maxLen, bufB);
+    return timingSafeEqual(padA, padB);
+}
+
+const MAX_OTP_ATTEMPTS = 5;
+const OTP_LOCKOUT_MS = 15 * 60 * 1000;
+
 router.post("/verify-otp", authTargetLimiter, async (req, res) => {
     const parsed = verifyOtpSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -535,8 +549,8 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
             return;
         }
 
-        if (subscriber.verification_otp !== otp) {
-            res.status(400).json({ error: "Invalid OTP" });
+        if (subscriber.locked_until && new Date(subscriber.locked_until) > new Date()) {
+            res.status(429).json({ error: "Too many failed attempts. Try again later." });
             return;
         }
 
@@ -545,10 +559,31 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
             return;
         }
 
+        if (!constantTimeCompare(otp, subscriber.verification_otp ?? "")) {
+            subscriber.failed_attempts = (subscriber.failed_attempts || 0) + 1;
+            if (subscriber.failed_attempts >= MAX_OTP_ATTEMPTS) {
+                subscriber.locked_until = new Date(Date.now() + OTP_LOCKOUT_MS).toISOString();
+            }
+            if (!dbFailed) {
+                await supabase
+                    .from("notification_subscribers")
+                    .update({ failed_attempts: subscriber.failed_attempts, locked_until: subscriber.locked_until })
+                    .eq("id", subscriber.id);
+            }
+            res.status(400).json({ error: "Invalid OTP" });
+            return;
+        }
+
         if (!dbFailed) {
             const { error: updateError } = await supabase
                 .from("notification_subscribers")
-                .update({ status: "active", verification_otp: null, otp_expires_at: null })
+                .update({
+                    status: "active",
+                    verification_otp: null,
+                    otp_expires_at: null,
+                    failed_attempts: 0,
+                    locked_until: null,
+                })
                 .eq("id", subscriber.id);
 
             if (updateError) {
@@ -560,6 +595,8 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
             subscriber.status = "active";
             subscriber.verification_otp = null;
             subscriber.otp_expires_at = null;
+            subscriber.failed_attempts = 0;
+            subscriber.locked_until = null;
             subscriber.updated_at = new Date().toISOString();
         }
 
