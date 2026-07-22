@@ -171,27 +171,6 @@ function toPublicSubscriber(sub: PublicSubscriber): PublicSubscriber {
     };
 }
 
-// The only subscriber fields any client is allowed to receive. Everything else on
-// a row is either a secret (verification_otp, otp_expires_at) or account-linkage
-// PII (user_id) and must never be serialized into a response. Returning the raw
-// row from /status let an unauthenticated caller read another subscriber's OTP and
-// Supabase user_id just by knowing their phone number, so every subscriber we hand
-// back — from the DB or the in-memory fallback — goes through this projection.
-type PublicSubscriber = Pick<
-    InMemorySubscriber,
-    "phone" | "channels" | "language" | "district" | "is_active"
->;
-
-function toPublicSubscriber(sub: PublicSubscriber): PublicSubscriber {
-    return {
-        phone: sub.phone,
-        channels: sub.channels,
-        language: sub.language,
-        district: sub.district,
-        is_active: sub.is_active,
-    };
-}
-
 router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
     try {
         let phone: string | undefined = undefined;
