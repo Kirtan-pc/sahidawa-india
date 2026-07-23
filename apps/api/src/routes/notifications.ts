@@ -472,18 +472,10 @@ const verifyOtpSchema = z
     })
     .strict();
 
-function constantTimeCompare(a: string, b: string): boolean {
-    const bufA = Buffer.from(a, "utf8");
-    const bufB = Buffer.from(b, "utf8");
-    const maxLen = Math.max(bufA.length, bufB.length);
-    const padA = Buffer.alloc(maxLen, bufA);
-    const padB = Buffer.alloc(maxLen, bufB);
-    return timingSafeEqual(padA, padB);
+function constantTimeCompare(a: string | null | undefined, b: string): boolean {
+    if (!a || a.length !== b.length) return false;
+    return timingSafeEqual(Buffer.from(a, "utf8"), Buffer.from(b, "utf8"));
 }
-
-const MAX_OTP_ATTEMPTS = 5;
-const OTP_LOCKOUT_MS = 15 * 60 * 1000;
-
 router.post("/verify-otp", authTargetLimiter, async (req, res) => {
     const parsed = verifyOtpSchema.safeParse(req.body);
     if (!parsed.success) {
@@ -549,31 +541,61 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
             return;
         }
 
+        // ── Lockout check ──────────────────────────────────────────────────────
         if (subscriber.locked_until && new Date(subscriber.locked_until) > new Date()) {
-            res.status(429).json({ error: "Too many failed attempts. Try again later." });
+            const remainingMin = Math.ceil(
+                (new Date(subscriber.locked_until).getTime() - Date.now()) / 60000
+            );
+            res.status(429).json({
+                error: `Too many failed attempts. Try again in ${remainingMin} minute(s).`,
+            });
             return;
         }
 
+        // ── OTP expiry check (before comparison, avoids timing leak) ───────────
         if (subscriber.otp_expires_at && new Date(subscriber.otp_expires_at) < new Date()) {
             res.status(400).json({ error: "OTP expired" });
             return;
         }
 
-        if (!constantTimeCompare(otp, subscriber.verification_otp ?? "")) {
-            subscriber.failed_attempts = (subscriber.failed_attempts || 0) + 1;
-            if (subscriber.failed_attempts >= MAX_OTP_ATTEMPTS) {
-                subscriber.locked_until = new Date(Date.now() + OTP_LOCKOUT_MS).toISOString();
-            }
+        // ── Constant-time OTP comparison ───────────────────────────────────────
+        if (!constantTimeCompare(subscriber.verification_otp, otp)) {
+            const newFailed = (subscriber.failed_attempts || 0) + 1;
+            const shouldLock = newFailed >= 5;
+            const lockUntil = shouldLock
+                ? new Date(Date.now() + 15 * 60 * 1000).toISOString()
+                : null;
+
             if (!dbFailed) {
-                await supabase
+                const { error: updateError } = await supabase
                     .from("notification_subscribers")
-                    .update({ failed_attempts: subscriber.failed_attempts, locked_until: subscriber.locked_until })
+                    .update({
+                        failed_attempts: newFailed,
+                        locked_until: lockUntil,
+                    })
                     .eq("id", subscriber.id);
+
+                if (updateError) {
+                    logger.error({
+                        message: "Failed to update failed_attempts after invalid OTP",
+                        error: updateError,
+                    });
+                }
+            } else {
+                subscriber.failed_attempts = newFailed;
+                subscriber.locked_until = lockUntil;
+                subscriber.updated_at = new Date().toISOString();
             }
-            res.status(400).json({ error: "Invalid OTP" });
+
+            res.status(400).json({
+                error: shouldLock
+                    ? "Invalid OTP. Too many failed attempts. Try again in 15 minutes."
+                    : "Invalid OTP",
+            });
             return;
         }
 
+        // ── Success — reset lockout fields, activate subscriber ────────────────
         if (!dbFailed) {
             const { error: updateError } = await supabase
                 .from("notification_subscribers")
@@ -587,7 +609,10 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
                 .eq("id", subscriber.id);
 
             if (updateError) {
-                logger.error({ message: "Failed to activate subscriber", error: updateError });
+                logger.error({
+                    message: "Failed to activate subscriber after OTP verification",
+                    error: updateError,
+                });
                 res.status(500).json({ error: "Database error" });
                 return;
             }
