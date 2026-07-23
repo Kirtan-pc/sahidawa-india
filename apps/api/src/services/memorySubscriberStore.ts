@@ -1,4 +1,5 @@
 import fs from "fs";
+import fsp from "fs/promises";
 import path from "path";
 import logger from "../utils/logger";
 import { supabase, dbConfig } from "../db/client";
@@ -25,6 +26,7 @@ class PersistedMemorySubscriberStore {
     private store = new Map<string, InMemorySubscriber>();
     private saveTimer: ReturnType<typeof setTimeout> | null = null;
     private dirty = false;
+    private isReconciling = false;
 
     constructor() {
         this.load();
@@ -59,15 +61,13 @@ class PersistedMemorySubscriberStore {
         }
     }
 
-    private save(): void {
+    private async save(): Promise<void> {
         try {
             const filePath = DATA_FILE;
             const dir = path.dirname(filePath);
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
+            await fsp.mkdir(dir, { recursive: true });
             const data = Array.from(this.store.values());
-            fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+            await fsp.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
         } catch (err) {
             logger.error({
                 message: "Failed to save memory subscribers to file",
@@ -83,7 +83,9 @@ class PersistedMemorySubscriberStore {
                 this.saveTimer = null;
                 if (this.dirty) {
                     this.dirty = false;
-                    this.save();
+                    this.save().catch((err) => {
+                        logger.error({ message: "Debounced save failed", error: err });
+                    });
                 }
             }, SAVE_DEBOUNCE_MS);
         }
@@ -93,7 +95,9 @@ class PersistedMemorySubscriberStore {
         setInterval(() => {
             if (this.dirty) {
                 this.dirty = false;
-                this.save();
+                this.save().catch((err) => {
+                    logger.error({ message: "Periodic save failed", error: err });
+                });
             }
         }, 30_000);
     }
@@ -205,7 +209,7 @@ class PersistedMemorySubscriberStore {
 
         if (reconciled > 0) {
             this.dirty = true;
-            this.save();
+            await this.save();
             logger.info(
                 `Reconciled ${reconciled} subscribers to Supabase, ${failed} failed`
             );
@@ -214,15 +218,21 @@ class PersistedMemorySubscriberStore {
 
     private startReconciliation(): void {
         setInterval(async () => {
+            if (this.isReconciling) return;
             if (!dbConfig?.isSupabaseOffline && this.store.size > 0) {
-                await this.reconcileWithSupabase();
+                this.isReconciling = true;
+                try {
+                    await this.reconcileWithSupabase();
+                } finally {
+                    this.isReconciling = false;
+                }
             }
         }, 30_000);
     }
 
-    saveImmediate(): void {
+    async saveImmediate(): Promise<void> {
         this.dirty = false;
-        this.save();
+        await this.save();
     }
 }
 
