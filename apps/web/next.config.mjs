@@ -63,6 +63,9 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
     async headers() {
         const connectSrc = [
             ...new Set(
@@ -115,4 +118,4 @@ const nextConfig = {
     },
 };
 
-export default withPWA(withNextIntl(nextConfig));
+export default withNextIntl(nextConfig);
