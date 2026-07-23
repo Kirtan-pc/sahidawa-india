@@ -8,6 +8,8 @@ import { verifyTwilioSignature } from "../middleware/twilioSignature";
 import { supabase, dbConfig } from "../db/client";
 import { smsService } from "../services/sms-service";
 import { whatsappService } from "../services/whatsapp-service";
+import { memorySubscriberStore, InMemorySubscriber } from "../services/memorySubscriberStore";
+import { formatPhoneNumber } from "../utils/phone";
 import logger from "../utils/logger";
 import {
     getMockRecallFeed,
@@ -251,11 +253,11 @@ router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
                 "Supabase database is offline. Falling back to in-memory subscription store."
             );
             if (req.user) {
-                subscriber = Array.from(memorySubscribers.values()).find(
+                subscriber = memorySubscriberStore.find(
                     (s) => s.user_id === req.user!.id
                 );
             } else if (phone) {
-                subscriber = memorySubscribers.get(phone);
+                subscriber = memorySubscriberStore.get(phone);
             }
         }
 
@@ -342,7 +344,7 @@ router.post(
             let result;
             if (dbFailed) {
                 logger.warn("Supabase database is offline. Registering subscriber in-memory.");
-                existing = memorySubscribers.get(formattedPhone);
+                existing = memorySubscriberStore.get(formattedPhone);
 
                 if (existing) {
                     existing.user_id = req.user?.id || existing.user_id;
@@ -374,7 +376,7 @@ router.post(
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString(),
                     };
-                    memorySubscribers.set(formattedPhone, result);
+                    memorySubscriberStore.set(formattedPhone, result);
                 }
             } else {
                 if (existing) {
@@ -528,7 +530,7 @@ router.post("/verify-otp", authTargetLimiter, async (req, res) => {
         }
 
         if (dbFailed) {
-            subscriber = memorySubscribers.get(formattedPhone);
+            subscriber = memorySubscriberStore.get(formattedPhone);
         }
 
         if (!subscriber) {
@@ -705,15 +707,15 @@ router.patch(
 
             if (dbFailed) {
                 logger.warn("Supabase database is offline. Updating subscriber in-memory.");
-                let sub = Array.from(memorySubscribers.values()).find(
+                let sub = memorySubscriberStore.find(
                     (s) => s.user_id === req.user!.id
                 );
 
                 if (sub) {
                     if (formattedNewPhone) {
-                        memorySubscribers.delete(sub.phone);
+                        memorySubscriberStore.delete(sub.phone);
                         sub.phone = formattedNewPhone;
-                        memorySubscribers.set(formattedNewPhone, sub);
+                        memorySubscriberStore.set(formattedNewPhone, sub);
                     }
                     if (channels) sub.channels = channels;
                     if (language) sub.language = language;
@@ -797,13 +799,13 @@ router.delete("/phone", optionalAuth, async (req: AuthenticatedRequest, res) => 
         if (dbFailed) {
             logger.warn("Supabase database is offline. Deleting subscriber in-memory.");
             let sub = req.user
-                ? Array.from(memorySubscribers.values()).find((s) => s.user_id === req.user!.id)
+                ? memorySubscriberStore.find((s) => s.user_id === req.user!.id)
                 : phone
-                  ? memorySubscribers.get(phone)
+                  ? memorySubscriberStore.get(phone)
                   : undefined;
 
             if (sub) {
-                memorySubscribers.delete(sub.phone);
+                memorySubscriberStore.delete(sub.phone);
                 data = [sub];
             } else {
                 data = [];
