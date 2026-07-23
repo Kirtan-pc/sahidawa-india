@@ -1,22 +1,22 @@
 import { execSync } from "node:child_process";
 import createNextIntlPlugin from "next-intl/plugin";
-import withPWAInit, { runtimeCaching as defaultRuntimeCaching } from "@ducanh2912/next-pwa";
-import { createWorkboxRuntimeCaching } from "./worker/workboxRuntimeCaching.mjs";
+// import withPWAInit, { runtimeCaching as defaultRuntimeCaching } from "@ducanh2912/next-pwa";
+// import { createWorkboxRuntimeCaching } from "./worker/workboxRuntimeCaching.mjs";
 
 const withNextIntl = createNextIntlPlugin();
-const workboxRuntimeCaching = createWorkboxRuntimeCaching(defaultRuntimeCaching);
+// const workboxRuntimeCaching = createWorkboxRuntimeCaching(defaultRuntimeCaching);
 
-const withPWA = withPWAInit({
-    dest: "public",
-    cacheOnFrontEndNav: true,
-    aggressiveFrontEndNavCaching: true,
-    reloadOnOnline: true,
-    swcMinify: true,
-    workboxOptions: {
-        disableDevLogs: true,
-        runtimeCaching: workboxRuntimeCaching,
-    },
-});
+// const withPWA = withPWAInit({
+//     dest: "public",
+//     cacheOnFrontEndNav: true,
+//     aggressiveFrontEndNavCaching: true,
+//     reloadOnOnline: true,
+//     swcMinify: true,
+//     workboxOptions: {
+//         disableDevLogs: true,
+//         runtimeCaching: workboxRuntimeCaching,
+//     },
+// });
 
 /**
  * Deterministic build ID derived from the Git commit SHA.

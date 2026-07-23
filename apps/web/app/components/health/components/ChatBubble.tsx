@@ -24,7 +24,7 @@ const formatTime = (d: Date) =>
 const BotAvatar = () => (
     <div
         aria-hidden="true"
-        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-2xl bg-emerald-600 shadow-sm"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-emerald-600 shadow-sm"
     >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
             <path d="M17 8C8 10 5.9 16.17 3.82 19.71L5.71 21l1-1.71c.19.13.39.26.59.37C9 21.07 11 22 14 22c3.56 0 6.83-1.63 9-4.56V3l-4 2-2-3-4.5 5.5C11.5 8 14 8 17 8z" />
@@ -35,7 +35,7 @@ const BotAvatar = () => (
 const UserAvatar = () => (
     <div
         aria-hidden="true"
-        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-200"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-slate-200"
     >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--color-dark-scrollbar)">
             <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
@@ -59,7 +59,7 @@ const ErrorContent = ({
                 height="16"
                 viewBox="0 0 24 24"
                 fill="var(--color-accent-danger)"
-                className="mt-0.5 flex-shrink-0"
+                className="mt-0.5 shrink-0"
                 aria-hidden="true"
             >
                 <path d="M12 2L1 21h22L12 2zm0 3.5L20.5 19h-17L12 5.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z" />
