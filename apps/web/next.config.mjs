@@ -23,10 +23,13 @@ const withNextIntl = createNextIntlPlugin();
  * Falls back to a timestamp if git is unavailable (e.g. Docker without .git).
  */
 function getBuildId() {
+    if (process.env.VERCEL_GIT_COMMIT_SHA) {
+        return process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7);
+    }
     try {
         return execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
     } catch {
-        return Date.now().toString(36);
+        return "static-fallback-id";
     }
 }
 
