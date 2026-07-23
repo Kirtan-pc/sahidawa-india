@@ -48,12 +48,7 @@ const nextConfig = {
         "@zxing/library",
         "@zxing/browser",
     ],
-    serverExternalPackages: [
-        "lightningcss",
-        "@tailwindcss/postcss",
-        "@tailwindcss/node",
-        "@tailwindcss/oxide",
-    ],
+
     images: {
         formats: ["image/avif", "image/webp"],
         deviceSizes: [320, 420, 640, 750, 1080],
@@ -66,9 +61,7 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
+
     async headers() {
         const connectSrc = [
             ...new Set(
