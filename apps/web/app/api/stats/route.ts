@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { createServiceRoleSupabaseClient } from "@/lib/rateLimitMetrics";
 
-export const revalidate = 60; // Cache for 1 minute (was 3600)
+// force-dynamic: never pre-render at build time — credentials only exist at runtime
+export const dynamic = "force-dynamic";
 
 export async function GET() {
     try {
