@@ -15,6 +15,8 @@ export interface InMemorySubscriber {
     status: string;
     verification_otp: string | null;
     otp_expires_at: string | null;
+    failed_attempts: number;
+    locked_until: string | null;
     created_at: string;
     updated_at: string;
 }
@@ -172,6 +174,8 @@ class PersistedMemorySubscriberStore {
                     status: sub.status,
                     verification_otp: sub.verification_otp,
                     otp_expires_at: sub.otp_expires_at,
+                    failed_attempts: sub.failed_attempts ?? 0,
+                    locked_until: sub.locked_until ?? null,
                 };
 
                 let error;

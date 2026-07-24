@@ -21,6 +21,8 @@ import {
     savePushSubscription,
     triggerRecallAlert,
 } from "../services/notifications";
+import { InMemorySubscriber, memorySubscriberStore } from "../services/memorySubscriberStore";
+import { formatPhoneNumber } from "../utils/phone";
 
 const router = Router();
 
@@ -150,27 +152,7 @@ const deletePhoneSchema = z
     })
     .strict();
 
-import { formatPhoneNumber } from "../utils/phone"; // Local in-memory fallback store for development when Supabase is offline
-interface InMemorySubscriber {
-    id: string;
-    user_id: string | null;
-    phone: string;
-    channels: ("sms" | "whatsapp")[];
-    language: string;
-    district: string;
-    is_active: boolean;
-    status: string;
-    verification_otp: string | null;
-    otp_expires_at: string | null;
-    failed_attempts: number;
-    locked_until: string | null;
-    created_at: string;
-    updated_at: string;
-}
 
-// Global flag to track Supabase offline status and skip connection retries instantly
-// (Live view of dbConfig.isSupabaseOffline is read directly inside request handlers)
-const memorySubscribers = new Map<string, InMemorySubscriber>();
 
 // The only subscriber fields any client is allowed to receive. Everything else on
 // a row is either a secret (verification_otp, otp_expires_at) or account-linkage
@@ -253,9 +235,13 @@ router.get("/status", optionalAuth, async (req: AuthenticatedRequest, res) => {
                 "Supabase database is offline. Falling back to in-memory subscription store."
             );
             if (req.user) {
+<<<<<<< HEAD
                 subscriber = memorySubscriberStore.find(
                     (s) => s.user_id === req.user!.id
                 );
+=======
+                subscriber = memorySubscriberStore.find((s) => s.user_id === req.user!.id);
+>>>>>>> 38eb82c6 (fix(api): integrate lockout fields into memory subscriber store and clean up duplicate definitions)
             } else if (phone) {
                 subscriber = memorySubscriberStore.get(phone);
             }
@@ -373,11 +359,17 @@ router.post(
                         status: targetStatus,
                         verification_otp: otp,
                         otp_expires_at: otpExpires,
+                        failed_attempts: 0,
+                        locked_until: null,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString(),
                     };
+<<<<<<< HEAD
                     memorySubscriberStore.set(formattedPhone, result);
+=======
+>>>>>>> 38eb82c6 (fix(api): integrate lockout fields into memory subscriber store and clean up duplicate definitions)
                 }
+                memorySubscriberStore.set(formattedPhone, result);
             } else {
                 if (existing) {
                     const updatePayload: any = {
@@ -707,9 +699,13 @@ router.patch(
 
             if (dbFailed) {
                 logger.warn("Supabase database is offline. Updating subscriber in-memory.");
+<<<<<<< HEAD
                 let sub = memorySubscriberStore.find(
                     (s) => s.user_id === req.user!.id
                 );
+=======
+                let sub = memorySubscriberStore.find((s) => s.user_id === req.user!.id);
+>>>>>>> 38eb82c6 (fix(api): integrate lockout fields into memory subscriber store and clean up duplicate definitions)
 
                 if (sub) {
                     if (formattedNewPhone) {
