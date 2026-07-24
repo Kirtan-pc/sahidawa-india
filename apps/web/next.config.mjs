@@ -58,9 +58,6 @@ const nextConfig = {
     compress: false, // Offloaded to Vercel/proxy
     reactStrictMode: true,
     poweredByHeader: false,
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
     experimental: {
         memoryBasedWorkersCount: true,
         cpus: 1,
