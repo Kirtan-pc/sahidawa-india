@@ -55,6 +55,175 @@ const reportBatchSchema = z
         message: "Either brandName or barcodeId must be provided alongside batchNumber",
     });
 
+// ── GET /api/verify/batch ─────────────────────────────────────────────────────
+
+const ALLOWED_SORT_FIELDS = [
+    "batch_number",
+    "manufacturing_date",
+    "expiry_date",
+    "recall_status",
+    "created_at",
+    "quantity_produced",
+] as const;
+
+const ALLOWED_SORT_ORDERS = ["asc", "desc"] as const;
+
+const listBatchesSchema = z
+    .object({
+        start: z.string().optional(),
+        end: z.string().optional(),
+        sortBy: z.enum(ALLOWED_SORT_FIELDS).default("created_at"),
+        sortOrder: z.enum(ALLOWED_SORT_ORDERS).default("desc"),
+        page: z.coerce.number().int().min(1).default(1),
+        limit: z.coerce.number().int().min(1).max(100).default(50),
+    })
+    .refine(
+        (data) => {
+            if (data.start) {
+                const d = new Date(data.start);
+                if (isNaN(d.getTime())) return false;
+            }
+            return true;
+        },
+        { message: "Invalid start date", path: ["start"] }
+    )
+    .refine(
+        (data) => {
+            if (data.end) {
+                const d = new Date(data.end);
+                if (isNaN(d.getTime())) return false;
+            }
+            return true;
+        },
+        { message: "Invalid end date", path: ["end"] }
+    )
+    .refine(
+        (data) => {
+            if (data.start && data.end) {
+                return new Date(data.start) <= new Date(data.end);
+            }
+            return true;
+        },
+        { message: "start date must not be after end date", path: ["end"] }
+    );
+
+/**
+ * @openapi
+ * /api/verify/batch:
+ *   get:
+ *     tags:
+ *       - Batch Traceability
+ *     summary: List batches with date filtering and sorting
+ *     description: Returns a paginated list of batches filtered by date range.
+ *     parameters:
+ *       - in: query
+ *         name: start
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Start date filter (ISO 8601)
+ *       - in: query
+ *         name: end
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: End date filter (ISO 8601)
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [batch_number, manufacturing_date, expiry_date, recall_status, created_at, quantity_produced]
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort direction
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *         description: Results per page
+ *     responses:
+ *       200:
+ *         description: Paginated batch list
+ *       400:
+ *         description: Invalid query parameters
+ *       500:
+ *         description: Database error
+ */
+router.get("/", batchLimiter, async (req: Request, res: Response) => {
+    const parsed = listBatchesSchema.safeParse(req.query);
+
+    if (!parsed.success) {
+        res.status(400).json({
+            error: "Invalid query parameters",
+            details: parsed.error.issues,
+        });
+        return;
+    }
+
+    const { start, end, sortBy, sortOrder, page, limit } = parsed.data;
+    const offset = (page - 1) * limit;
+
+    try {
+        let query = supabase
+            .from("batches")
+            .select(
+                "id, batch_number, manufacturing_date, expiry_date, recall_status, recall_reason, quantity_produced, created_at",
+                { count: "exact" }
+            );
+
+        if (start) {
+            query = query.gte("manufacturing_date", start);
+        }
+        if (end) {
+            query = query.lte("manufacturing_date", end);
+        }
+
+        const { data, error, count } = await query
+            .order(sortBy, { ascending: sortOrder === "asc" })
+            .range(offset, offset + limit - 1);
+
+        if (error) {
+            logger.error({
+                message: "Batch list query failed",
+                error,
+                route: "/api/verify/batch",
+            });
+            res.status(500).json({ error: "Failed to fetch batches" });
+            return;
+        }
+
+        res.status(200).json({
+            batches: data ?? [],
+            meta: {
+                total: count ?? 0,
+                page,
+                limit,
+                totalPages: count ? Math.ceil(count / limit) : 0,
+            },
+        });
+    } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        logger.error({
+            message: "Batch list error",
+            error: message,
+            route: "/api/verify/batch",
+        });
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 // ── GET /api/verify/batch/:batchNumber ────────────────────────────────────────
 
 /**

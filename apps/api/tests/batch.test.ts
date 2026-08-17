@@ -7,6 +7,9 @@ jest.mock("../src/db/client", () => {
         from: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
+        gte: jest.fn().mockReturnThis(),
+        lte: jest.fn().mockReturnThis(),
+        range: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
         limit: jest.fn().mockReturnThis(),
         maybeSingle: jest.fn(),
@@ -18,6 +21,151 @@ jest.mock("../src/db/client", () => {
 import { supabase } from "../src/db/client";
 
 const mockedSupabase = supabase as jest.Mocked<typeof supabase>;
+
+describe("GET /api/verify/batch", () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+        mockedSupabase.range.mockReset();
+    });
+
+    it("returns 400 for invalid start date", async () => {
+        const response = await request(app).get("/api/verify/batch?start=notadate");
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Invalid query parameters");
+        expect(response.body.details).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    message: "Invalid start date",
+                }),
+            ])
+        );
+    });
+
+    it("returns 400 for invalid end date", async () => {
+        const response = await request(app).get("/api/verify/batch?end=notadate");
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Invalid query parameters");
+        expect(response.body.details).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    message: "Invalid end date",
+                }),
+            ])
+        );
+    });
+
+    it("returns 400 when sortBy is not in the allow-list", async () => {
+        const response = await request(app).get("/api/verify/batch?sortBy=arbitrary-key");
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Invalid query parameters");
+    });
+
+    it("returns 400 when sortOrder is invalid", async () => {
+        const response = await request(app).get("/api/verify/batch?sortOrder=up");
+
+        expect(response.status).toBe(400);
+        expect(response.body.error).toBe("Invalid query parameters");
+    });
+
+    it("returns 400 when start is after end", async () => {
+        const response = await request(app).get(
+            "/api/verify/batch?start=2026-12-31&end=2026-01-01"
+        );
+
+        expect(response.status).toBe(400);
+        expect(response.body.details).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    message: "start date must not be after end date",
+                }),
+            ])
+        );
+    });
+
+    it("returns paginated batch list with valid params", async () => {
+        mockedSupabase.range.mockResolvedValueOnce({
+            data: [
+                {
+                    id: "1",
+                    batch_number: "BN2024001",
+                    manufacturing_date: "2026-01-10",
+                    expiry_date: "2099-12-31",
+                    recall_status: "none",
+                    recall_reason: null,
+                    quantity_produced: 5000,
+                    created_at: "2026-01-10T00:00:00Z",
+                },
+            ],
+            error: null,
+            count: 1,
+        });
+
+        const response = await request(app).get("/api/verify/batch");
+
+        expect(response.status).toBe(200);
+        expect(response.body.batches).toHaveLength(1);
+        expect(response.body.meta).toEqual({
+            total: 1,
+            page: 1,
+            limit: 50,
+            totalPages: 1,
+        });
+    });
+
+    it("uses default sortBy=created_at and sortOrder=desc", async () => {
+        mockedSupabase.range.mockResolvedValueOnce({
+            data: [],
+            error: null,
+            count: 0,
+        });
+
+        await request(app).get("/api/verify/batch");
+
+        expect(mockedSupabase.order).toHaveBeenCalledWith("created_at", {
+            ascending: false,
+        });
+    });
+
+    it("applies start date filter when valid", async () => {
+        mockedSupabase.range.mockResolvedValueOnce({
+            data: [],
+            error: null,
+            count: 0,
+        });
+
+        await request(app).get("/api/verify/batch?start=2026-01-01");
+
+        expect(mockedSupabase.gte).toHaveBeenCalledWith("manufacturing_date", "2026-01-01");
+    });
+
+    it("applies end date filter when valid", async () => {
+        mockedSupabase.range.mockResolvedValueOnce({
+            data: [],
+            error: null,
+            count: 0,
+        });
+
+        await request(app).get("/api/verify/batch?end=2026-12-31");
+
+        expect(mockedSupabase.lte).toHaveBeenCalledWith("manufacturing_date", "2026-12-31");
+    });
+
+    it("returns 500 when database query fails", async () => {
+        mockedSupabase.range.mockResolvedValueOnce({
+            data: null,
+            error: { message: "database unavailable" },
+            count: null,
+        });
+
+        const response = await request(app).get("/api/verify/batch");
+
+        expect(response.status).toBe(500);
+        expect(response.body).toEqual({ error: "Failed to fetch batches" });
+    });
+});
 
 describe("GET /api/verify/batch/:batchNumber", () => {
     beforeEach(() => {
